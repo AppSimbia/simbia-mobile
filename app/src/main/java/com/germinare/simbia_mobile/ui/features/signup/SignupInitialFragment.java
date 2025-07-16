@@ -3,10 +3,13 @@ package com.germinare.simbia_mobile.ui.features.signup;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
 
 import com.germinare.simbia_mobile.R;
 
@@ -60,7 +63,27 @@ public class SignupInitialFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_signup_initial, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_signup_initial, container, false);
+
+        CheckBox termsCheckbox = view.findViewById(R.id.cb_terms);
+        Button btn_continue = view.findViewById(R.id.btn_follow);
+
+        acceptTerms(termsCheckbox, btn_continue);
+
+        termsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            btn_continue.setEnabled(isChecked);
+        });
+
+        btn_continue.setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.signupVerificationFragment)
+        );
+
+        return view;
     }
+
+    private void acceptTerms(CheckBox checkBox, Button btn_continue) {
+        btn_continue.setEnabled(checkBox.isChecked());
+    }
+
 }

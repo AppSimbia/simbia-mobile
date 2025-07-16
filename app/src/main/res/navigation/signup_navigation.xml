@@ -3,12 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/signup_navigation"
+    android:label="Cadastro"
     app:startDestination="@id/signupInitialFragment">
 
     <fragment
         android:id="@+id/signupInitialFragment"
         android:name="com.germinare.simbia_mobile.ui.features.signup.SignupInitialFragment"
-        android:label="fragment_signup_initial"
+        android:label="Cadastro"
         tools:layout="@layout/fragment_signup_initial" />
     <fragment
         android:id="@+id/signupVerificationFragment"
