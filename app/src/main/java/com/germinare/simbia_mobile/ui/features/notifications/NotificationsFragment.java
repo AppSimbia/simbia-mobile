@@ -1,4 +1,4 @@
-package com.germinare.simbia_mobile.ui.notifications;
+package com.germinare.simbia_mobile.ui.features.notifications;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

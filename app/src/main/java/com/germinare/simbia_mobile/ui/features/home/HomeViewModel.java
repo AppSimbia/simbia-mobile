@@ -1,4 +1,4 @@
-package com.germinare.simbia_mobile.ui.home;
+package com.germinare.simbia_mobile.ui.features.home;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
