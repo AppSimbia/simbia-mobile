@@ -1,26 +1,21 @@
 package com.germinare.simbia_mobile.ui.features.signup;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
-import com.germinare.simbia_mobile.MainActivity;
 import com.germinare.simbia_mobile.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link SignupContinueFragment#newInstance} factory method to
+ * Use the {@link SignupAddRoleFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SignupContinueFragment extends Fragment {
+public class SignupAddRoleFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -31,13 +26,7 @@ public class SignupContinueFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private String companyName;
-    private String email;
-
-    private TextView tvCompanyNameDisplay;
-    private TextView tvEmailDisplay;
-
-    public SignupContinueFragment() {
+    public SignupAddRoleFragment() {
         // Required empty public constructor
     }
 
@@ -47,11 +36,11 @@ public class SignupContinueFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment SignupContinueFragment.
+     * @return A new instance of fragment SignupAddRole.
      */
     // TODO: Rename and change types and number of parameters
-    public static SignupContinueFragment newInstance(String param1, String param2) {
-        SignupContinueFragment fragment = new SignupContinueFragment();
+    public static SignupAddRoleFragment newInstance(String param1, String param2) {
+        SignupAddRoleFragment fragment = new SignupAddRoleFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -63,31 +52,16 @@ public class SignupContinueFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            companyName = getArguments().getString("companyName");
-            email = getArguments().getString("email");
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_signup_continue, container, false);
 
-        tvCompanyNameDisplay = view.findViewById(R.id.tv_name_company);
-        tvEmailDisplay = view.findViewById(R.id.tv_email);
-
-        if (companyName != null) {
-            tvCompanyNameDisplay.setText(companyName);
-        }
-        if (email != null) {
-            tvEmailDisplay.setText(email);
-        }
-
-        Button btnContinue = view.findViewById(R.id.btn_follow);
-        btnContinue.setOnClickListener(v -> {
-            Navigation.findNavController(v).navigate(R.id.signupAddRoleFragment);
-        });
-
+        View view = inflater.inflate(R.layout.fragment_signup_add_role, container, false);
         return view;
     }
 }

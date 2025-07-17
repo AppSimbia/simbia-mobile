@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 
 import com.germinare.simbia_mobile.R;
+import com.google.android.material.textfield.TextInputEditText;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +29,9 @@ public class SignupInitialFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private TextInputEditText etCompanyName;
+    private TextInputEditText etEmail;
 
     public SignupInitialFragment() {
         // Required empty public constructor
@@ -69,15 +73,25 @@ public class SignupInitialFragment extends Fragment {
         CheckBox termsCheckbox = view.findViewById(R.id.cb_terms);
         Button btn_continue = view.findViewById(R.id.btn_follow);
 
+        etCompanyName = view.findViewById(R.id.et_name);
+        etEmail = view.findViewById(R.id.et_email);
+
         acceptTerms(termsCheckbox, btn_continue);
 
         termsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             btn_continue.setEnabled(isChecked);
         });
 
-        btn_continue.setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.signupVerificationFragment)
-        );
+        btn_continue.setOnClickListener(v -> {
+            String companyName = etCompanyName.getText().toString();
+            String email = etEmail.getText().toString();
+
+            Bundle bundle = new Bundle();
+            bundle.putString("companyName", companyName);
+            bundle.putString("email", email);
+
+            Navigation.findNavController(v).navigate(R.id.signupVerificationFragment, bundle);
+        });
 
         return view;
     }
