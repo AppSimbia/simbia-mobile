@@ -1,4 +1,4 @@
-package com.germinare.simbia_mobile.ui.features.signup;
+package com.germinare.simbia_mobile.ui.features.signup.activity;
 
 import android.os.Bundle;
 import android.widget.TextView;
@@ -8,8 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.databinding.ActivitySignupBinding;
@@ -45,12 +43,25 @@ public class SignupActivity extends AppCompatActivity {
             if (destination.getLabel() != null) {
                 toolbarText.setText(destination.getLabel());
             }
+
+            if (getSupportActionBar() != null) {
+                if (destination.getId() == controller.getGraph().getStartDestinationId()){
+                    getSupportActionBar().setHomeAsUpIndicator(R.drawable.close_toolbar);
+                }else{
+                    getSupportActionBar().setHomeAsUpIndicator(null);
+                }
+            }
         });
     }
 
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_signup);
-        return navController.navigateUp() || super.onSupportNavigateUp();
+        final boolean isNavigateUp = navController.navigateUp();
+        if (!isNavigateUp){
+            finish();
+            return true;
+        }
+        return isNavigateUp;
     }
 }

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.features.signup.SignupAddRoleFragment">
+    tools:context=".ui.features.signup.fragments.SignupAddRoleFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -12,31 +12,31 @@
 
 
         <View
-            android:id="@+id/view3"
+            android:id="@+id/view3_signup_add_role"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:background="@drawable/gray_ball"
-            app:layout_constraintEnd_toStartOf="@+id/view4"
-            app:layout_constraintStart_toEndOf="@+id/view"
+            app:layout_constraintEnd_toStartOf="@+id/view4_signup_add_role"
+            app:layout_constraintStart_toEndOf="@+id/view_signup_add_role"
             app:layout_constraintTop_toTopOf="parent" />
 
         <View
-            android:id="@+id/view2"
+            android:id="@+id/view2_signup_add_role"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:background="@drawable/gray_ball"
-            app:layout_constraintEnd_toStartOf="@+id/view"
+            app:layout_constraintEnd_toStartOf="@+id/view_signup_add_role"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <View
-            android:id="@+id/view4"
+            android:id="@+id/view4_signup_add_role"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginStart="5dp"
@@ -44,23 +44,23 @@
             android:background="@drawable/cyan_ball"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/view3"
+            app:layout_constraintStart_toEndOf="@+id/view3_signup_add_role"
             app:layout_constraintTop_toTopOf="parent" />
 
         <View
-            android:id="@+id/view"
+            android:id="@+id/view_signup_add_role"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:background="@drawable/gray_ball"
-            app:layout_constraintEnd_toStartOf="@+id/view3"
+            app:layout_constraintEnd_toStartOf="@+id/view3_signup_add_role"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/view2"
+            app:layout_constraintStart_toEndOf="@+id/view2_signup_add_role"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_add_role"
+            android:id="@+id/text_signup_add_role"
             android:layout_width="353dp"
             android:layout_height="53dp"
             android:layout_marginTop="20dp"
@@ -73,10 +73,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.491"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view3" />
+            app:layout_constraintTop_toBottomOf="@+id/view3_signup_add_role" />
 
         <TextView
-            android:id="@+id/tv_explanation_role"
+            android:id="@+id/text_explanation_signup_add_role"
             android:layout_width="328dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -89,11 +89,11 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.493"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_add_role" />
+            app:layout_constraintTop_toBottomOf="@+id/text_signup_add_role" />
 
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_add_role"
+            android:id="@+id/btn_signup_add_role"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -111,29 +111,31 @@
             app:iconTint="?attr/colorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_explanation_role" />
+            app:layout_constraintTop_toBottomOf="@+id/text_explanation_signup_add_role" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_follow"
+            android:id="@+id/btn_follow_signup_add_role"
             android:layout_width="328dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="109dp"
             android:fontFamily="@font/plus_jakarta_sans"
-            android:text="Cadastrar"
+            android:text="Seguir"
             app:cornerRadius="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.506"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.493"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerView"
+            app:layout_constraintVertical_bias="0.166" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="403dp"
             android:layout_height="330dp"
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_add_role" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_signup_add_role" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

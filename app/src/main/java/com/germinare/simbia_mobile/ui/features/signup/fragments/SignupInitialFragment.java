@@ -1,4 +1,4 @@
-package com.germinare.simbia_mobile.ui.features.signup;
+package com.germinare.simbia_mobile.ui.features.signup.fragments;
 
 import android.os.Bundle;
 
@@ -70,11 +70,11 @@ public class SignupInitialFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_signup_initial, container, false);
 
-        CheckBox termsCheckbox = view.findViewById(R.id.cb_terms);
-        Button btn_continue = view.findViewById(R.id.btn_follow);
+        CheckBox termsCheckbox = view.findViewById(R.id.cb_terms_signup_initial);
+        Button btn_continue = view.findViewById(R.id.btn_follow_signup_initial);
 
-        etCompanyName = view.findViewById(R.id.et_name);
-        etEmail = view.findViewById(R.id.et_email);
+        etCompanyName = view.findViewById(R.id.et_name_signup_initial);
+        etEmail = view.findViewById(R.id.et_email_signup_initial);
 
         acceptTerms(termsCheckbox, btn_continue);
 

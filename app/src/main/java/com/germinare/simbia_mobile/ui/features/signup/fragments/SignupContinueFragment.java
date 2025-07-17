@@ -1,6 +1,5 @@
-package com.germinare.simbia_mobile.ui.features.signup;
+package com.germinare.simbia_mobile.ui.features.signup.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.germinare.simbia_mobile.MainActivity;
 import com.germinare.simbia_mobile.R;
 
 /**
@@ -73,8 +71,8 @@ public class SignupContinueFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_signup_continue, container, false);
 
-        tvCompanyNameDisplay = view.findViewById(R.id.tv_name_company);
-        tvEmailDisplay = view.findViewById(R.id.tv_email);
+        tvCompanyNameDisplay = view.findViewById(R.id.text_name_company_signup_continue);
+        tvEmailDisplay = view.findViewById(R.id.text_email_signup_continue);
 
         if (companyName != null) {
             tvCompanyNameDisplay.setText(companyName);
@@ -83,7 +81,7 @@ public class SignupContinueFragment extends Fragment {
             tvEmailDisplay.setText(email);
         }
 
-        Button btnContinue = view.findViewById(R.id.btn_follow);
+        Button btnContinue = view.findViewById(R.id.btn_follow_signup_continue);
         btnContinue.setOnClickListener(v -> {
             Navigation.findNavController(v).navigate(R.id.signupAddRoleFragment);
         });

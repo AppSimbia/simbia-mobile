@@ -58,6 +58,11 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_login);
-        return navController.navigateUp() || super.onSupportNavigateUp();
+        final boolean isNavigateUp = navController.navigateUp();
+        if (!isNavigateUp){
+            finish();
+            return true;
+        }
+        return isNavigateUp;
     }
 }

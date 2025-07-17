@@ -4,38 +4,38 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.features.signup.SignupContinueFragment">
+    tools:context=".ui.features.signup.fragments.SignupContinueFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <View
-            android:id="@+id/view3"
+            android:id="@+id/view3_signup_continue"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:background="@drawable/cyan_ball"
-            app:layout_constraintEnd_toStartOf="@+id/view4"
-            app:layout_constraintStart_toEndOf="@+id/view"
+            app:layout_constraintEnd_toStartOf="@+id/view4_signup_continue"
+            app:layout_constraintStart_toEndOf="@+id/view_signup_continue"
             app:layout_constraintTop_toTopOf="parent" />
 
         <View
-            android:id="@+id/view2"
+            android:id="@+id/view2_signup_continue"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:background="@drawable/gray_ball"
-            app:layout_constraintEnd_toStartOf="@+id/view"
+            app:layout_constraintEnd_toStartOf="@+id/view_signup_continue"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <View
-            android:id="@+id/view4"
+            android:id="@+id/view4_signup_continue"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginStart="5dp"
@@ -43,23 +43,23 @@
             android:background="@drawable/gray_ball"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/view3"
+            app:layout_constraintStart_toEndOf="@+id/view3_signup_continue"
             app:layout_constraintTop_toTopOf="parent" />
 
         <View
-            android:id="@+id/view"
+            android:id="@+id/view_signup_continue"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:background="@drawable/gray_ball"
-            app:layout_constraintEnd_toStartOf="@+id/view3"
+            app:layout_constraintEnd_toStartOf="@+id/view3_signup_continue"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/view2"
+            app:layout_constraintStart_toEndOf="@+id/view2_signup_continue"
             app:layout_constraintTop_toTopOf="parent" />
 
         <View
-            android:id="@+id/vw_photo"
+            android:id="@+id/vw_photo_signup_continue"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_marginTop="20dp"
@@ -67,10 +67,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view3" />
+            app:layout_constraintTop_toBottomOf="@+id/view3_signup_continue" />
 
         <TextView
-            android:id="@+id/tv_name_company"
+            android:id="@+id/text_name_company_signup_continue"
             android:layout_width="328dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -83,10 +83,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.493"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/vw_photo" />
+            app:layout_constraintTop_toBottomOf="@+id/vw_photo_signup_continue" />
 
         <TextView
-            android:id="@+id/tv_email"
+            android:id="@+id/text_email_signup_continue"
             android:layout_width="328dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
@@ -99,10 +99,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.493"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_name_company" />
+            app:layout_constraintTop_toBottomOf="@+id/text_name_company_signup_continue" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_description"
+            android:id="@+id/input_description_signup_continue"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="328dp"
             android:layout_height="wrap_content"
@@ -113,9 +113,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:endIconDrawable="@drawable/outline_email"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_email">
+            app:layout_constraintTop_toBottomOf="@id/text_email_signup_continue">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_description"
+                android:id="@+id/et_description_signup_continue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/plus_jakarta_sans"
@@ -123,7 +123,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_cep"
+            android:id="@+id/input_cep_signup_continue"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="328dp"
             android:layout_height="wrap_content"
@@ -134,10 +134,10 @@
             app:endIconDrawable="@drawable/outline_email"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/input_description">
+            app:layout_constraintTop_toBottomOf="@id/input_description_signup_continue">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_cep"
+                android:id="@+id/et_cep_signup_continue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/plus_jakarta_sans"
@@ -146,20 +146,21 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_more_info"
+            android:id="@+id/input_more_info_signup_continue"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="328dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:hint="Mais Informações"
             app:boxBackgroundColor="@android:color/transparent"
-            app:endIconMode="custom"
             app:endIconDrawable="@drawable/outline_add"
+            app:endIconMode="custom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/input_cep">
+            app:layout_constraintTop_toBottomOf="@id/input_cep_signup_continue">
+
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_more_info"
+                android:id="@+id/et_more_info_signup_continue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/plus_jakarta_sans"
@@ -167,17 +168,19 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_follow"
+            android:id="@+id/btn_follow_signup_continue"
             android:layout_width="328dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="109dp"
+            android:layout_marginTop="79dp"
             android:fontFamily="@font/plus_jakarta_sans"
             android:text="Seguir"
             app:cornerRadius="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.493"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.506"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/input_more_info_signup_continue"
+            app:layout_constraintVertical_bias="0.036" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

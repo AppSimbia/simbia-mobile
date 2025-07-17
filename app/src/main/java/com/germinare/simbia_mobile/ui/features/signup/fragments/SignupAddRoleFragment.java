@@ -1,4 +1,4 @@
-package com.germinare.simbia_mobile.ui.features.signup;
+package com.germinare.simbia_mobile.ui.features.signup.fragments;
 
 import android.os.Bundle;
 

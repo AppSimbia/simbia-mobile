@@ -60,7 +60,7 @@ public class LoginInitialFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login_initial, container, false);
-        Button btn = view.findViewById(R.id.btn_follow);
+        Button btn = view.findViewById(R.id.btn_follow_login_initial);
         btn.setOnClickListener(V -> Navigation.findNavController(view).navigate(R.id.loginVerificationFragment));
 
         return view;
