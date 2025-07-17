@@ -1,15 +1,18 @@
-package com.germinare.simbia_mobile.ui.features.login.fragments;
+package com.germinare.simbia_mobile.ui.features.signup.fragments;
 
 import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.ArraySet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
-
-import androidx.fragment.app.Fragment;
 
 import com.germinare.simbia_mobile.R;
 
@@ -19,10 +22,10 @@ import java.util.Set;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link LoginVerificationFragment#newInstance} factory method to
+ * Use the {@link SignupVerificationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LoginVerificationFragment extends Fragment {
+public class SignupVerificationFragment extends Fragment {
 
     private final List<EditText> numsVerification = new ArrayList<>();
     private final Set<Integer> response = new ArraySet<>();
@@ -37,7 +40,10 @@ public class LoginVerificationFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public LoginVerificationFragment() {
+    private String companyName;
+    private String email;
+
+    public SignupVerificationFragment() {
         // Required empty public constructor
     }
 
@@ -47,11 +53,11 @@ public class LoginVerificationFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment LoginVerification.
+     * @return A new instance of fragment SignupVerificationFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LoginVerificationFragment newInstance(String param1, String param2) {
-        LoginVerificationFragment fragment = new LoginVerificationFragment();
+    public static SignupVerificationFragment newInstance(String param1, String param2) {
+        SignupVerificationFragment fragment = new SignupVerificationFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -63,25 +69,35 @@ public class LoginVerificationFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            companyName = getArguments().getString("companyName");
+            email = getArguments().getString("email");
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login_verification, container, false);
+        View view = inflater.inflate(R.layout.fragment_signup_verification, container, false);
 
-        numsVerification.add(view.findViewById(R.id.et_n1_login_verification));
-        numsVerification.add(view.findViewById(R.id.et_n2_login_verification));
-        numsVerification.add(view.findViewById(R.id.et_n3_login_verification));
-        numsVerification.add(view.findViewById(R.id.et_n4_login_verification));
-        numsVerification.add(view.findViewById(R.id.et_n5_login_verification));
+        numsVerification.add(view.findViewById(R.id.et_n1_signup_verification));
+        numsVerification.add(view.findViewById(R.id.et_n2_signup_verification));
+        numsVerification.add(view.findViewById(R.id.et_n3_signup_verification));
+        numsVerification.add(view.findViewById(R.id.et_n4_signup_verification));
+        numsVerification.add(view.findViewById(R.id.et_n5_signup_verification));
 
         for (int i = 0; i < numsVerification.size(); i++){
             setupTextWatcher(numsVerification.get(i), i);
         }
+
+        Button btnContinueFromAddRole = view.findViewById(R.id.btn_follow_signup_verification);
+
+        btnContinueFromAddRole.setOnClickListener(v -> {
+            Bundle bundleToNextFragment = new Bundle();
+            bundleToNextFragment.putString("companyName", companyName);
+            bundleToNextFragment.putString("email", email);
+
+            Navigation.findNavController(v).navigate(R.id.signupContinueFragment, bundleToNextFragment);
+        });
 
         return view;
     }
@@ -145,5 +161,6 @@ public class LoginVerificationFragment extends Fragment {
             public void afterTextChanged(Editable editable) {
             }
         });
+
     }
 }
