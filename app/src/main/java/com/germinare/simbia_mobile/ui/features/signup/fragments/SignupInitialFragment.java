@@ -12,7 +12,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 
 import com.germinare.simbia_mobile.R;
+import com.germinare.simbia_mobile.util.Utils;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,6 +34,17 @@ public class SignupInitialFragment extends Fragment {
 
     private TextInputEditText etCompanyName;
     private TextInputEditText etEmail;
+    private TextInputEditText etCnpj;
+    private TextInputEditText etCategory;
+
+    private TextInputEditText etPassword;
+
+    private TextInputLayout inputLayoutCompany;
+    private TextInputLayout inputLayoutCnpj;
+    private TextInputLayout inputLayoutCategory;
+
+    private TextInputLayout inputLayoutPassword;
+    private TextInputLayout inputLayoutEmail;
 
     public SignupInitialFragment() {
         // Required empty public constructor
@@ -70,21 +83,32 @@ public class SignupInitialFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_signup_initial, container, false);
 
-        CheckBox termsCheckbox = view.findViewById(R.id.cb_terms_signup_initial);
-        Button btn_continue = view.findViewById(R.id.btn_follow_signup_initial);
-
         etCompanyName = view.findViewById(R.id.et_name_signup_initial);
         etEmail = view.findViewById(R.id.et_email_signup_initial);
+        etCnpj = view.findViewById(R.id.et_cnpj_signup_initial);
+        etCategory = view.findViewById(R.id.et_category_signup_initial);
+        etPassword = view.findViewById(R.id.et_password_signup_initial);
 
-        acceptTerms(termsCheckbox, btn_continue);
+        inputLayoutCompany = view.findViewById(R.id.input_name_signup_initial);
+        inputLayoutCnpj = view.findViewById(R.id.input_cnpj_signup_initial);
+        inputLayoutCategory = view.findViewById(R.id.input_category_signup_initial);
+        inputLayoutPassword = view.findViewById(R.id.input_password_signup_initial);
+        inputLayoutEmail = view.findViewById(R.id.input_email_signup_initial);
+
+        CheckBox termsCheckbox = view.findViewById(R.id.cb_terms_signup_initial);
+        Button btnContinue = view.findViewById(R.id.btn_follow_signup_initial);
+
+        acceptTerms(termsCheckbox, btnContinue);
 
         termsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            btn_continue.setEnabled(isChecked);
+            btnContinue.setEnabled(isChecked);
         });
 
-        btn_continue.setOnClickListener(v -> {
-            String companyName = etCompanyName.getText().toString();
-            String email = etEmail.getText().toString();
+        btnContinue.setOnClickListener(v -> {
+            if (!validateAllFields()) return;
+
+            String companyName = etCompanyName.getText().toString().trim();
+            String email = etEmail.getText().toString().trim();
 
             Bundle bundle = new Bundle();
             bundle.putString("companyName", companyName);
@@ -98,6 +122,54 @@ public class SignupInitialFragment extends Fragment {
 
     private void acceptTerms(CheckBox checkBox, Button btn_continue) {
         btn_continue.setEnabled(checkBox.isChecked());
+    }
+
+    private boolean validateAllFields() {
+
+        String companyName = etCompanyName.getText().toString().trim();
+        String email = etEmail.getText().toString().trim();
+        String cnpj = etCnpj.getText().toString().trim();
+        String category = etCategory.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
+
+        boolean isValid = true;
+
+        if (companyName.isEmpty()) {
+            inputLayoutCompany.setError("Nome da empresa é obrigatório");
+            isValid = false;
+        } else {
+            inputLayoutCompany.setError(null);
+        }
+
+        if (category.isEmpty()) {
+            inputLayoutCategory.setError("Categoria obrigatória");
+            isValid = false;
+        } else {
+            inputLayoutCategory.setError(null);
+        }
+
+        if (!Utils.validateCNPJ(cnpj)) {
+            inputLayoutCnpj.setError("CNPJ inválido");
+            isValid = false;
+        } else {
+            inputLayoutCnpj.setError(null);
+        }
+
+        if (!Utils.validateEmail(email)) {
+            inputLayoutEmail.setError("E-mail inválido");
+            isValid = false;
+        } else {
+            inputLayoutEmail.setError(null);
+        }
+
+        if (!Utils.validatePassword(password)) {
+            inputLayoutPassword.setError("Senha fraca");
+            isValid = false;
+        } else {
+            inputLayoutPassword.setError(null);
+        }
+
+        return isValid;
     }
 
 }
