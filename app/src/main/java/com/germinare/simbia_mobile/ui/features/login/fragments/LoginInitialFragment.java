@@ -15,6 +15,7 @@ import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.utils.CnpjCepUtils;
 import com.germinare.simbia_mobile.utils.RegexUtils;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +26,9 @@ public class LoginInitialFragment extends Fragment {
 
     private TextInputEditText etCnpj;
     private TextInputEditText etPassword;
+
+    private TextInputLayout laCnpj;
+    private TextInputLayout laPassword;
     private boolean isUpdatingText = true;
 
     private static final String ARG_PARAM1 = "param1";
@@ -69,6 +73,8 @@ public class LoginInitialFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login_initial, container, false);
+        laCnpj = view.findViewById(R.id.input_cnpj_login_initial);
+        laPassword = view.findViewById(R.id.input_password_login_initial);
         etCnpj = view.findViewById(R.id.et_cnpj_login_initial);
         etPassword = view.findViewById(R.id.et_password_login_initial);
         Button btn = view.findViewById(R.id.btn_follow_login_initial);
@@ -90,12 +96,12 @@ public class LoginInitialFragment extends Fragment {
         boolean isValid = true;
 
         if (!RegexUtils.validateCNPJ(cnpj)){
-            etCnpj.setError("Formato de CNPJ está incorreto.");
+            laCnpj.setError("Formato de CNPJ está incorreto.");
             isValid = false;
         }
 
         if (!RegexUtils.validatePassword(password)) {
-            etPassword.setError("A Senha deve conter 8 caracteres, com pelo menos uma letra minuscula, uma letra maiuscula, um digite e um caracter especial ($*&@#)");
+            laPassword.setError("A Senha deve conter 8 caracteres, com pelo menos uma letra minuscula, uma letra maiuscula, um digite e um caracter especial ($*&@#)");
             isValid = false;
         }
 

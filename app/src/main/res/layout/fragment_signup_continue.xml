@@ -109,11 +109,12 @@
             android:layout_marginTop="16dp"
             android:hint="Descrição"
             app:boxBackgroundColor="@android:color/transparent"
+            app:endIconDrawable="@drawable/outline_email"
             app:endIconMode="custom"
             app:layout_constraintEnd_toEndOf="parent"
-            app:endIconDrawable="@drawable/outline_email"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_email_signup_continue">
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_description_signup_continue"
                 android:layout_width="match_parent"

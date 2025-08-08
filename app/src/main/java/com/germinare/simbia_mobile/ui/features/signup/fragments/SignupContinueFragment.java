@@ -1,18 +1,20 @@
 package com.germinare.simbia_mobile.ui.features.signup.fragments;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.util.Utils;
+import com.germinare.simbia_mobile.utils.CnpjCepUtils;
+import com.germinare.simbia_mobile.utils.RegexUtils;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -22,7 +24,7 @@ import com.google.android.material.textfield.TextInputLayout;
  * create an instance of this fragment.
  */
 public class SignupContinueFragment extends Fragment {
-
+    
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -46,6 +48,9 @@ public class SignupContinueFragment extends Fragment {
     private TextInputLayout inputLayoutDescription;
     private TextInputLayout inputLayoutCep;
     private TextInputLayout inputLayoutMoreInfo;
+    
+    private boolean isUpdatingText = true;
+
 
     public SignupContinueFragment() {
         // Required empty public constructor
@@ -93,6 +98,7 @@ public class SignupContinueFragment extends Fragment {
         inputLayoutDescription = view.findViewById(R.id.input_description_signup_continue);
         inputLayoutCep = view.findViewById(R.id.input_cep_signup_continue);
         inputLayoutMoreInfo = view.findViewById(R.id.input_more_info_signup_continue);
+        setupTextWatcher();
 
         if (companyName != null) {
             tvCompanyNameDisplay.setText(companyName);
@@ -128,7 +134,7 @@ public class SignupContinueFragment extends Fragment {
         if (cep.isEmpty()) {
             inputLayoutCep.setError("CEP obrigatório");
             isValid = false;
-        } else if (!Utils.validateCep(cep)) {
+        } else if (!RegexUtils.validateCep(cep)) {
             inputLayoutCep.setError("CEP inválido");
             isValid = false;
         } else {
@@ -145,5 +151,36 @@ public class SignupContinueFragment extends Fragment {
         return isValid;
     }
 
+    private void setupTextWatcher(){
+        etCep.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (!isUpdatingText){
+                    return;
+                }
+
+                isUpdatingText = false;
+                String formattedCep;
+                if (charSequence.length() < 9) {
+                    formattedCep = CnpjCepUtils.formartterCep(charSequence.toString());
+                }else{
+                    formattedCep = CnpjCepUtils.formartterCep(charSequence.toString().substring(0, 9));
+                }
+
+                etCep.setText(formattedCep);
+                etCep.setSelection(formattedCep.length());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                isUpdatingText = true;
+            }
+        });
+    }
 
 }

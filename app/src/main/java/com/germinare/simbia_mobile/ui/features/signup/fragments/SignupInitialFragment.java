@@ -1,18 +1,20 @@
 package com.germinare.simbia_mobile.ui.features.signup.fragments;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.util.Utils;
+import com.germinare.simbia_mobile.utils.CnpjCepUtils;
+import com.germinare.simbia_mobile.utils.RegexUtils;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -45,6 +47,8 @@ public class SignupInitialFragment extends Fragment {
 
     private TextInputLayout inputLayoutPassword;
     private TextInputLayout inputLayoutEmail;
+
+    private boolean isUpdatingText = true;
 
     public SignupInitialFragment() {
         // Required empty public constructor
@@ -98,6 +102,7 @@ public class SignupInitialFragment extends Fragment {
         CheckBox termsCheckbox = view.findViewById(R.id.cb_terms_signup_initial);
         Button btnContinue = view.findViewById(R.id.btn_follow_signup_initial);
 
+        setupTextWatcher();
         acceptTerms(termsCheckbox, btnContinue);
 
         termsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -148,21 +153,21 @@ public class SignupInitialFragment extends Fragment {
             inputLayoutCategory.setError(null);
         }
 
-        if (!Utils.validateCNPJ(cnpj)) {
+        if (!RegexUtils.validateCNPJ(cnpj)) {
             inputLayoutCnpj.setError("CNPJ inválido");
             isValid = false;
         } else {
             inputLayoutCnpj.setError(null);
         }
 
-        if (!Utils.validateEmail(email)) {
+        if (!RegexUtils.validateEmail(email)) {
             inputLayoutEmail.setError("E-mail inválido");
             isValid = false;
         } else {
             inputLayoutEmail.setError(null);
         }
 
-        if (!Utils.validatePassword(password)) {
+        if (!RegexUtils.validatePassword(password)) {
             inputLayoutPassword.setError("Senha fraca");
             isValid = false;
         } else {
@@ -170,6 +175,38 @@ public class SignupInitialFragment extends Fragment {
         }
 
         return isValid;
+    }
+
+    private void setupTextWatcher(){
+        etCnpj.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (!isUpdatingText){
+                    return;
+                }
+
+                isUpdatingText = false;
+                String formattedCnpj;
+                if (charSequence.length() < 18) {
+                    formattedCnpj = CnpjCepUtils.formartterCnpj(charSequence.toString());
+                }else{
+                    formattedCnpj = CnpjCepUtils.formartterCnpj(charSequence.toString().substring(0, 18));
+                }
+
+                etCnpj.setText(formattedCnpj);
+                etCnpj.setSelection(formattedCnpj.length());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                isUpdatingText = true;
+            }
+        });
     }
 
 }

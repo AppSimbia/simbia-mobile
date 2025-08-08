@@ -2,6 +2,7 @@ package com.germinare.simbia_mobile.utils;
 
 public class CnpjCepUtils {
 
+
     public static String formartterCnpj(String cnpj){
         if (cnpj == null || cnpj.isEmpty()) {
             return "";
@@ -28,11 +29,38 @@ public class CnpjCepUtils {
 
         return formattedCnpj.toString();
     }
+    public static String formartterCep(String cep){
+        if (cep == null || cep.isEmpty()) {
+            return "";
+        }
 
-    public static String sanitize(String value){
-        return value
+        String cleanedCep = cep.replaceAll("[^0-9]", "");
+
+        StringBuilder formattedCep = new StringBuilder(cleanedCep);
+
+        int length = formattedCep.length();
+
+        if (length > 5) {
+            formattedCep.insert(5, '-');
+        }
+        return formattedCep.toString();
+    }
+    public static String sanitizeCep(String cep){
+        String cleanedCep = cep
                 .trim()
-                .replaceAll("[^0-9]", "");
+                .replaceAll(".", "")
+                .replaceAll("-", "");
+
+        return cleanedCep;
+    }
+    public static String sanitizeCnpj(String cpnj){
+        String cleanedCnpj = cpnj
+                .trim()
+                .replaceAll(".", "")
+                .replaceAll("/", "")
+                .replaceAll("-", "");
+
+        return cleanedCnpj;
     }
 
 }
