@@ -1,6 +1,5 @@
-package com.germinare.simbia_mobile.ui.features.signup.fragments;
+package com.germinare.simbia_mobile.ui.features.eva.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,17 +7,15 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import com.germinare.simbia_mobile.ui.features.home.activity.MainActivity;
 import com.germinare.simbia_mobile.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link SignupAddRoleFragment#newInstance} factory method to
+ * Use the {@link EvaFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SignupAddRoleFragment extends Fragment {
+public class EvaFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -29,7 +26,7 @@ public class SignupAddRoleFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public SignupAddRoleFragment() {
+    public EvaFragment() {
         // Required empty public constructor
     }
 
@@ -39,11 +36,11 @@ public class SignupAddRoleFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment SignupAddRole.
+     * @return A new instance of fragment EvaFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SignupAddRoleFragment newInstance(String param1, String param2) {
-        SignupAddRoleFragment fragment = new SignupAddRoleFragment();
+    public static EvaFragment newInstance(String param1, String param2) {
+        EvaFragment fragment = new EvaFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -63,18 +60,7 @@ public class SignupAddRoleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_signup_add_role, container, false);
-
-        Button btnContinue = view.findViewById(R.id.btn_follow_signup_add_role);
-        btnContinue.setOnClickListener(v -> {
-            navigateToHome();
-        });
-        return view;
-    }
-
-    public void navigateToHome(){
-        Intent intent = new Intent(getActivity(), MainActivity.class);
-        getActivity().startActivity(intent);
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_eva, container, false);
     }
 }

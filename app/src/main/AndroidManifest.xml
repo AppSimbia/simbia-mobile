@@ -33,6 +33,9 @@
             android:name=".ui.features.signup.activity.SignupActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.features.home.activity.MainActivity"
+            android:exported="false" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

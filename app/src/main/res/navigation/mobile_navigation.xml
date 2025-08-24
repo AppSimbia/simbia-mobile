@@ -7,19 +7,28 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.germinare.simbia_mobile.ui.features.home.HomeFragment"
+        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
-
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.germinare.simbia_mobile.ui.features.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
-
+        android:id="@+id/navigation_feed"
+        android:name="com.germinare.simbia_mobile.ui.features.feed.fragments.FeedFragment"
+        android:label="fragment_feed"
+        tools:layout="@layout/fragment_feed" />
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.germinare.simbia_mobile.ui.features.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_post"
+        android:name="com.germinare.simbia_mobile.ui.features.post.fragments.PostFragment"
+        android:label="fragment_post"
+        tools:layout="@layout/fragment_post" />
+    <fragment
+        android:id="@+id/navigation_chat"
+        android:name="com.germinare.simbia_mobile.ui.features.chat.fragments.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
+    <fragment
+        android:id="@+id/navigation_eva"
+        android:name="com.germinare.simbia_mobile.ui.features.eva.fragments.EvaFragment"
+        android:label="fragment_eva"
+        tools:layout="@layout/fragment_eva" />
+
 </navigation>
