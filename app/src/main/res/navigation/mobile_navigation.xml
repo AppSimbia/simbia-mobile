@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/navigation_feed"
-        android:name="com.germinare.simbia_mobile.ui.features.feed.fragments.FeedFragment"
+        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.feed.FeedFragment"
         android:label="fragment_feed"
         tools:layout="@layout/fragment_feed" />
     <fragment
@@ -22,12 +22,12 @@
         tools:layout="@layout/fragment_post" />
     <fragment
         android:id="@+id/navigation_chat"
-        android:name="com.germinare.simbia_mobile.ui.features.chat.fragments.ChatFragment"
+        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.chat.ChatFragment"
         android:label="fragment_chat"
         tools:layout="@layout/fragment_chat" />
     <fragment
         android:id="@+id/navigation_eva"
-        android:name="com.germinare.simbia_mobile.ui.features.eva.fragments.EvaFragment"
+        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.eva.EvaFragment"
         android:label="fragment_eva"
         tools:layout="@layout/fragment_eva" />
 

@@ -1,4 +1,4 @@
-package com.germinare.simbia_mobile.ui.features.chat.fragments;
+package com.germinare.simbia_mobile.ui.features.home.fragments.chat;
 
 import android.os.Bundle;
 
