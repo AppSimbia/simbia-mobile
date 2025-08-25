@@ -35,9 +35,7 @@ public class SplashScreen extends AppCompatActivity {
 
         animatedViews.add(binding.txLogin);
         animatedViews.add(binding.btnSignup);
-        animatedViews.add(binding.logoApple);
         animatedViews.add(binding.logoGoogle);
-        animatedViews.add(binding.logoMicrosoft);
 
         for (View view : animatedViews){
             view.setAlpha(0f);
