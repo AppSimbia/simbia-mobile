@@ -35,44 +35,14 @@
         app:layout_constraintTop_toBottomOf="@+id/tx_login" />
 
     <ImageView
-        android:id="@+id/logo_apple"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="15dp"
-        android:contentDescription="Logar com Apple"
-        android:src="@drawable/logo_apple"
-        app:layout_constraintEnd_toStartOf="@+id/logo_microsoft"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/logo_google"
-        app:layout_constraintTop_toBottomOf="@+id/btn_signup" />
-
-    <ImageView
         android:id="@+id/logo_google"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
-        android:layout_marginEnd="15dp"
         android:src="@drawable/logo_google"
-        app:layout_constraintEnd_toStartOf="@+id/logo_apple"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_signup" />
-
-    <ImageView
-        android:id="@+id/logo_microsoft"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="15dp"
-        android:src="@drawable/logo_microsoft"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/logo_apple"
         app:layout_constraintTop_toBottomOf="@+id/btn_signup" />
 
     <TextView
