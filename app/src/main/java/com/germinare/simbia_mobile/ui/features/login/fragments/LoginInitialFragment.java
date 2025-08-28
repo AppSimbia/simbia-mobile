@@ -73,14 +73,14 @@ public class LoginInitialFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login_initial, container, false);
-        laCnpj = view.findViewById(R.id.input_cnpj_login_initial);
+        laCnpj = view.findViewById(R.id.input_chat_initial);
         laPassword = view.findViewById(R.id.input_password_login_initial);
-        etCnpj = view.findViewById(R.id.et_cnpj_login_initial);
+        etCnpj = view.findViewById(R.id.et_chat_initial);
         etPassword = view.findViewById(R.id.et_password_login_initial);
         Button btn = view.findViewById(R.id.btn_follow_login_initial);
         setupTextWatcher();
         btn.setOnClickListener(V -> {
-            etCnpj = view.findViewById(R.id.et_cnpj_login_initial);
+            etCnpj = view.findViewById(R.id.et_chat_initial);
             etPassword = view.findViewById(R.id.et_password_login_initial);
             if (validateInfo()) {
                 Navigation.findNavController(view).navigate(R.id.loginVerificationFragment);
@@ -91,21 +91,25 @@ public class LoginInitialFragment extends Fragment {
     }
 
     private boolean validateInfo(){
-        final String cnpj = etCnpj.getText().toString();
-        final String password = etPassword.getText().toString();
-        boolean isValid = true;
+        try {
+            final String cnpj = etCnpj.getText().toString();
+            final String password = etPassword.getText().toString();
+            boolean isValid = true;
 
-        if (!RegexUtils.validateCNPJ(cnpj)){
-            laCnpj.setError("Formato de CNPJ está incorreto.");
-            isValid = false;
+            if (!RegexUtils.validateCNPJ(cnpj)) {
+                laCnpj.setError("Formato de CNPJ está incorreto.");
+                isValid = false;
+            }
+
+            if (!RegexUtils.validatePassword(password)) {
+                laPassword.setError("A Senha deve conter 8 caracteres, com pelo menos uma letra minuscula, uma letra maiuscula, um digite e um caracter especial ($*&@#)");
+                isValid = false;
+            }
+
+            return isValid;
+        }catch (NullPointerException e){
+            return false;
         }
-
-        if (!RegexUtils.validatePassword(password)) {
-            laPassword.setError("A Senha deve conter 8 caracteres, com pelo menos uma letra minuscula, uma letra maiuscula, um digite e um caracter especial ($*&@#)");
-            isValid = false;
-        }
-
-        return isValid;
     }
 
     private void setupTextWatcher(){

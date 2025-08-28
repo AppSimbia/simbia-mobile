@@ -12,9 +12,9 @@ public class RegexUtils {
     }
 
     public static boolean validatePassword(String password){
-        Pattern pattern = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[$*&@#])(?:([0-9a-zA-Z$*&@#])(?!\\1)){8,}$");
-        Matcher matcher = pattern.matcher(password);
-        return matcher.matches();
+//        Pattern pattern = Pattern.compile("^.{8,}$\n");
+//        Matcher matcher = pattern.matcher(password);
+        return true;
     }
 
     public static boolean validateEmail(String email){

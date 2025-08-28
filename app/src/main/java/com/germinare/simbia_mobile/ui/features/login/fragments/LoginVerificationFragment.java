@@ -1,5 +1,6 @@
 package com.germinare.simbia_mobile.ui.features.login.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -7,11 +8,13 @@ import android.util.ArraySet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.fragment.app.Fragment;
 
 import com.germinare.simbia_mobile.R;
+import com.germinare.simbia_mobile.ui.features.home.activity.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +85,11 @@ public class LoginVerificationFragment extends Fragment {
         for (int i = 0; i < numsVerification.size(); i++){
             setupTextWatcher(numsVerification.get(i), i);
         }
+
+        ((Button) view.findViewById(R.id.btn_login_verification)).setOnClickListener(V -> {
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            getActivity().startActivity(intent);
+        });
 
         return view;
     }

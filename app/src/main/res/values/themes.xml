@@ -47,4 +47,13 @@
         <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
     </style>
+
+    <style name="NoActiveIndicator" parent="">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:shape">@style/NoShape</item>
+    </style>
+
+    <style name="NoShape">
+        <item name="cornerSize">0dp</item>
+    </style>
 </resources>

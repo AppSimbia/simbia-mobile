@@ -1,7 +1,9 @@
-package com.germinare.simbia_mobile;
+package com.germinare.simbia_mobile.ui.features.home.activity;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
+import com.germinare.simbia_mobile.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,17 +28,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
+                R.id.navigation_home, R.id.navigation_feed, R.id.navigation_post, R.id.navigation_chat, R.id.navigation_eva)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+        TextView toolbarText = binding.toolbar.findViewById(R.id.toolbar_title);
+
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getLabel() != null) {
+                toolbarText.setText(destination.getLabel());
+            }
+        });
+
     }
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
