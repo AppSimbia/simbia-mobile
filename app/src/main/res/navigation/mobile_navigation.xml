@@ -22,13 +22,18 @@
         tools:layout="@layout/fragment_post" />
     <fragment
         android:id="@+id/navigation_chat"
-        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.chat.ChatFragment"
+        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.chat.ChatInitialFragment"
         android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_chat_initial" />
     <fragment
         android:id="@+id/navigation_eva"
         android:name="com.germinare.simbia_mobile.ui.features.home.fragments.eva.EvaFragment"
         android:label="fragment_eva"
         tools:layout="@layout/fragment_eva" />
+    <fragment
+        android:id="@+id/navigation_eva_messages"
+        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.eva.EvaMessagesFragment"
+        android:label="fragment_eva_messages"
+        tools:layout="@layout/fragment_eva_messages" />
 
 </navigation>
