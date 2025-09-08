@@ -37,17 +37,20 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_feed, R.id.navigation_post, R.id.navigation_chat, R.id.navigation_eva)
+                R.id.navigation_home, R.id.navigation_feed, R.id.navigation_post, R.id.navigation_chat, R.id.navigation_eva, R.id.navigation_eva_messages)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        TextView toolbarText = binding.toolbar.findViewById(R.id.toolbar_title);
+        TextView toolbarText = binding.toolbarTitle;
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (destination.getLabel() != null) {
-                toolbarText.setText(destination.getLabel());
+                toolbarText.setText("Usuário");
+            }
+            if (destination.getId() == R.id.navigation_eva_messages){
+                navView.getMenu().findItem(R.id.navigation_eva).setChecked(true);
             }
         });
 
