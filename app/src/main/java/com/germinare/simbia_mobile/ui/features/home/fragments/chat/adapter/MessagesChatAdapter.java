@@ -18,8 +18,8 @@ public class MessagesChatAdapter extends RecyclerView.Adapter<MessagesChatAdapte
 
     private static final int MESSAGE_TYPE_SEND = 1;
     private static final int MESSAGE_TYPE_RECEIVED = 2;
-    private Context context;
-    private List<MessageChat> messages;
+    private final Context context;
+    private final List<MessageChat> messages;
 
     public MessagesChatAdapter(Context context) {
         this.context = context;
@@ -75,7 +75,7 @@ public class MessagesChatAdapter extends RecyclerView.Adapter<MessagesChatAdapte
         this.messages.add(message);
         notifyItemInserted(getItemCount()-1);
     }
-    static class MessagesChatViewHolder extends RecyclerView.ViewHolder {
+    public static class MessagesChatViewHolder extends RecyclerView.ViewHolder {
         final TextView txMessageSent, txMessageReceived;
 
         MessagesChatViewHolder(View view){

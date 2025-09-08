@@ -1,24 +1,18 @@
 package com.germinare.simbia_mobile.ui.features.home.fragments.chat;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.text.Editable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.databinding.FragmentChatInitialBinding;
-import com.germinare.simbia_mobile.databinding.FragmentChatMessagesBinding;
 import com.germinare.simbia_mobile.ui.features.home.fragments.chat.adapter.Chat;
 import com.germinare.simbia_mobile.ui.features.home.fragments.chat.adapter.ChatAdapter;
-import com.germinare.simbia_mobile.ui.features.home.fragments.chat.adapter.MessageChat;
-import com.germinare.simbia_mobile.ui.features.home.fragments.chat.adapter.MessagesChatAdapter;
 
 import java.util.UUID;
 
@@ -33,9 +27,6 @@ public class ChatInitialFragment extends Fragment {
     private ChatAdapter adapter;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
 
     public ChatInitialFragment() {
         // Required empty public constructor

@@ -14,9 +14,6 @@ public class Chat{
         this.newMessages = newMessages;
     }
 
-    public Chat() {
-    }
-
     public String getId() {
         return id;
     }
@@ -33,19 +30,7 @@ public class Chat{
         this.name = name;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public Long getNewMessages() {
         return newMessages;
-    }
-
-    public void setNewMessages(Long newMessages) {
-        this.newMessages = newMessages;
     }
 }

@@ -16,6 +16,8 @@ import androidx.navigation.ui.NavigationUI;
 import com.germinare.simbia_mobile.databinding.ActivityMainBinding;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Optional;
+
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
@@ -30,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -58,9 +59,5 @@ public class MainActivity extends AppCompatActivity {
                 navView.getMenu().findItem(R.id.navigation_chat).setChecked(true);
             }
         });
-
     }
-
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-
 }
