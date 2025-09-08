@@ -93,8 +93,12 @@ public class EvaMessagesFragment extends Fragment {
                         "1",
                         messageContent
                 ));
-            }
 
+                binding.etChatMessage.setText("");
+                binding.listMessagesEva.post(() ->
+                        binding.listMessagesEva.smoothScrollToPosition(adapter.getItemCount() - 1)
+                );
+            }
         });
 
     }

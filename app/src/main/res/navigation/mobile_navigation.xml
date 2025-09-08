@@ -35,5 +35,10 @@
         android:name="com.germinare.simbia_mobile.ui.features.home.fragments.eva.EvaMessagesFragment"
         android:label="fragment_eva_messages"
         tools:layout="@layout/fragment_eva_messages" />
+    <fragment
+        android:id="@+id/navigation_chat_messages"
+        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.chat.ChatMessagesFragment"
+        android:label="fragment_chat_messages"
+        tools:layout="@layout/fragment_chat_messages" />
 
 </navigation>
