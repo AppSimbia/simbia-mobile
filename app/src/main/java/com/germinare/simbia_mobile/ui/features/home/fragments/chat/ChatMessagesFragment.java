@@ -1,7 +1,12 @@
 package com.germinare.simbia_mobile.ui.features.home.fragments.chat;
 
+import static android.view.View.VISIBLE;
+
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.text.Editable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,5 +92,27 @@ public class ChatMessagesFragment extends Fragment {
                 );
             }
         });
+
+        binding.btnMatch.setOnClickListener(V -> {
+            startSlideInAnimation(binding.ltMatch.getTranslationY() < 0f);
+        });
+    }
+
+    private void startSlideInAnimation(boolean show) {
+        final View ltMatch = binding.ltMatch;
+
+        if (show) {
+            ltMatch.setVisibility(VISIBLE);
+            ltMatch.animate()
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setDuration(400)
+                    .start();
+        } else {
+            ltMatch.animate()
+                    .translationY(-binding.ltBtn.getHeight())
+                    .setDuration(400)
+                    .start();
+        }
     }
 }

@@ -10,6 +10,7 @@
         android:id="@+id/app_bar_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/md_theme_background_highContrast"
         android:fitsSystemWindows="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,10 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 app:srcCompat="@drawable/logo_simbia" />
-
-
         </com.google.android.material.appbar.MaterialToolbar>
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <fragment
