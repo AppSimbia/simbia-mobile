@@ -2,11 +2,8 @@ package com.germinare.simbia_mobile.ui.features.home.fragments.chat;
 
 import static android.view.View.VISIBLE;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.text.Editable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
