@@ -23,7 +23,7 @@
                 android:layout_height="100dp"
                 android:layout_marginTop="16dp"
                 android:scaleType="centerInside"
-                android:src="@drawable/default_structure"
+                android:src="@drawable/no_image_profile"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
