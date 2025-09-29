@@ -1,6 +1,5 @@
-package com.germinare.simbia_mobile.ui.features;
+package com.germinare.simbia_mobile.ui.features.home.drawer;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.ui.features.DrawerItem;
 
 import java.util.List;
 

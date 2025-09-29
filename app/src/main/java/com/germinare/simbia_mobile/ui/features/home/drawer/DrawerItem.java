@@ -1,4 +1,4 @@
-package com.germinare.simbia_mobile.ui.features;
+package com.germinare.simbia_mobile.ui.features.home.drawer;
 
 public class DrawerItem {
     private int iconResId;
