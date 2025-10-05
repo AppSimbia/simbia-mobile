@@ -72,8 +72,10 @@ public class MainActivity extends AppCompatActivity {
                 R.id.navigation_feed,
                 R.id.navigation_post,
                 R.id.navigation_chat,
+                R.id.navigation_chat_messages,
                 R.id.navigation_eva,
-                R.id.navigation_eva_messages
+                R.id.navigation_eva_messages,
+                R.id.navigation_profile
         ).build();
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
@@ -90,11 +92,14 @@ public class MainActivity extends AppCompatActivity {
             }
             if (destination.getId() == R.id.navigation_eva_messages) {
                 navView.getMenu().findItem(R.id.navigation_eva).setChecked(true);
+            } else if (destination.getId() == R.id.navigation_chat_messages) {
+                navView.getMenu().findItem(R.id.navigation_chat).setChecked(true);
             }
+
         });
 
         binding.imageView.setOnClickListener(v -> {
-            navController.navigate(R.id.profileFragment);
+            navController.navigate(R.id.navigation_profile);
         });
     }
 

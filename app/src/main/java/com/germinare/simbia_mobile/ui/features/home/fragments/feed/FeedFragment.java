@@ -1,14 +1,21 @@
 package com.germinare.simbia_mobile.ui.features.home.fragments.feed;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.germinare.simbia_mobile.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.germinare.simbia_mobile.databinding.FragmentFeedBinding;
+import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.FiltersAdapter;
+import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.Post;
+import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.PostAdapter;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,50 +24,47 @@ import com.germinare.simbia_mobile.R;
  */
 public class FeedFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private FragmentFeedBinding binding;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String[] filters = {"Alimentício", "Cera", "Marcenaria", "Metalúrgico"};
 
     public FeedFragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FeedFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FeedFragment newInstance(String param1, String param2) {
-        FeedFragment fragment = new FeedFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static FeedFragment newInstance() {
+        return new FeedFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_feed, container, false);
+        binding = FragmentFeedBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        FiltersAdapter filtersAdapter = new FiltersAdapter(requireContext(), filters);
+        binding.rvFilters.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        binding.rvFilters.setAdapter(filtersAdapter);
+
+        PostAdapter postAdapter = new PostAdapter(List.of(
+                new Post(1L, "Orgânicos Secos", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx"),
+                new Post(1L, "Orgânicos Secos", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx"),
+                new Post(1L, "Orgânicos Secos", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx"),
+                new Post(1L, "Orgânicos Secos", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx")
+        ));
+        binding.rvPost1.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        binding.rvPost1.setAdapter(postAdapter);
+
+        binding.rvPost2.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        binding.rvPost2.setAdapter(postAdapter);
+
     }
 }

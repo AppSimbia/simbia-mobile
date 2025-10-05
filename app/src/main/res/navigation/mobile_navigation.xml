@@ -36,7 +36,7 @@
         android:label="fragment_eva_messages"
         tools:layout="@layout/fragment_eva_messages" />
     <fragment
-        android:id="@+id/profileFragment"
+        android:id="@+id/navigation_profile"
         android:name="com.germinare.simbia_mobile.ui.features.home.fragments.profile.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
@@ -46,5 +46,10 @@
         android:name="com.germinare.simbia_mobile.ui.features.home.fragments.chat.ChatMessagesFragment"
         android:label="fragment_chat_messages"
         tools:layout="@layout/fragment_chat_messages" />
+    <fragment
+        android:id="@+id/navigation_product_details"
+        android:name="com.germinare.simbia_mobile.ProductDetails"
+        android:label="fragment_product_details"
+        tools:layout="@layout/fragment_product_details" />
 
 </navigation>
