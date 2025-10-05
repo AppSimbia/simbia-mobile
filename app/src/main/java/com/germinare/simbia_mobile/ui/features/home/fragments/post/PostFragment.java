@@ -2,7 +2,6 @@ package com.germinare.simbia_mobile.ui.features.home.fragments.post;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -157,8 +156,7 @@ public class PostFragment extends Fragment {
                 storageDir
         );
 
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
+        currentPhotoPath = image.getAbsolutePath();       return image;
     }
 
     private void dispatchTakePictureIntent() {
