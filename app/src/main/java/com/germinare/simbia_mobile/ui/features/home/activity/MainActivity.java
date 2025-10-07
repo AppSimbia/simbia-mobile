@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home,
                 R.id.navigation_feed,
+                R.id.navigation_product_details,
                 R.id.navigation_post,
                 R.id.navigation_chat,
                 R.id.navigation_chat_messages,
@@ -90,10 +91,13 @@ public class MainActivity extends AppCompatActivity {
             if (destination.getLabel() != null) {
                 toolbarText.setText("User");
             }
+            
             if (destination.getId() == R.id.navigation_eva_messages) {
                 navView.getMenu().findItem(R.id.navigation_eva).setChecked(true);
             } else if (destination.getId() == R.id.navigation_chat_messages) {
                 navView.getMenu().findItem(R.id.navigation_chat).setChecked(true);
+            } else if (destination.getId() == R.id.navigation_product_details) {
+                navView.getMenu().findItem(R.id.navigation_feed).setChecked(true);
             }
 
         });

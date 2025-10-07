@@ -8,8 +8,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.databinding.FragmentFeedBinding;
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.FiltersAdapter;
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.Post;
@@ -55,16 +57,23 @@ public class FeedFragment extends Fragment {
         binding.rvFilters.setAdapter(filtersAdapter);
 
         PostAdapter postAdapter = new PostAdapter(List.of(
-                new Post(1L, "Orgânicos Secos", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx"),
-                new Post(1L, "Orgânicos Secos", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx"),
-                new Post(1L, "Orgânicos Secos", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx"),
-                new Post(1L, "Orgânicos Secos", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx")
-        ));
+                new Post(1L, "Orgânicos Secos", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec  turpis tortor. Nunc non varius leo, quis iaculis magna. Sed sed eleifend turpis, vel vestibulum lectus.", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx"),
+                new Post(2L, "Orgânicos Secos", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec  turpis tortor. Nunc non varius leo, quis iaculis magna. Sed sed eleifend turpis, vel vestibulum lectus.", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx"),
+                new Post(3L, "Orgânicos Secos", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec  turpis tortor. Nunc non varius leo, quis iaculis magna. Sed sed eleifend turpis, vel vestibulum lectus.", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx"),
+                new Post(4L, "Orgânicos Secos", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec  turpis tortor. Nunc non varius leo, quis iaculis magna. Sed sed eleifend turpis, vel vestibulum lectus.", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx")
+        ), this::onClickPost);
         binding.rvPost1.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.rvPost1.setAdapter(postAdapter);
 
         binding.rvPost2.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.rvPost2.setAdapter(postAdapter);
 
+    }
+
+    private void onClickPost(Post post){
+        Bundle args = new Bundle();
+        args.putParcelable("post", post);
+
+        Navigation.findNavController(requireView()).navigate(R.id.navigation_product_details, args);
     }
 }

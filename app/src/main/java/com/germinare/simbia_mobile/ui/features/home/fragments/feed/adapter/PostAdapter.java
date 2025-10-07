@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -15,13 +16,17 @@ import com.germinare.simbia_mobile.R;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
     private final List<Post> posts;
+    private final Consumer<Post> onClickPost;
 
-    public PostAdapter(List<Post> posts){
+    public PostAdapter(List<Post> posts, Consumer<Post> onClickPost){
         this.posts = posts;
+        this.onClickPost = onClickPost;
     }
 
     @NonNull
@@ -38,9 +43,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
     @Override
     public void onBindViewHolder(@NonNull PostHolder holder, int position) {
         Post post = posts.get(position);
-        Log.d("teste", post.getTittle());
 
-        holder.tittle.setText(post.getTittle());
+        holder.title.setText(post.getTitle());
         holder.price.setText("R$ "+ post.getPrice());
         holder.quantity.setText(post.getQuantity());
 
@@ -51,6 +55,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
         Glide.with(holder.industry.getContext())
                 .load(post.getUrlIndustry())
                 .into(holder.industry);
+
+        holder.cardPost.setOnClickListener(V -> onClickPost.accept(post));
     }
 
     @Override
@@ -59,18 +65,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
     }
 
     public static class PostHolder extends RecyclerView.ViewHolder{
-
-        TextView tittle, price, quantity;
+        TextView title, price, quantity;
         ImageView image;
         ShapeableImageView industry;
 
+        CardView cardPost;
+
         public PostHolder(@NonNull View itemView) {
             super(itemView);
-            this.tittle = itemView.findViewById(R.id.tx_tittle_post);
+            this.title = itemView.findViewById(R.id.tx_title_post);
             this.price = itemView.findViewById(R.id.tx_preco_post);
             this.quantity = itemView.findViewById(R.id.tx_qntd_post);
             this.image = itemView.findViewById(R.id.image_post);
             this.industry = itemView.findViewById(R.id.image_industry_post);
+            this.cardPost = itemView.findViewById(R.id.card_post);
         }
     }
 }

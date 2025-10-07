@@ -4,8 +4,8 @@
     android:id="@+id/card_filter"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="5dp"
     android:layout_marginVertical="2dp"
+    android:layout_marginEnd="5dp"
     app:cardCornerRadius="5dp"
     app:strokeColor="@color/md_theme_primary"
     app:strokeWidth="1dp">

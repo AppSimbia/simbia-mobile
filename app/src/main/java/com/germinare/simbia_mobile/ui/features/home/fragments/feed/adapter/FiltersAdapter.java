@@ -22,11 +22,23 @@ public class FiltersAdapter extends RecyclerView.Adapter<FiltersAdapter.FilterHo
     private final Context ctx;
     private final String[] filters;
     private final Map<String, Boolean> mapFilters = new HashMap<>();
+    private final boolean interactible;
     private int selectedPosition = RecyclerView.NO_POSITION;
 
     public FiltersAdapter(Context ctx, String[] filters){
         this.ctx = ctx;
         this.filters = filters;
+        this.interactible = true;
+
+        for (String filter : filters){
+            mapFilters.put(filter, Boolean.FALSE);
+        }
+    }
+
+    public FiltersAdapter(Context ctx, String[] filters, boolean interactible){
+        this.ctx = ctx;
+        this.filters = filters;
+        this.interactible = interactible;
 
         for (String filter : filters){
             mapFilters.put(filter, Boolean.FALSE);
@@ -59,18 +71,20 @@ public class FiltersAdapter extends RecyclerView.Adapter<FiltersAdapter.FilterHo
             holder.filter.setTextColor(ContextCompat.getColor(ctx, R.color.md_theme_primary));
         }
 
-        holder.card.setOnClickListener(v -> {
-            int oldPosition = selectedPosition;
+        if (interactible) {
+            holder.card.setOnClickListener(v -> {
+                int oldPosition = selectedPosition;
 
-            if (selectedPosition == position) {
-                selectedPosition = RecyclerView.NO_POSITION;
-                notifyItemChanged(position);
-            } else {
-                selectedPosition = position;
-                notifyItemChanged(oldPosition);
-                notifyItemChanged(selectedPosition);
-            }
-        });
+                if (selectedPosition == position) {
+                    selectedPosition = RecyclerView.NO_POSITION;
+                    notifyItemChanged(position);
+                } else {
+                    selectedPosition = position;
+                    notifyItemChanged(oldPosition);
+                    notifyItemChanged(selectedPosition);
+                }
+            });
+        }
     }
 
 

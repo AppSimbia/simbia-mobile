@@ -24,9 +24,11 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_filters"
-            android:layout_width="328dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
@@ -48,9 +50,11 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_post1"
-            android:layout_width="328dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="1dp"
+            android:layout_marginEnd="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView10"
@@ -58,9 +62,11 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_post2"
-            android:layout_width="328dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="12dp"
+            android:layout_marginEnd="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.506"
             app:layout_constraintStart_toStartOf="parent"

@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_post"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="15dp"
@@ -24,12 +25,13 @@
             app:srcCompat="@drawable/carrosel_mock" />
 
         <TextView
-            android:id="@+id/tx_tittle_post"
+            android:id="@+id/tx_title_post"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginTop="14dp"
             android:text="TextView"
+            android:textColor="@color/md_theme_onSurface"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/image_post" />
 
@@ -40,8 +42,9 @@
             android:layout_marginStart="5dp"
             android:layout_marginTop="16dp"
             android:text="TextView"
+            android:textColor="@color/md_theme_onSurface"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tx_tittle_post" />
+            app:layout_constraintTop_toBottomOf="@+id/tx_title_post" />
 
         <TextView
             android:id="@+id/tx_qntd_post"
@@ -50,8 +53,9 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="5dp"
             android:text="TextView"
+            android:textColor="@color/md_theme_onSurface"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tx_tittle_post" />
+            app:layout_constraintTop_toBottomOf="@+id/tx_title_post" />
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/image_industry_post"
