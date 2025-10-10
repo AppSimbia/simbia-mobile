@@ -54,7 +54,11 @@ public class SolicitationMatchFragment extends Fragment {
 
             binding.btnCancelSolicitation.setOnClickListener(V -> Navigation.findNavController(requireView()).navigate(R.id.navigation_product_details, args));
             binding.btnSendSolicitation.setOnClickListener(V -> {
+                Bundle argsSolicitation = new Bundle();
+                argsSolicitation.putString("nameIndustry", "Indústria de Lebuddha");
+
                 Intent intent = new Intent(requireContext(), SolicitationSent.class);
+                intent.putExtras(argsSolicitation);
                 startActivity(intent);
             });
         }

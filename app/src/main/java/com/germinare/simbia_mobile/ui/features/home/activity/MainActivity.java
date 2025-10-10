@@ -1,8 +1,10 @@
 package com.germinare.simbia_mobile.ui.features.home.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -27,6 +29,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private NavController navController;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 R.id.navigation_home,
                 R.id.navigation_feed,
                 R.id.navigation_product_details,
+                R.id.navigation_solicitation_match,
                 R.id.navigation_post,
                 R.id.navigation_chat,
                 R.id.navigation_chat_messages,
@@ -81,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment_activity_main);
-        NavController navController = navHostFragment.getNavController();
+        navController = navHostFragment.getNavController();
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
@@ -96,7 +100,8 @@ public class MainActivity extends AppCompatActivity {
                 navView.getMenu().findItem(R.id.navigation_eva).setChecked(true);
             } else if (destination.getId() == R.id.navigation_chat_messages) {
                 navView.getMenu().findItem(R.id.navigation_chat).setChecked(true);
-            } else if (destination.getId() == R.id.navigation_product_details) {
+            } else if (destination.getId() == R.id.navigation_product_details ||
+                    destination.getId() == R.id.navigation_solicitation_match) {
                 navView.getMenu().findItem(R.id.navigation_feed).setChecked(true);
             }
 
@@ -108,11 +113,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onNewIntent(@NonNull Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        loadFragmentFromIntent(intent);
+    }
+
+    @Override
     public void onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    private void loadFragmentFromIntent(Intent intent) {
+        String fragmentToLoad = intent.getStringExtra("fragmentToLoad");
+        navController.popBackStack(R.id.mobile_navigation, true);
+
+        if ("feed".equals(fragmentToLoad)) {
+            navController.navigate(R.id.navigation_feed);
+        } else if ("solicitationMatch".equals(fragmentToLoad)){
+            navController.navigate(R.id.navigation_solicitation_match);
         }
     }
 }
