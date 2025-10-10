@@ -94,8 +94,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         binding.imageView.setOnClickListener(v -> {
-            navController.navigate(R.id.profileFragment);
+            navController.navigate(R.id.action_home_to_profile_config);
         });
+
     }
 
     @Override

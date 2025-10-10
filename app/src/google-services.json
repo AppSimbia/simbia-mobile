@@ -12,7 +12,12 @@
           "package_name": "com.germinare.simbia_mobile"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "378459638272-d1s67o7oqed9l2e9n8uqgj487mdc9kkr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD76lQ_xxmEvYTUeO0EnuVezP3dfrZQVD8"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "378459638272-d1s67o7oqed9l2e9n8uqgj487mdc9kkr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

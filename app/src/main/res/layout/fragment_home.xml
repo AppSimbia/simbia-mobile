@@ -59,9 +59,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout3"
             android:layout_width="328dp"
-            android:layout_height="140dp"
+            android:layout_height="160dp"
             android:layout_marginTop="12dp"
-            android:background="@drawable/carrosel_mock"
+            android:background="@drawable/carousel_fav_mock"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.506"
             app:layout_constraintStart_toStartOf="parent"
