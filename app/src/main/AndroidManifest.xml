@@ -28,7 +28,7 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
         <activity
-            android:name=".ui.features.profile.activity.Profile"
+            android:name=".ui.features.profile.activity.ProfileActivity"
             android:exported="false" />
         <activity
             android:name=".ui.features.splashScreen.SplashScreen"

@@ -18,9 +18,9 @@ public class RegexUtils {
     }
 
     public static boolean validateEmail(String email){
-        Pattern pattern = Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
+//        Pattern pattern = Pattern.compile("^[a-z]");
+//        Matcher matcher = pattern.matcher(email);
+        return true;
     }
 
     public static boolean validateCep(String cep){

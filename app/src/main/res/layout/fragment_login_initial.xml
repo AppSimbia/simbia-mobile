@@ -11,12 +11,12 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_chat_initial"
+            android:id="@+id/input_email_login_initial"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="328dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="CNPJ"
+            android:hint="E-mail"
             app:boxBackgroundColor="@android:color/transparent"
             app:endIconMode="custom"
             app:endIconDrawable="@drawable/outline_email"
@@ -25,11 +25,11 @@
             app:layout_constraintTop_toBottomOf="@+id/text_login_initial">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_chat_initial"
+                android:id="@+id/et_email_login_initial"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/plus_jakarta_sans"
-                android:inputType="number"
+                android:inputType="text"
                 android:textColor="?attr/colorOnSurface" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -44,7 +44,7 @@
             app:endIconMode="password_toggle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/input_chat_initial">
+            app:layout_constraintTop_toBottomOf="@+id/input_email_login_initial">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_password_login_initial"

@@ -1,13 +1,7 @@
 package com.germinare.simbia_mobile.ui.features.home.fragments.post;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,23 +11,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.germinare.simbia_mobile.R;
+import com.germinare.simbia_mobile.utils.CameraGalleryUtils;
 import com.google.android.material.imageview.ShapeableImageView;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class PostFragment extends Fragment {
+public class PostFragment extends Fragment implements CameraGalleryUtils.ImageResultListener {
 
     private AutoCompleteTextView actvCategoria;
     private AutoCompleteTextView actvClassificacao;
@@ -42,13 +31,8 @@ public class PostFragment extends Fragment {
     private ShapeableImageView spAddPhoto;
 
     private Uri photoUri;
-    private String currentPhotoPath;
 
-    private ActivityResultLauncher<Intent> takePictureLauncher;
-    private ActivityResultLauncher<Intent> pickImageLauncher;
-    private ActivityResultLauncher<String> requestCameraPermissionLauncher;
-    private ActivityResultLauncher<String> requestStoragePermissionLauncher;
-
+    private CameraGalleryUtils cameraGalleryUtils;
 
     public PostFragment() {
     }
@@ -56,51 +40,7 @@ public class PostFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        takePictureLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK && photoUri != null) {
-                        setPhotoToImageView(photoUri);
-                    } else {
-                        deleteTempPhotoFile();
-                    }
-                }
-        );
-
-        pickImageLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                        Uri selectedImageUri = result.getData().getData();
-                        if (selectedImageUri != null) {
-                            setPhotoToImageView(selectedImageUri);
-                        }
-                    }
-                }
-        );
-
-        requestCameraPermissionLauncher = registerForActivityResult(
-                new ActivityResultContracts.RequestPermission(),
-                isGranted -> {
-                    if (isGranted) {
-                        dispatchTakePictureIntent();
-                    } else {
-                        Toast.makeText(requireContext(), "Permissão de câmera negada", Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-
-        requestStoragePermissionLauncher = registerForActivityResult(
-                new ActivityResultContracts.RequestPermission(),
-                isGranted -> {
-                    if (isGranted) {
-                        dispatchPickImageIntent();
-                    } else {
-                        Toast.makeText(requireContext(), "Permissão de galeria negada", Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
+        cameraGalleryUtils = new CameraGalleryUtils(this, this);
     }
 
     @Override
@@ -118,6 +58,20 @@ public class PostFragment extends Fragment {
         setupDropdowns(view);
 
         return view;
+    }
+
+    @Override
+    public void onImageSelected(Uri imageUri) {
+        setPhotoToImageView(imageUri);
+    }
+
+    @Override
+    public void onImageSelectionCancelled() {
+        Toast.makeText(requireContext(), "Seleção de imagem cancelada.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPermissionDenied(String permission) {
     }
 
     private void setPhotoToImageView(Uri uri) {
@@ -143,20 +97,20 @@ public class PostFragment extends Fragment {
 
         btnSelectImage.setOnClickListener(v -> {
             dialog.dismiss();
-            checkStoragePermissionAndPickImage();
+            cameraGalleryUtils.selectImageFromGallery();
         });
 
         btnTakePhoto.setOnClickListener(v -> {
             dialog.dismiss();
-            checkCameraPermission();
+            cameraGalleryUtils.takePhoto();
         });
 
-        if (photoUri != null) {
+        if (cameraGalleryUtils.getCurrentPhotoUri() != null) {
             tvViewImage.setVisibility(View.VISIBLE);
             tvViewImage.setOnClickListener(v -> {
                 AlertDialog.Builder builder_ = new AlertDialog.Builder(requireContext());
                 View customView_ = getLayoutInflater().inflate(R.layout.dialog_image, null);
-                builder.setView(customView_);
+                builder_.setView(customView_);
 
                 final AlertDialog dialog_ = builder_.create();
 
@@ -173,35 +127,6 @@ public class PostFragment extends Fragment {
         dialog.show();
     }
 
-    private void checkCameraPermission() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED) {
-            dispatchTakePictureIntent();
-        } else {
-            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA);
-        }
-    }
-
-    private void checkStoragePermissionAndPickImage() {
-        String permission = Manifest.permission.READ_EXTERNAL_STORAGE;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permission = Manifest.permission.READ_MEDIA_IMAGES;
-        }
-
-        if (ContextCompat.checkSelfPermission(requireContext(), permission)
-                == PackageManager.PERMISSION_GRANTED) {
-            dispatchPickImageIntent();
-        } else {
-            requestStoragePermissionLauncher.launch(permission);
-        }
-    }
-
-    private void dispatchPickImageIntent() {
-        Intent pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickImageLauncher.launch(pickIntent);
-    }
-
     private void setupDropdowns(View view) {
         List<String> categorias = Arrays.asList(
                 "Papelão", "Plástico", "Vidro", "Metal", "Eletrônicos", "Orgânico"
@@ -214,7 +139,7 @@ public class PostFragment extends Fragment {
         actvCategoria.setAdapter(categoriaAdapter);
 
         List<String> classificacoes = Arrays.asList(
-                "Limpo", "Sujo", "Compactado", "Não compactado", "Misto"
+                "A", "B", "C"
         );
         ArrayAdapter<String> classificacaoAdapter = new ArrayAdapter<>(
                 requireContext(),
@@ -232,55 +157,5 @@ public class PostFragment extends Fragment {
                 unidades
         );
         actvUnidade.setAdapter(unidadeAdapter);
-    }
-
-    private File createImageFile() throws IOException {
-        String timeStamp = String.valueOf(System.currentTimeMillis());
-        File storageDir = requireContext().getExternalFilesDir("Pictures");
-
-        File image = File.createTempFile(
-                "JPEG_" + timeStamp + "_",
-                ".jpg",
-                storageDir
-        );
-
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        if (takePictureIntent.resolveActivity(requireContext().getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException e) {
-                Toast.makeText(requireContext(), "Erro ao criar arquivo de imagem", Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
-
-            if (photoFile != null) {
-                String authority = requireContext().getPackageName() + ".fileprovider";
-                photoUri = FileProvider.getUriForFile(
-                        requireContext(),
-                        authority,
-                        photoFile
-                );
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                takePictureLauncher.launch(takePictureIntent);
-            }
-        }
-    }
-
-    private void deleteTempPhotoFile() {
-        if (currentPhotoPath != null) {
-            File file = new File(currentPhotoPath);
-            if (file.exists()) {
-                file.delete();
-            }
-            currentPhotoPath = null;
-            photoUri = null;
-        }
     }
 }

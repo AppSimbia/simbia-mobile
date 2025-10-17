@@ -11,8 +11,9 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.germinare.simbia_mobile.R;
+import com.germinare.simbia_mobile.ui.features.profile.fragments.ProfileFragment;
 
-public class Profile extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +26,10 @@ public class Profile extends AppCompatActivity {
             return insets;
         });
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_profile);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.profile_fragment_container, new ProfileFragment())
+                    .commit();
+        }
     }
 }

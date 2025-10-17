@@ -156,7 +156,7 @@ public class ChatMessagesFragment extends Fragment {
         alert.show();
     }
 
-    private void showDialogCancelar(){
+    private void solicitarConfirmacao(){}private void showDialogCancelar(){
         AlertUtils.DialogAlertBuilder alertBuilder = new AlertUtils.DialogAlertBuilder();
         alertBuilder.setTitle("Abandonar Match");
         alertBuilder.setDescription("Deseja mesmo abandonar esse Match?");
@@ -169,8 +169,6 @@ public class ChatMessagesFragment extends Fragment {
                 alertBuilder
         );
     }
-
-    private void solicitarConfirmacao(){}
 
     private void cancelarMatch(){}
 }

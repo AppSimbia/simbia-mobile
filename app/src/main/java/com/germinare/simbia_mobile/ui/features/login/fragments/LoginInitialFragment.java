@@ -1,21 +1,24 @@
 package com.germinare.simbia_mobile.ui.features.login.fragments;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.utils.CnpjCepUtils;
 import com.germinare.simbia_mobile.utils.RegexUtils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,12 +27,13 @@ import com.google.android.material.textfield.TextInputLayout;
  */
 public class LoginInitialFragment extends Fragment {
 
-    private TextInputEditText etCnpj;
-    private TextInputEditText etPassword;
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
-    private TextInputLayout laCnpj;
+    private String etEmail;
+    private String etPassword;
+
+    private TextInputLayout laEmail;
     private TextInputLayout laPassword;
-    private boolean isUpdatingText = true;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -71,33 +75,49 @@ public class LoginInitialFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login_initial, container, false);
-        laCnpj = view.findViewById(R.id.input_chat_initial);
+
+        laEmail = view.findViewById(R.id.input_email_login_initial);
         laPassword = view.findViewById(R.id.input_password_login_initial);
-        etCnpj = view.findViewById(R.id.et_chat_initial);
-        etPassword = view.findViewById(R.id.et_password_login_initial);
+
+        TextInputEditText etEmailField = view.findViewById(R.id.et_email_login_initial);
+        TextInputEditText etPasswordField = view.findViewById(R.id.et_password_login_initial);
+
         Button btn = view.findViewById(R.id.btn_follow_login_initial);
-        setupTextWatcher();
         btn.setOnClickListener(V -> {
-            etCnpj = view.findViewById(R.id.et_chat_initial);
-            etPassword = view.findViewById(R.id.et_password_login_initial);
+            etEmail = etEmailField.getText().toString().trim();
+            etPassword = etPasswordField.getText().toString().trim();
+
             if (validateInfo()) {
-                Navigation.findNavController(view).navigate(R.id.loginVerificationFragment);
+                firebaseAuth.signInWithEmailAndPassword(etEmail, etPassword)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Navigation.findNavController(view)
+                                            .navigate(R.id.loginVerificationFragment);
+                                } else {
+                                    Toast.makeText(view.getContext(),
+                                            "E-mail ou Senha inválidos!",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
             }
         });
 
         return view;
     }
 
+
     private boolean validateInfo(){
         try {
-            final String cnpj = etCnpj.getText().toString();
-            final String password = etPassword.getText().toString();
+            final String email = etEmail;
+            final String password = etPassword;
             boolean isValid = true;
 
-            if (!RegexUtils.validateCNPJ(cnpj)) {
-                laCnpj.setError("Formato de CNPJ está incorreto.");
+            if (!RegexUtils.validateEmail(email)) {
+                laEmail.setError("Formato de e-mail está incorreto.");
                 isValid = false;
             }
 
@@ -110,38 +130,6 @@ public class LoginInitialFragment extends Fragment {
         }catch (NullPointerException e){
             return false;
         }
-    }
-
-    private void setupTextWatcher(){
-        etCnpj.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!isUpdatingText){
-                    return;
-                }
-
-                isUpdatingText = false;
-                String formattedCnpj;
-                if (charSequence.length() < 18) {
-                    formattedCnpj = CnpjCepUtils.formartterCnpj(charSequence.toString());
-                }else{
-                    formattedCnpj = CnpjCepUtils.formartterCnpj(charSequence.toString().substring(0, 18));
-                }
-
-                etCnpj.setText(formattedCnpj);
-                etCnpj.setSelection(formattedCnpj.length());
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                isUpdatingText = true;
-            }
-        });
     }
 
 }

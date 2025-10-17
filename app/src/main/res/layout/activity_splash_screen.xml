@@ -19,42 +19,29 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5" />
 
+    <ImageView
+        android:id="@+id/logo_google"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="36dp"
+        android:src="@drawable/logo_google"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_signin" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_signup"
+        android:id="@+id/btn_signin"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="60dp"
         android:layout_marginTop="11dp"
         android:layout_marginEnd="60dp"
         android:fontFamily="@font/plus_jakarta_sans"
-        android:text="Cadastro"
+        android:text="Login"
         app:cornerRadius="12dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tx_login" />
-
-    <ImageView
-        android:id="@+id/logo_google"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="15dp"
-        android:src="@drawable/logo_google"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_signup" />
-
-    <TextView
-        android:id="@+id/tx_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:fontFamily="@font/k2d"
-        android:text="Ja possui uma conta!"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo_simbia" />
 

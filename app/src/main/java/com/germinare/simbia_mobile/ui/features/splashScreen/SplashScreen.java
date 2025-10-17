@@ -20,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.germinare.simbia_mobile.databinding.ActivitySplashScreenBinding;
 import com.germinare.simbia_mobile.ui.features.home.activity.MainActivity;
 import com.germinare.simbia_mobile.ui.features.login.activity.LoginActivity;
-import com.germinare.simbia_mobile.ui.features.signup.activity.SignupActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -59,8 +58,7 @@ public class SplashScreen extends AppCompatActivity {
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, options);
 
-        animatedViews.add(binding.txLogin);
-        animatedViews.add(binding.btnSignup);
+        animatedViews.add(binding.btnSignin);
         animatedViews.add(binding.logoGoogle);
 
         for (View view : animatedViews){
@@ -68,16 +66,9 @@ public class SplashScreen extends AppCompatActivity {
             view.setTranslationY(200f);
         }
 
-        binding.txLogin.setOnClickListener(V -> {
-            if (binding.txLogin.getVisibility() == VISIBLE) {
+        binding.btnSignin.setOnClickListener(V -> {
+            if (binding.btnSignin.getVisibility() == VISIBLE) {
                 Intent intent = new Intent(SplashScreen.this, LoginActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        binding.btnSignup.setOnClickListener(V -> {
-            if (binding.btnSignup.getVisibility() == VISIBLE) {
-                Intent intent = new Intent(SplashScreen.this, SignupActivity.class);
                 startActivity(intent);
             }
         });
@@ -161,5 +152,17 @@ public class SplashScreen extends AppCompatActivity {
                         Toast.makeText(SplashScreen.this, "Erro ao autenticar no Firebase.", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if(user != null) {
+            Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }
