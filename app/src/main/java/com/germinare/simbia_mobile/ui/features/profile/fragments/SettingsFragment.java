@@ -1,65 +1,78 @@
 package com.germinare.simbia_mobile.ui.features.profile.fragments;
 
+import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 
 import com.germinare.simbia_mobile.R;
+import com.germinare.simbia_mobile.utils.CameraGalleryUtils;
+import com.google.android.material.imageview.ShapeableImageView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SettingsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends Fragment implements CameraGalleryUtils.ImageResultListener {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private CameraGalleryUtils cameraGalleryUtils;
+    private ShapeableImageView spProfilePhoto;
+    private Uri profilePhotoUri;
 
     public SettingsFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SettingsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SettingsFragment newInstance(String param1, String param2) {
-        SettingsFragment fragment = new SettingsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        cameraGalleryUtils = new CameraGalleryUtils(this, this);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        View view = inflater.inflate(R.layout.fragment_settings, container, false);
+
+        spProfilePhoto = view.findViewById(R.id.sv_profile_photo);
+
+        spProfilePhoto.setOnClickListener(v -> showImageSourceDialog());
+
+        return view;
+    }
+
+    @Override
+    public void onImageSelected(Uri imageUri) {
+        spProfilePhoto.setImageURI(imageUri);
+        spProfilePhoto.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
+        this.profilePhotoUri = imageUri;
+        Toast.makeText(requireContext(), "Foto de perfil atualizada!", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onImageSelectionCancelled() {
+        Toast.makeText(requireContext(), "Seleção de foto cancelada.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPermissionDenied(String permission) {
+    }
+
+    private void showImageSourceDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Alterar Foto de Perfil")
+                .setItems(new CharSequence[]{"Tirar Foto", "Escolher da Galeria"}, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            cameraGalleryUtils.takePhoto();
+                            break;
+                        case 1:
+                            cameraGalleryUtils.selectImageFromGallery();
+                            break;
+                    }
+                });
+        builder.create().show();
     }
 }
