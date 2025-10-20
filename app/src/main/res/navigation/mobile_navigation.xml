@@ -35,16 +35,21 @@
         android:name="com.germinare.simbia_mobile.ui.features.home.fragments.eva.EvaMessagesFragment"
         android:label="fragment_eva_messages"
         tools:layout="@layout/fragment_eva_messages" />
-    <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.profile.ProfileFragment"
-        android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/navigation_chat_messages"
         android:name="com.germinare.simbia_mobile.ui.features.home.fragments.chat.ChatMessagesFragment"
         android:label="fragment_chat_messages"
         tools:layout="@layout/fragment_chat_messages" />
+    <fragment
+        android:id="@+id/navigation_product_details"
+        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.feed.ProductDetailsFragment"
+        android:label="fragment_product_details"
+        tools:layout="@layout/fragment_product_details" />
+    <fragment
+        android:id="@+id/navigation_solicitation_match"
+        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.feed.SolicitationMatchFragment"
+        android:label="fragment_solicitation_match"
+        tools:layout="@layout/fragment_solicitation_match" />
 
 </navigation>

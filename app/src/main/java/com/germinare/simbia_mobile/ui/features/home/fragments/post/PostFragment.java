@@ -1,81 +1,46 @@
 package com.germinare.simbia_mobile.ui.features.home.fragments.post;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.germinare.simbia_mobile.R;
+import com.germinare.simbia_mobile.utils.CameraGalleryUtils;
 import com.google.android.material.imageview.ShapeableImageView;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class PostFragment extends Fragment {
+public class PostFragment extends Fragment implements CameraGalleryUtils.ImageResultListener {
 
-    private Spinner spinnerCategoria;
-    private Spinner spinnerUnidade;
+    private AutoCompleteTextView actvCategoria;
+    private AutoCompleteTextView actvClassificacao;
+    private AutoCompleteTextView actvUnidade;
+
     private ShapeableImageView spAddPhoto;
 
     private Uri photoUri;
-    private String currentPhotoPath;
 
-    private ActivityResultLauncher<Intent> takePictureLauncher;
+    private CameraGalleryUtils cameraGalleryUtils;
 
-    private static final int CAMERA_PERMISSION_CODE = 101;
-
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
-
-    public PostFragment() {}
-
-    public static PostFragment newInstance(String param1, String param2) {
-        PostFragment fragment = new PostFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public PostFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
-        takePictureLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK && photoUri != null) {
-                        spAddPhoto.setImageURI(photoUri);
-                        spAddPhoto.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
-                    }
-                }
-        );
+        cameraGalleryUtils = new CameraGalleryUtils(this, this);
     }
 
     @Override
@@ -83,103 +48,114 @@ public class PostFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post, container, false);
 
-        spinnerCategoria = view.findViewById(R.id.spinner_categoria);
-        spinnerUnidade = view.findViewById(R.id.spinner_unidade);
+        actvCategoria = view.findViewById(R.id.actv_categoria);
+        actvClassificacao = view.findViewById(R.id.actv_classificacao);
+        actvUnidade = view.findViewById(R.id.actv_unidade);
         spAddPhoto = view.findViewById(R.id.sp_add_photo);
 
-        spAddPhoto.setOnClickListener(v -> checkCameraPermissionAndTakePhoto());
+        spAddPhoto.setOnClickListener(v -> showImageSourceDialog());
 
-        List<String> categorias = new ArrayList<>();
-        categorias.add("Papelão");
-        categorias.add("Plástico");
-        categorias.add("Vidro");
-        categorias.add("Metal");
-        categorias.add("Eletrônicos");
-        categorias.add("Orgânico");
-
-        List<String> unidades = new ArrayList<>();
-        unidades.add("Kg");
-        unidades.add("g");
-        unidades.add("Tonelada");
-        unidades.add("Unidade");
-        unidades.add("Litro");
-        unidades.add("m³");
-
-        ArrayAdapter<String> categoriaAdapter = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                categorias
-        );
-        categoriaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCategoria.setAdapter(categoriaAdapter);
-
-        ArrayAdapter<String> unidadeAdapter = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                unidades
-        );
-        unidadeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerUnidade.setAdapter(unidadeAdapter);
+        setupDropdowns(view);
 
         return view;
     }
 
-    private void checkCameraPermissionAndTakePhoto() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-        } else {
-            dispatchTakePictureIntent();
-        }
+    @Override
+    public void onImageSelected(Uri imageUri) {
+        setPhotoToImageView(imageUri);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                dispatchTakePictureIntent();
-            } else {
-                Toast.makeText(requireContext(), "Permissão de câmera negada", Toast.LENGTH_SHORT).show();
-            }
-        }
+    public void onImageSelectionCancelled() {
+        Toast.makeText(requireContext(), "Seleção de imagem cancelada.", Toast.LENGTH_SHORT).show();
     }
 
-    private File createImageFile() throws IOException {
-        String timeStamp = String.valueOf(System.currentTimeMillis());
-        File storageDir = requireContext().getExternalFilesDir("Pictures");
+    @Override
+    public void onPermissionDenied(String permission) {
+    }
 
-        File image = File.createTempFile(
-                "JPEG_" + timeStamp + "_",
-                ".jpg",
-                storageDir
+    private void setPhotoToImageView(Uri uri) {
+        spAddPhoto.setImageURI(uri);
+        spAddPhoto.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
+        this.photoUri = uri;
+    }
+
+    private void showImageSourceDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View customView = getLayoutInflater().inflate(R.layout.dialog_image, null);
+        builder.setView(customView);
+
+        final AlertDialog dialog = builder.create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        Button btnSelectImage = customView.findViewById(R.id.btn_select_image);
+        Button btnTakePhoto = customView.findViewById(R.id.btn_take_photo);
+        TextView tvViewImage = customView.findViewById(R.id.tv_view_image);
+
+        btnSelectImage.setOnClickListener(v -> {
+            dialog.dismiss();
+            cameraGalleryUtils.selectImageFromGallery();
+        });
+
+        btnTakePhoto.setOnClickListener(v -> {
+            dialog.dismiss();
+            cameraGalleryUtils.takePhoto();
+        });
+
+        if (cameraGalleryUtils.getCurrentPhotoUri() != null) {
+            tvViewImage.setVisibility(View.VISIBLE);
+            tvViewImage.setOnClickListener(v -> {
+                AlertDialog.Builder builder_ = new AlertDialog.Builder(requireContext());
+                View customView_ = getLayoutInflater().inflate(R.layout.dialog_image, null);
+                builder_.setView(customView_);
+
+                final AlertDialog dialog_ = builder_.create();
+
+                if (dialog_.getWindow() != null) {
+                    dialog_.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                }
+
+                dialog_.show();
+            });
+        } else {
+            tvViewImage.setVisibility(View.GONE);
+        }
+
+        dialog.show();
+    }
+
+    private void setupDropdowns(View view) {
+        List<String> categorias = Arrays.asList(
+                "Papelão", "Plástico", "Vidro", "Metal", "Eletrônicos", "Orgânico"
         );
+        ArrayAdapter<String> categoriaAdapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                categorias
+        );
+        actvCategoria.setAdapter(categoriaAdapter);
 
-        currentPhotoPath = image.getAbsolutePath();       return image;
-    }
+        List<String> classificacoes = Arrays.asList(
+                "A", "B", "C"
+        );
+        ArrayAdapter<String> classificacaoAdapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                classificacoes
+        );
+        actvClassificacao.setAdapter(classificacaoAdapter);
 
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        if (takePictureIntent.resolveActivity(requireContext().getPackageManager()) != null) {
-            File photoFile;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
-
-            if (photoFile != null) {
-                photoUri = FileProvider.getUriForFile(
-                        requireContext(),
-                        requireContext().getPackageName() + ".fileprovider",
-                        photoFile
-                );
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                takePictureLauncher.launch(takePictureIntent);
-            }
-        }
+        List<String> unidades = Arrays.asList(
+                "Kg", "g", "Tonelada", "Unidade", "Litro", "m³"
+        );
+        ArrayAdapter<String> unidadeAdapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                unidades
+        );
+        actvUnidade.setAdapter(unidadeAdapter);
     }
 }
