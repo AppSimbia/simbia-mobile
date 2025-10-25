@@ -76,82 +76,11 @@ public class LoginVerificationFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login_verification, container, false);
 
-        numsVerification.add(view.findViewById(R.id.et_n1_login_verification));
-        numsVerification.add(view.findViewById(R.id.et_n2_login_verification));
-        numsVerification.add(view.findViewById(R.id.et_n3_login_verification));
-        numsVerification.add(view.findViewById(R.id.et_n4_login_verification));
-        numsVerification.add(view.findViewById(R.id.et_n5_login_verification));
-
-        for (int i = 0; i < numsVerification.size(); i++){
-            setupTextWatcher(numsVerification.get(i), i);
-        }
-
         ((Button) view.findViewById(R.id.btn_login_verification)).setOnClickListener(V -> {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             getActivity().startActivity(intent);
         });
 
         return view;
-    }
-
-    private void setupTextWatcher(EditText num, int indCurrent){
-        num.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (isUpdatingText) {
-                    return;
-                }
-
-                String currentText = s.toString();
-
-                if (count > before) {
-                    if (currentText.length() > 1) {
-                        isUpdatingText = true;
-
-                        num.setText(String.valueOf(currentText.charAt(0)));
-                        num.setSelection(1);
-                        response.add(indCurrent);
-
-                        for (int k = 1; k < currentText.length() && (indCurrent + k) < numsVerification.size(); k++) {
-                            EditText nextField = numsVerification.get(indCurrent + k);
-                            nextField.setText(String.valueOf(currentText.charAt(k)));
-                            response.add(indCurrent + k);
-
-                            if (k == currentText.length() - 1 || (indCurrent + k) == numsVerification.size() - 1) {
-                                nextField.requestFocus();
-                                nextField.setSelection(nextField.getText().length());
-                            }
-                        }
-
-
-                        isUpdatingText = false;
-
-                    } else if (currentText.length() == 1) {
-                        if (indCurrent < numsVerification.size() - 1) {
-                            response.add(indCurrent);
-                            numsVerification.get(indCurrent + 1).requestFocus();
-                        } else {
-                            if (response.size() == 5){
-                                // Lógica de Verficar Código!!!!!!
-                            }
-                        }
-                    }
-                } else if (before > count) {
-                    if (indCurrent > 0) {
-                        numsVerification.get(indCurrent - 1).requestFocus();
-                        EditText prevField = numsVerification.get(indCurrent - 1);
-                        prevField.setSelection(prevField.getText().length());
-                        response.remove(indCurrent);
-                    }
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
-        });
     }
 }

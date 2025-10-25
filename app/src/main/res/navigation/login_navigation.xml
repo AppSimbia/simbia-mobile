@@ -13,6 +13,6 @@
     <fragment
         android:id="@+id/loginVerificationFragment"
         android:name="com.germinare.simbia_mobile.ui.features.login.fragments.LoginVerificationFragment"
-        android:label="Verificação"
+        android:label="Trocar Senha"
         tools:layout="@layout/fragment_login_verification" />
 </navigation>

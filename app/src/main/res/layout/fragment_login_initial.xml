@@ -10,6 +10,34 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_profile_photo_login_initial"
+            android:layout_width="198dp"
+            android:layout_height="161dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/photo_default"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_login_initial" />
+
+        <TextView
+            android:id="@+id/text_update_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="60dp"
+            android:fontFamily="@font/plus_jakarta_sans"
+            android:textStyle="bold"
+
+            android:gravity="center_horizontal"
+            android:text="Alterar imagem"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_profile_photo_login_initial" />
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_email_login_initial"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -18,11 +46,12 @@
             android:layout_marginTop="16dp"
             android:hint="E-mail"
             app:boxBackgroundColor="@android:color/transparent"
-            app:endIconMode="custom"
             app:endIconDrawable="@drawable/outline_email"
+            app:endIconMode="custom"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.506"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_login_initial">
+            app:layout_constraintTop_toBottomOf="@+id/text_update_image">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_email_login_initial"
@@ -59,27 +88,25 @@
             android:id="@+id/btn_follow_login_initial"
             android:layout_width="328dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="344dp"
+            android:layout_marginTop="144dp"
             android:fontFamily="@font/plus_jakarta_sans"
-            android:text="Seguir"
+            android:text="AVANÇAR"
             app:cornerRadius="12dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.506"
+            app:layout_constraintHorizontal_bias="0.493"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/input_password_login_initial"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/input_password_login_initial" />
 
         <TextView
             android:id="@+id/text_login_initial"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="60dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="60dp"
             android:fontFamily="@font/k2d"
             android:gravity="center_horizontal"
-            android:text="Bem-Vindo de Volta!"
+            android:text="Seja Bem-Vindo!"
             android:textSize="28sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"

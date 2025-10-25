@@ -14,35 +14,49 @@
         android:src="@drawable/logo_simbia"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_first_access"
+        android:layout_width="328dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:fontFamily="@font/plus_jakarta_sans"
+        android:text="PRIMEIRO ACESSO"
+        android:textColor="@color/md_theme_primary"
+        android:backgroundTint="@color/md_theme_onPrimary"
+        app:cornerRadius="12dp"
+        app:strokeColor="@color/md_theme_primary"
+        app:strokeWidth="1sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo_simbia" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_signin"
+        android:layout_width="328dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="88dp"
+        android:fontFamily="@font/plus_jakarta_sans"
+        android:text="LOGIN"
+        app:cornerRadius="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo_simbia" />
 
     <ImageView
         android:id="@+id/logo_google"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="24dp"
         android:src="@drawable/logo_google"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_signin" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_signin"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="11dp"
-        android:layout_marginEnd="60dp"
-        android:fontFamily="@font/plus_jakarta_sans"
-        android:text="Login"
-        app:cornerRadius="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo_simbia" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
