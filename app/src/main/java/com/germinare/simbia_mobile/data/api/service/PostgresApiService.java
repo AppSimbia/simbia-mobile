@@ -1,19 +1,31 @@
 package com.germinare.simbia_mobile.data.api.service;
 
-import com.germinare.simbia_mobile.data.api.model.postgres.PostRequestDto;
-import com.germinare.simbia_mobile.data.api.model.postgres.PostResponseDto;
+import com.germinare.simbia_mobile.data.api.model.postgres.PostRequest;
+import com.germinare.simbia_mobile.data.api.model.postgres.PostResponse;
+import com.germinare.simbia_mobile.data.api.model.postgres.ProductCategoryResponse;
+
+import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 
 public interface PostgresApiService {
 
     // ENDPOINTS
 
     // POSTS
-    @POST("/post")
-    Call<PostResponseDto> createPost(@Body PostRequestDto post);
+    @POST("/posts")
+    Call<PostResponse> createPost(@Body PostRequest post);
 
+    @PUT("/posts/{id}")
+    Call<PostResponse> updatePost(@Path("id") Long id, @Body Map<String, Object> map);
+
+    @GET("/posts/category/list")
+    Call<List<ProductCategoryResponse>> findAllProductsCategories();
 
 }
