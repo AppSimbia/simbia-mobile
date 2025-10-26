@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
         List<DrawerItem> drawerItems = new ArrayList<>();
         drawerItems.add(new DrawerItem(R.drawable.icon_painel_impacto, "Seus impactos"));
-        drawerItems.add(new DrawerItem(R.drawable.outline_add_box_24, "Ranking Geral"));
         drawerItems.add(new DrawerItem(R.drawable.icon_guia_legal, "Guia de leis"));
         drawerItems.add(new DrawerItem(R.drawable.outline_add_box_24, "Desafios e soluções"));
         drawerItems.add(new DrawerItem(R.drawable.outline_add_box_24, "Converse com a EVA"));
