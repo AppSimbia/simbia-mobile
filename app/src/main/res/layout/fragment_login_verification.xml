@@ -36,139 +36,80 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/text_login_verification"
-            android:layout_width="0dp"
+            android:id="@+id/text_login_initial"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="60dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="60dp"
             android:fontFamily="@font/k2d"
             android:gravity="center_horizontal"
-            android:text="Insira o código de verificação"
-            android:textSize="22sp"
+            android:text="Trocar Senha"
+            android:textSize="28sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view_login_verification" />
+            app:layout_constraintTop_toBottomOf="@+id/view_login_verification"/>
 
-        <TextView
-            android:id="@+id/text2_login_verification"
-            android:layout_width="0dp"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_password_login_initial"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="328dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="20dp"
-            android:fontFamily="@font/k2d"
-            android:gravity="center_horizontal"
-            android:text="Enviamos um código de verificação para o seu e-mail. Por favor, insira o código abaixo para continuar."
-            android:textSize="14sp"
+            android:layout_marginTop="104dp"
+            android:hint="Nova Senha"
+            app:boxBackgroundColor="@android:color/transparent"
+            app:endIconMode="password_toggle"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.506"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_login_verification" />
+            app:layout_constraintTop_toBottomOf="@+id/text_login_initial">
 
-        <TextView
-            android:id="@+id/tx_send_login_verification"
-            android:layout_width="wrap_content"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_password_login_initial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:inputType="textPassword"
+                android:textColor="?attr/colorOnSurface" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_login_initial"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="328dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Reenviar o código"
-            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="16dp"
+            android:hint="Corfirmar Senha"
+            app:boxBackgroundColor="@android:color/transparent"
+            app:endIconMode="password_toggle"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_n3_login_verification" />
+            app:layout_constraintTop_toBottomOf="@+id/input_password_login_initial">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_login_initial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:inputType="textPassword"
+                android:textColor="?attr/colorOnSurface" />
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_login_verification"
             android:layout_width="328dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="144dp"
             android:fontFamily="@font/plus_jakarta_sans"
-            android:text="Seguir"
+            android:text="ENTRAR"
             app:cornerRadius="12dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.493"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tx_send_login_verification"
-            app:layout_constraintVertical_bias="0.756" />
-
-        <EditText
-            android:id="@+id/et_n1_login_verification"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="43dp"
-            android:layout_marginEnd="10dp"
-            android:ems="10"
-            android:gravity="center_horizontal"
-            android:inputType="number"
-            app:layout_constraintEnd_toStartOf="@+id/et_n2_login_verification"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text2_login_verification" />
-
-        <EditText
-            android:id="@+id/et_n2_login_verification"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="43dp"
-            android:layout_marginEnd="10dp"
-            android:ems="10"
-            android:gravity="center_horizontal"
-            android:inputType="number"
-            app:layout_constraintEnd_toStartOf="@+id/et_n3_login_verification"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/et_n1_login_verification"
-            app:layout_constraintTop_toBottomOf="@+id/text2_login_verification" />
-
-        <EditText
-            android:id="@+id/et_n3_login_verification"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="43dp"
-            android:layout_marginEnd="10dp"
-            android:ems="10"
-            android:gravity="center_horizontal"
-            android:inputType="number"
-            app:layout_constraintEnd_toStartOf="@+id/et_n4_login_verification"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/et_n2_login_verification"
-            app:layout_constraintTop_toBottomOf="@+id/text2_login_verification" />
-
-        <EditText
-            android:id="@+id/et_n4_login_verification"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="43dp"
-            android:layout_marginEnd="10dp"
-            android:ems="10"
-            android:gravity="center_horizontal"
-            android:inputType="number"
-            app:layout_constraintEnd_toStartOf="@+id/et_n5_login_verification"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/et_n3_login_verification"
-            app:layout_constraintTop_toBottomOf="@+id/text2_login_verification" />
-
-        <EditText
-            android:id="@+id/et_n5_login_verification"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="43dp"
-            android:layout_marginEnd="40dp"
-            android:ems="10"
-            android:gravity="center_horizontal"
-            android:inputType="number"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/et_n4_login_verification"
-            app:layout_constraintTop_toBottomOf="@+id/text2_login_verification" />
+            app:layout_constraintTop_toBottomOf="@+id/input_login_initial" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

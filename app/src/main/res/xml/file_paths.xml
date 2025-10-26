@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <external-files-path
+<paths>
+    <!-- Caminho para armazenar imagens da câmera ou galeria -->
+    <external-path
+        name="external_files"
+        path="." />
+    <files-path
         name="my_images"
-        path="Pictures/" />
+        path="images/" />
+    <cache-path
+        name="my_cache_images"
+        path="images/" />
 </paths>

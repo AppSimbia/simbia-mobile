@@ -58,6 +58,7 @@ public class SplashScreen extends AppCompatActivity {
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, options);
 
+        animatedViews.add(binding.btnFirstAccess);
         animatedViews.add(binding.btnSignin);
         animatedViews.add(binding.logoGoogle);
 
@@ -66,7 +67,7 @@ public class SplashScreen extends AppCompatActivity {
             view.setTranslationY(200f);
         }
 
-        binding.btnSignin.setOnClickListener(V -> {
+        binding.btnFirstAccess.setOnClickListener(V -> {
             if (binding.btnSignin.getVisibility() == VISIBLE) {
                 Intent intent = new Intent(SplashScreen.this, LoginActivity.class);
                 startActivity(intent);
