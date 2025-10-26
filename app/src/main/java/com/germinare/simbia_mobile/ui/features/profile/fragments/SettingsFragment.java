@@ -1,8 +1,6 @@
 package com.germinare.simbia_mobile.ui.features.profile.fragments;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,21 +17,15 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.germinare.simbia_mobile.R;
+import com.germinare.simbia_mobile.ui.data.firestore.UserRepository;
 import com.germinare.simbia_mobile.utils.CameraGalleryUtils;
 import com.germinare.simbia_mobile.utils.StorageUtils;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
 
 public class SettingsFragment extends Fragment implements CameraGalleryUtils.ImageResultListener {
 
@@ -42,8 +34,7 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
     private TextView tvUserName, tvEmail;
 
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
-
+    private UserRepository userRepository;
     private StorageUtils storageUtils;
 
     public SettingsFragment() {}
@@ -53,7 +44,7 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
         super.onCreate(savedInstanceState);
         cameraGalleryUtils = new CameraGalleryUtils(this, this);
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        userRepository = new UserRepository(requireContext());
         storageUtils = new StorageUtils();
     }
 
@@ -67,7 +58,6 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
         tvEmail = view.findViewById(R.id.tv_email);
 
         ivProfileIcon.setOnClickListener(v -> showImageSourceDialog());
-
         loadUserInfo();
 
         return view;
@@ -80,47 +70,25 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
             return;
         }
 
-        // Email direto do Auth
         tvEmail.setText(user.getEmail());
-
-        // Nome e foto do Firestore
-        db.collection("employee").document(user.getUid()).get()
-                .addOnSuccessListener(document -> {
-                    if (document.exists()) preencherCampos(document);
-                    else Toast.makeText(requireContext(), "Dados do usuário não encontrados.", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(requireContext(), "Erro ao carregar dados: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        userRepository.getUserByUid(
+                user.getUid(),
+                this::loadFields
+        );
     }
 
-    private void preencherCampos(DocumentSnapshot document) {
+    private void loadFields(DocumentSnapshot document) {
         tvUserName.setText(document.getString("name"));
 
         String imageUrl = document.getString("imageUri");
-        FirebaseUser user = mAuth.getCurrentUser();
-
         if (imageUrl != null && !imageUrl.isEmpty()) {
             Glide.with(requireContext())
                     .load(imageUrl)
                     .placeholder(R.drawable.photo_default)
                     .into(ivProfileIcon);
-        } else if (user != null) {
-            // Tenta carregar a imagem diretamente do Firebase Storage se não houver URL salva
-//            StorageReference storageRef = storage.getReference()
-//                    .child("profile_images/" + user.getUid() + ".jpg");
-//
-//            storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-//                Glide.with(requireContext())
-//                        .load(uri)
-//                        .placeholder(R.drawable.photo_default)
-//                        .into(ivProfileIcon);
-//            }).addOnFailureListener(e -> {
-//                ivProfileIcon.setImageResource(R.drawable.photo_default);
-//            });
         }
     }
 
-    // Upload da nova foto para Storage
     private void uploadProfileImage(Uri imageUri) {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) return;
@@ -139,30 +107,24 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
                         "profile_images",
                         user.getUid(),
                         imageBitmap),
-                new StorageUtils.CallbackDownloadUri() {
-                    @Override
-                    public void getDownloadUri(String downloadUri) {
-                        updateUserPhoto(downloadUri);
-                    }
-                }
+                this::updateUserPhoto
         );
     }
 
     private void updateUserPhoto(String downloadUrl) {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) return;
-
-        db.collection("employee").document(user.getUid())
-                .update("imageUri", downloadUrl)
-                .addOnSuccessListener(aVoid -> {
+        userRepository.updateFieldByUid(
+                user.getUid(),
+                Map.of("imageUri", downloadUrl),
+                Void -> {
                     Glide.with(requireContext())
                             .load(downloadUrl)
                             .placeholder(R.drawable.photo_default)
                             .into(ivProfileIcon);
                     Toast.makeText(requireContext(), "Imagem atualizada com sucesso!", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(requireContext(), "Erro ao atualizar imagem: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                }
+        );
     }
 
     @Override
