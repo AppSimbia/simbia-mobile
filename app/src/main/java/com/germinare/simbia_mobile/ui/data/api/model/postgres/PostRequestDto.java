@@ -1,4 +1,4 @@
-package com.germinare.simbia_mobile.ui.data.postgres.model;
+package com.germinare.simbia_mobile.ui.data.api.model.postgres;
 
 public class PostRequestDto {
     private int idProductCategory;
