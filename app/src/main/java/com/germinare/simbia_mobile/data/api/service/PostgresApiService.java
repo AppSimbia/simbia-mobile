@@ -1,7 +1,7 @@
-package com.germinare.simbia_mobile.ui.data.api.service;
+package com.germinare.simbia_mobile.data.api.service;
 
-import com.germinare.simbia_mobile.ui.data.api.model.postgres.PostRequestDto;
-import com.germinare.simbia_mobile.ui.data.api.model.postgres.PostResponseDto;
+import com.germinare.simbia_mobile.data.api.model.postgres.PostRequestDto;
+import com.germinare.simbia_mobile.data.api.model.postgres.PostResponseDto;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

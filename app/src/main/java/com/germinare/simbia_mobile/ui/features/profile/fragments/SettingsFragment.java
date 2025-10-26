@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.ui.data.firestore.UserRepository;
+import com.germinare.simbia_mobile.data.firestore.UserRepository;
 import com.germinare.simbia_mobile.utils.CameraGalleryUtils;
 import com.germinare.simbia_mobile.utils.StorageUtils;
 import com.google.firebase.auth.FirebaseAuth;
