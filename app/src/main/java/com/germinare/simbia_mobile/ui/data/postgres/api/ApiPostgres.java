@@ -17,7 +17,4 @@ public interface ApiPostgres {
     Call<PostResponseDto> createPost(@Body PostRequestDto post);
 
 
-    @Headers("Content-Type: application/json")
-    @GET("/category/list")
-    Call<List<PostCategoryResponseDto>> listCategories();
 }

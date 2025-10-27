@@ -58,13 +58,27 @@ public class MainActivity extends AppCompatActivity {
         List<DrawerItem> drawerItems = new ArrayList<>();
         drawerItems.add(new DrawerItem(R.drawable.icon_painel_impacto, "Seus impactos"));
         drawerItems.add(new DrawerItem(R.drawable.icon_guia_legal, "Guia de leis"));
-        drawerItems.add(new DrawerItem(R.drawable.outline_add_box_24, "Desafios e soluções"));
-        drawerItems.add(new DrawerItem(R.drawable.outline_add_box_24, "Converse com a EVA"));
-        drawerItems.add(new DrawerItem(R.drawable.outline_add_box_24, "Ver solicitações de match"));
+        drawerItems.add(new DrawerItem(R.drawable.icon_pergunta, "Desafios e soluções"));
+        drawerItems.add(new DrawerItem(R.drawable.outline_cycle_24, "Ver solicitações de match"));
         drawerItems.add(new DrawerItem(R.drawable.outline_add_box_24, "Crie um post"));
+        drawerItems.add(new DrawerItem(R.drawable.outline_robot_2_24, "Converse com a EVA"));
 
         DrawerAdapter adapter = new DrawerAdapter(drawerItems, position -> {
             drawerLayout.closeDrawer(GravityCompat.START);
+
+            if(position == 0) {
+                navController.navigate(R.id.navigation_impacts);
+            } else if(position == 1) {
+                navController.navigate(R.id.navigation_legal_guide);
+            } else if(position == 2) {
+                navController.navigate(R.id.navigation_feed);
+            } else if(position == 3) {
+                navController.navigate(R.id.navigation_solicitation_match);
+            } else if(position == 4) {
+                navController.navigate(R.id.navigation_post);
+            } else if(position == 5) {
+                navController.navigate(R.id.navigation_eva);
+            }
         });
 
         binding.drawerRecyclerView.setAdapter(adapter);
@@ -79,7 +93,9 @@ public class MainActivity extends AppCompatActivity {
                 R.id.navigation_chat,
                 R.id.navigation_chat_messages,
                 R.id.navigation_eva,
-                R.id.navigation_eva_messages
+                R.id.navigation_eva_messages,
+                R.id.navigation_impacts,
+                R.id.navigation_legal_guide
         ).build();
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()

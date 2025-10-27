@@ -51,5 +51,15 @@
         android:name="com.germinare.simbia_mobile.ui.features.home.fragments.feed.SolicitationMatchFragment"
         android:label="fragment_solicitation_match"
         tools:layout="@layout/fragment_solicitation_match" />
+    <fragment
+        android:id="@+id/navigation_impacts"
+        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.impacts.ImpactsFragment"
+        android:label="fragment_impacts"
+        tools:layout="@layout/fragment_impacts" />
+    <fragment
+        android:id="@+id/navigation_legal_guide"
+        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.legalGuide.LegalGuideFragment"
+        android:label="fragment_legal_guide"
+        tools:layout="@layout/fragment_legal_guide" />
 
 </navigation>

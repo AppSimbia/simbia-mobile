@@ -8,7 +8,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="634dp"
+        android:layout_height="709dp"
         android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -33,7 +33,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:background="@color/md_theme_primaryContainer"
+                android:background="@color/md_theme_inversePrimary"
                 android:elevation="-1dp" />
 
             <LinearLayout
