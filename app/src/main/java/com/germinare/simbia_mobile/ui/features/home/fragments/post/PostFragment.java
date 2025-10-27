@@ -42,6 +42,7 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
     private UserRepository userRepository;
     private StorageUtils storage;
     private Bitmap imageBitmap;
+    private AlertDialog progressDialog;
     private List<ProductCategoryResponse> categories;
     private CameraGalleryUtils cameraGalleryUtils;
 
@@ -63,10 +64,13 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
         userRepository = new UserRepository(requireContext());
         storage = new StorageUtils();
         cameraGalleryUtils = new CameraGalleryUtils(this, this);
-        repository = new PostgresRepository(error -> AlertUtils.showDialogError(
-                requireContext(),
-                error
-        ));
+        repository = new PostgresRepository(error -> {
+            hideLoadingDialog();
+            AlertUtils.showDialogError(
+                    requireContext(),
+                    error
+            );
+        });
     }
 
     @Override
@@ -123,7 +127,8 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
             );
             return;
         }
-
+        binding.btnPostar.setEnabled(false);
+        showLoadingDialog("Criando Post...");
         userRepository.getUserByUid(user.getUid(), document -> {
             PostRequest request = new PostRequest(
                     categories.stream().
@@ -151,7 +156,10 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
                             repository.updatePost(
                                     post.getIdPost(),
                                     Map.of("image", downloadUri),
-                                    postUpdate -> Toast.makeText(requireContext(), "Post Realizado com sucesso", Toast.LENGTH_SHORT).show())
+                                    postUpdate -> {
+                                        hideLoadingDialog();
+                                        Toast.makeText(requireContext(), "Post Realizado com sucesso", Toast.LENGTH_SHORT).show();
+                                    })
             ));
         });
     }
@@ -226,5 +234,28 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
                 measuresUnits
         );
         binding.actvUnidade.setAdapter(unidadeAdapter);
+    }
+
+    private void showLoadingDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View view = getLayoutInflater().inflate(R.layout.alert_loading, null);
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        TextView tvMessage = view.findViewById(R.id.tv_loading_message);
+        tvMessage.setText(message);
+
+        progressDialog = builder.create();
+        if (progressDialog.getWindow() != null) {
+            progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        progressDialog.show();
+    }
+
+    private void hideLoadingDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+            binding.btnPostar.setEnabled(true);
+        }
     }
 }
