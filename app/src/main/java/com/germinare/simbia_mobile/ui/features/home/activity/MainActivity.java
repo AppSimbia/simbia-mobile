@@ -20,9 +20,8 @@ import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.databinding.ActivityMainBinding;
 import com.germinare.simbia_mobile.ui.features.home.drawer.DrawerAdapter;
 import com.germinare.simbia_mobile.ui.features.home.drawer.DrawerItem;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.germinare.simbia_mobile.ui.features.profile.activity.ProfileActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private NavController navController;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
