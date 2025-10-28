@@ -2,8 +2,12 @@ package com.germinare.simbia_mobile.utils;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.germinare.simbia_mobile.R;
 
@@ -55,6 +59,30 @@ public class AlertUtils {
         btnBack.setOnClickListener(V -> alert.dismiss());
 
         alert.show();
+    }
+
+    public static AlertDialog showLoadingDialog(Context ctx, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+        View view = LayoutInflater.from(ctx).inflate(R.layout.alert_loading, null);
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        AlertDialog alertDialog = builder.create();
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        TextView tvMessage = view.findViewById(R.id.tv_loading_message);
+        tvMessage.setText(message);
+
+        alertDialog.show();
+        return alertDialog;
+    }
+
+    public static void hideLoadingDialog(AlertDialog progressDialog) {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
     public static class DialogAlertBuilder {
