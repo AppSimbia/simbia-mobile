@@ -7,12 +7,14 @@ import android.widget.TextView;
 
 import com.germinare.simbia_mobile.R;
 
+import java.util.Objects;
+
 public class AlertUtils {
 
-    public static void showDialog(Context ctx, DialogAlertBuilder builder){
+    public static void showDialogDefault(Context ctx, DialogAlertBuilder builder){
         Dialog alert = new Dialog(ctx);
         alert.setContentView(R.layout.alert_default);
-        alert.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        Objects.requireNonNull(alert.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
 
         TextView tittle = alert.findViewById(R.id.tx_tittle);
         TextView description = alert.findViewById(R.id.tx_description);
@@ -37,6 +39,20 @@ public class AlertUtils {
             else
                 alert.dismiss();
         });
+
+        alert.show();
+    }
+
+    public static void showDialogError(Context ctx, String error){
+        Dialog alert = new Dialog(ctx);
+        alert.setContentView(R.layout.alert_error);
+        Objects.requireNonNull(alert.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
+
+        TextView message = alert.findViewById(R.id.tx_message_error);
+        Button btnBack = alert.findViewById(R.id.btn_back_error);
+
+        message.setText(error);
+        btnBack.setOnClickListener(V -> alert.dismiss());
 
         alert.show();
     }

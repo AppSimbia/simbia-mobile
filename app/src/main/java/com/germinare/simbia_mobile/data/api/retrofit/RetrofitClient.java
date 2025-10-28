@@ -1,4 +1,4 @@
-package com.germinare.simbia_mobile.ui.data.api.retrofit;
+package com.germinare.simbia_mobile.data.api.retrofit;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

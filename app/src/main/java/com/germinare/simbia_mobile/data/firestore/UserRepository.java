@@ -1,4 +1,4 @@
-package com.germinare.simbia_mobile.ui.data.firestore;
+package com.germinare.simbia_mobile.data.firestore;
 
 import android.content.Context;
 import android.widget.Toast;

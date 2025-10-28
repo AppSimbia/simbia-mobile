@@ -1,12 +1,13 @@
 package com.germinare.simbia_mobile.ui.features.home.fragments.post;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,23 +17,42 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.germinare.simbia_mobile.R;
+import com.germinare.simbia_mobile.data.api.model.postgres.PostRequest;
+import com.germinare.simbia_mobile.data.api.model.postgres.ProductCategoryResponse;
+import com.germinare.simbia_mobile.data.api.repository.PostgresRepository;
+import com.germinare.simbia_mobile.data.firestore.UserRepository;
+import com.germinare.simbia_mobile.databinding.FragmentPostBinding;
+import com.germinare.simbia_mobile.utils.AlertUtils;
 import com.germinare.simbia_mobile.utils.CameraGalleryUtils;
-import com.google.android.material.imageview.ShapeableImageView;
+import com.germinare.simbia_mobile.utils.StorageUtils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class PostFragment extends Fragment implements CameraGalleryUtils.ImageResultListener {
-
-    private AutoCompleteTextView actvCategoria;
-    private AutoCompleteTextView actvClassificacao;
-    private AutoCompleteTextView actvUnidade;
-
-    private ShapeableImageView spAddPhoto;
-
-    private Uri photoUri;
-
+    private FragmentPostBinding binding;
+    private PostgresRepository repository;
+    private FirebaseAuth firebaseAuth;
+    private UserRepository userRepository;
+    private StorageUtils storage;
+    private Bitmap imageBitmap;
+    private AlertDialog progressDialog;
+    private List<ProductCategoryResponse> categories;
     private CameraGalleryUtils cameraGalleryUtils;
+
+    private static final List<String> classifications = Arrays.asList(
+            "A", "B", "C"
+    );
+    private static final List<String> measuresUnits = Arrays.asList(
+            "Kg", "Litro", "Metro", "Unidade"
+            );
+
 
     public PostFragment() {
     }
@@ -40,24 +60,32 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        firebaseAuth = FirebaseAuth.getInstance();
+        userRepository = new UserRepository(requireContext());
+        storage = new StorageUtils();
         cameraGalleryUtils = new CameraGalleryUtils(this, this);
+        repository = new PostgresRepository(error -> {
+            hideLoadingDialog();
+            AlertUtils.showDialogError(
+                    requireContext(),
+                    error
+            );
+        });
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_post, container, false);
+        binding = FragmentPostBinding.inflate(inflater, container, false);
+        repository.listProductCategories(list -> {
+            categories = list;
+            requireActivity().runOnUiThread(this::setupDropdowns);
+        });
 
-        actvCategoria = view.findViewById(R.id.actv_categoria);
-        actvClassificacao = view.findViewById(R.id.actv_classificacao);
-        actvUnidade = view.findViewById(R.id.actv_unidade);
-        spAddPhoto = view.findViewById(R.id.sp_add_photo);
+        binding.spAddPhoto.setOnClickListener(v -> showImageSourceDialog());
+        binding.btnPostar.setOnClickListener(V -> createPost());
 
-        spAddPhoto.setOnClickListener(v -> showImageSourceDialog());
-
-        setupDropdowns(view);
-
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -75,9 +103,65 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
     }
 
     private void setPhotoToImageView(Uri uri) {
-        spAddPhoto.setImageURI(uri);
-        spAddPhoto.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
-        this.photoUri = uri;
+        binding.spAddPhoto.setImageURI(uri);
+        binding.spAddPhoto.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
+        Bitmap imageBitmap = null;
+        try {
+            imageBitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
+        } catch (IOException e) {
+            AlertUtils.showDialogError(
+                    requireContext(),
+                    "Imagem Comprometida."
+            );
+        }
+        if (imageBitmap == null) return;
+        this.imageBitmap = imageBitmap;
+    }
+
+    private void createPost(){
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user == null){
+            AlertUtils.showDialogError(
+                    requireContext(),
+                    "É necessário estar logado."
+            );
+            return;
+        }
+        binding.btnPostar.setEnabled(false);
+        showLoadingDialog("Criando Post...");
+        userRepository.getUserByUid(user.getUid(), document -> {
+            PostRequest request = new PostRequest(
+                    categories.stream().
+                            filter(category -> category.getCategoryName().equals(binding.actvCategoria.getText().toString()))
+                            .map(ProductCategoryResponse::getId)
+                            .findFirst().orElse(null),
+                    document.getLong("industryId"),
+                    document.getLong("employeeId"),
+                    binding.etNomeResiduo.getText().toString(),
+                    binding.etDescricao.getText().toString(),
+                    Integer.parseInt(binding.etQuantidade.getText().toString()),
+                    Double.parseDouble(binding.etValor.getText().toString()),
+                    String.valueOf(measuresUnits.indexOf(binding.actvUnidade.getText().toString())+1),
+                    String.valueOf(classifications.indexOf(binding.actvClassificacao.getText().toString())+1),
+                    ""
+                    );
+            repository.createPost(request, post -> storage.uploadImage(
+                    requireContext(),
+                    new StorageUtils.StorageDataLoad(
+                            "post_images",
+                            user.getUid() + "-" + UUID.randomUUID().toString(),
+                            imageBitmap
+                    ),
+                    downloadUri ->
+                            repository.updatePost(
+                                    post.getIdPost(),
+                                    Map.of("image", downloadUri),
+                                    postUpdate -> {
+                                        hideLoadingDialog();
+                                        Toast.makeText(requireContext(), "Post Realizado com sucesso", Toast.LENGTH_SHORT).show();
+                                    })
+            ));
+        });
     }
 
     private void showImageSourceDialog() {
@@ -127,35 +211,51 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
         dialog.show();
     }
 
-    private void setupDropdowns(View view) {
-        List<String> categorias = Arrays.asList(
-                "Papelão", "Plástico", "Vidro", "Metal", "Eletrônicos", "Orgânico"
-        );
+    private void setupDropdowns() {
+        List<String> categorias = categories.stream()
+                .map(ProductCategoryResponse::getCategoryName).collect(Collectors.toList());
         ArrayAdapter<String> categoriaAdapter = new ArrayAdapter<>(
                 requireContext(),
                 android.R.layout.simple_dropdown_item_1line,
                 categorias
         );
-        actvCategoria.setAdapter(categoriaAdapter);
+        binding.actvCategoria.setAdapter(categoriaAdapter);
 
-        List<String> classificacoes = Arrays.asList(
-                "A", "B", "C"
-        );
         ArrayAdapter<String> classificacaoAdapter = new ArrayAdapter<>(
                 requireContext(),
                 android.R.layout.simple_dropdown_item_1line,
-                classificacoes
+                classifications
         );
-        actvClassificacao.setAdapter(classificacaoAdapter);
+        binding.actvClassificacao.setAdapter(classificacaoAdapter);
 
-        List<String> unidades = Arrays.asList(
-                "Kg", "g", "Tonelada", "Unidade", "Litro", "m³"
-        );
         ArrayAdapter<String> unidadeAdapter = new ArrayAdapter<>(
                 requireContext(),
                 android.R.layout.simple_dropdown_item_1line,
-                unidades
+                measuresUnits
         );
-        actvUnidade.setAdapter(unidadeAdapter);
+        binding.actvUnidade.setAdapter(unidadeAdapter);
+    }
+
+    private void showLoadingDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View view = getLayoutInflater().inflate(R.layout.alert_loading, null);
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        TextView tvMessage = view.findViewById(R.id.tv_loading_message);
+        tvMessage.setText(message);
+
+        progressDialog = builder.create();
+        if (progressDialog.getWindow() != null) {
+            progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        progressDialog.show();
+    }
+
+    private void hideLoadingDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+            binding.btnPostar.setEnabled(true);
+        }
     }
 }

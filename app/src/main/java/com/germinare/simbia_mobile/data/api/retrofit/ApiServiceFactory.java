@@ -1,8 +1,8 @@
-package com.germinare.simbia_mobile.ui.data.api.retrofit;
+package com.germinare.simbia_mobile.data.api.retrofit;
 
-import com.germinare.simbia_mobile.ui.data.api.service.IntegrationApiService;
-import com.germinare.simbia_mobile.ui.data.api.service.MongoApiService;
-import com.germinare.simbia_mobile.ui.data.api.service.PostgresApiService;
+import com.germinare.simbia_mobile.data.api.service.IntegrationApiService;
+import com.germinare.simbia_mobile.data.api.service.MongoApiService;
+import com.germinare.simbia_mobile.data.api.service.PostgresApiService;
 
 public class ApiServiceFactory {
 
