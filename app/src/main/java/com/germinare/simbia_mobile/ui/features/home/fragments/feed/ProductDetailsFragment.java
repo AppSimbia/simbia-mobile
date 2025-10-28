@@ -1,6 +1,9 @@
 package com.germinare.simbia_mobile.ui.features.home.fragments.feed;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,18 +11,12 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.bumptech.glide.Glide;
 import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.databinding.FragmentProductDetailsBinding;
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.FiltersAdapter;
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.Post;
 import com.germinare.simbia_mobile.utils.AlertUtils;
-
-import java.io.File;
 
 public class ProductDetailsFragment extends Fragment {
 
@@ -87,7 +84,7 @@ public class ProductDetailsFragment extends Fragment {
             V.dismiss();
         });
 
-        AlertUtils.showDialog(
+        AlertUtils.showDialogDefault(
                 requireActivity(),
                 alertBuilder
         );

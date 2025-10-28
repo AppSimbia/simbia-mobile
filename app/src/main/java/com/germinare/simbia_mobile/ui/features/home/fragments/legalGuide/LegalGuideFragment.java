@@ -1,66 +1,94 @@
 package com.germinare.simbia_mobile.ui.features.home.fragments.legalGuide;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-import com.germinare.simbia_mobile.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link LegalGuideFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.germinare.simbia_mobile.data.api.repository.IntegrationRepository;
+import com.germinare.simbia_mobile.data.api.retrofit.ApiServiceFactory;
+import com.germinare.simbia_mobile.databinding.FragmentLegalGuideBinding;
+import com.germinare.simbia_mobile.data.api.service.IntegrationApiService;
+import com.germinare.simbia_mobile.data.api.model.integration.LawResponse;
+
+import java.util.Collections;
+import java.util.function.Consumer;
+
 public class LegalGuideFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private LegalGuideViewModel viewModel;
+    private LawAdapter lawAdapter;
+    private FragmentLegalGuideBinding binding;
 
     public LegalGuideFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment LegalGuideFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static LegalGuideFragment newInstance(String param1, String param2) {
-        LegalGuideFragment fragment = new LegalGuideFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_legal_guide, container, false);
+        binding = FragmentLegalGuideBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        setupRecyclerView();
+
+        initViewModel();
+        observeViewModel();
+
+        viewModel.fetchLaws();
+    }
+
+    private void setupRecyclerView() {
+        lawAdapter = new LawAdapter(Collections.<LawResponse>emptyList());
+
+        binding.rvLaws.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.rvLaws.setAdapter(lawAdapter);
+    }
+
+    private void initViewModel() {
+        IntegrationApiService apiService = getIntegrationApiServiceInstance();
+
+        Consumer<String> onFailure = errorMessage -> {
+        };
+
+        IntegrationRepository repository = new IntegrationRepository(apiService, onFailure);
+
+        LegalGuideViewModel.Factory factory = new LegalGuideViewModel.Factory(repository);
+        viewModel = new ViewModelProvider(this, factory).get(LegalGuideViewModel.class);
+    }
+
+    private void observeViewModel() {
+        viewModel.getLawList().observe(getViewLifecycleOwner(), lawList -> {
+            if (lawList != null && !lawList.isEmpty()) {
+                lawAdapter.submitList(lawList);
+            }
+        });
+
+        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), errorMessage -> {
+            if (errorMessage != null) {
+                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    private IntegrationApiService getIntegrationApiServiceInstance() {
+        return ApiServiceFactory.getIntegrationApi();
     }
 }

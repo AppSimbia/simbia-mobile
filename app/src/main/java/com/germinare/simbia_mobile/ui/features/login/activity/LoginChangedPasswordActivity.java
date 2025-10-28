@@ -27,12 +27,16 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException; // Import necessário
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
 public class LoginChangedPasswordActivity extends AppCompatActivity {
 
     private ActivityLoginChangedPasswordBinding binding;
+
+    private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
 
     private String etEmail;
@@ -47,6 +51,7 @@ public class LoginChangedPasswordActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbarLoginChangedPassword);
         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -68,15 +73,14 @@ public class LoginChangedPasswordActivity extends AppCompatActivity {
             etEmail = etEmailField.getText() != null ? etEmailField.getText().toString().trim() : "";
             etPassword = etPasswordField.getText() != null ? etPasswordField.getText().toString().trim() : "";
 
+
             if (validateInfo(laEmail, laPassword)) {
                 firebaseAuth.signInWithEmailAndPassword(etEmail, etPassword)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Intent intent = new Intent(LoginChangedPasswordActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                                    checkFirestoreField(task.getResult().getUser().getUid());
                                 } else {
                                     Toast.makeText(LoginChangedPasswordActivity.this,
                                             "E-mail ou senha inválidos", Toast.LENGTH_SHORT).show();
@@ -159,7 +163,6 @@ public class LoginChangedPasswordActivity extends AppCompatActivity {
                             }
                         } else {
                             Toast.makeText(LoginChangedPasswordActivity.this, "Erro de conexão. Tente novamente.", Toast.LENGTH_SHORT).show();
-                            Log.e("Auth", "Erro ao verificar email: " + task.getException());
                         }
                     });
         });
@@ -169,5 +172,38 @@ public class LoginChangedPasswordActivity extends AppCompatActivity {
         });
 
         customDialog.show();
+    }
+
+
+    private void checkFirestoreField(String uid) {
+        DocumentReference userDocRef = firebaseFirestore.collection("employee").document(uid);
+
+        userDocRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                if (task.getResult().exists()) {
+                    Boolean isVerified = task.getResult().getBoolean("firstAccess");
+
+                    if (isVerified.booleanValue() && isVerified != null) {
+                        Toast.makeText(LoginChangedPasswordActivity.this,
+                                "Sua conta não realizou o primeiro acesso",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Intent intent = new Intent(LoginChangedPasswordActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                } else {
+                    firebaseAuth.signOut();
+                    Toast.makeText(LoginChangedPasswordActivity.this,
+                            "Dados de perfil não encontrado.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                firebaseAuth.signOut();
+                Toast.makeText(LoginChangedPasswordActivity.this,
+                        "Erro de conexão ao verificar o perfil. Tente novamente",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

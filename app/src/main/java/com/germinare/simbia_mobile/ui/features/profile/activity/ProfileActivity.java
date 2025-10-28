@@ -7,11 +7,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.ui.features.profile.fragments.ProfileFragment;
+import com.germinare.simbia_mobile.ui.features.profile.fragments.SettingsFragment;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -28,7 +26,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.profile_fragment_container, new ProfileFragment())
+                    .replace(R.id.profile_fragment_container, new SettingsFragment())
                     .commit();
         }
     }

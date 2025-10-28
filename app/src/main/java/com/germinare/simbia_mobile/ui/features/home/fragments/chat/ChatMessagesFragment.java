@@ -174,7 +174,7 @@ public class ChatMessagesFragment extends Fragment {
         alertBuilder.setTextCancel("Abandonar");
         alertBuilder.onCancel(V -> cancelarMatch());
 
-        AlertUtils.showDialog(
+        AlertUtils.showDialogDefault(
                 requireActivity(),
                 alertBuilder
         );

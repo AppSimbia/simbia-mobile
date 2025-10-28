@@ -86,8 +86,8 @@ public class ImpactsFragment extends Fragment {
         webSettings1.setDomStorageEnabled(true);
         webSettings2.setDomStorageEnabled(true);
 
-        String powerBiUrl1 = "https://app.powerbi.com/view?r=eyJrIjoiMzk2ZTg2ODUtNjdjYy00OGJlLWI2ODAtNTUxYzZhNGFkNWRmIiwidCI6ImIxNDhmMTRjLTIzOTctNDAyYy1hYjZhLTFiNDcxMTE3N2FjMCJ9";
-        String powerBiUrl2 = "https://app.powerbi.com/view?r=eyJrIjoiZGZkYzVlNTItYmQzYy00ZDZlLWI5YTEtMjFkODZhY2FkZTRlIiwidCI6ImIxNDhmMTRjLTIzOTctNDAyYy1hYjZhLTFiNDcxMTE3N2FjMCJ9";
+        String powerBiUrl1 = "https://app.powerbi.com/reportEmbed?reportId=079c5a38-4a09-4b4d-a078-d56714d1b370&autoAuth=true&ctid=b148f14c-2397-402c-ab6a-1b4711177ac0";
+        String powerBiUrl2 = "https://app.powerbi.com/groups/me/reports/24941bbe-9cab-49e1-80b8-7203ec1b94d7/e7be94090433d8d120cf?ctid=b148f14c-2397-402c-ab6a-1b4711177ac0&experience=power-bi";
 
 
         webViewPowerBI1.setWebViewClient(new WebViewClient() {

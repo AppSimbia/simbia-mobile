@@ -1,3 +1,4 @@
+// app/src/main/java/com/germinare/simbia_mobile/utils/StorageUtils.java
 package com.germinare.simbia_mobile.utils;
 
 import android.content.Context;
@@ -11,11 +12,9 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 
-
 public class StorageUtils {
 
     private static final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-
 
     public void uploadImage(
             Context ctx,
