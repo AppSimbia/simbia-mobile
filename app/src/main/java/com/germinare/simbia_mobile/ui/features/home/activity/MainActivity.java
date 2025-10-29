@@ -18,8 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.databinding.ActivityMainBinding;
-import com.germinare.simbia_mobile.ui.features.home.drawer.DrawerAdapter;
-import com.germinare.simbia_mobile.ui.features.home.drawer.DrawerItem;
 import com.germinare.simbia_mobile.ui.features.profile.activity.ProfileActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -41,45 +39,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-        DrawerLayout drawerLayout = binding.drawerLayout;
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, 0, 0
-        );
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        binding.imageView2.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
-
-        binding.drawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        List<DrawerItem> drawerItems = new ArrayList<>();
-        drawerItems.add(new DrawerItem(R.drawable.icon_painel_impacto, "Seus impactos"));
-        drawerItems.add(new DrawerItem(R.drawable.icon_guia_legal, "Guia de leis"));
-        drawerItems.add(new DrawerItem(R.drawable.icon_pergunta, "Desafios e soluções"));
-        drawerItems.add(new DrawerItem(R.drawable.outline_cycle_24, "Ver solicitações de match"));
-        drawerItems.add(new DrawerItem(R.drawable.outline_add_box_24, "Crie um post"));
-        drawerItems.add(new DrawerItem(R.drawable.outline_robot_2_24, "Converse com a EVA"));
-
-        DrawerAdapter adapter = new DrawerAdapter(drawerItems, position -> {
-            drawerLayout.closeDrawer(GravityCompat.START);
-
-            if(position == 0) {
-                navController.navigate(R.id.navigation_impacts);
-            } else if(position == 1) {
-                navController.navigate(R.id.navigation_legal_guide);
-            } else if(position == 2) {
-                navController.navigate(R.id.navigation_feed);
-            } else if(position == 3) {
-                navController.navigate(R.id.navigation_solicitation_match);
-            } else if(position == 4) {
-                navController.navigate(R.id.navigation_post);
-            } else if(position == 5) {
-                navController.navigate(R.id.navigation_eva);
-            }
-        });
-
-        binding.drawerRecyclerView.setAdapter(adapter);
 
         BottomNavigationView navView = binding.navView;
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -106,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         TextView toolbarText = binding.toolbarTitle;
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (destination.getLabel() != null) {
-                toolbarText.setText("User");
+                toolbarText.setText("Olá, Pedro Gabriel!");
             }
             
             if (destination.getId() == R.id.navigation_eva_messages) {

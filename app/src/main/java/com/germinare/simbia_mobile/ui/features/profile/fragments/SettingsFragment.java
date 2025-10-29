@@ -14,9 +14,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.germinare.simbia_mobile.R;
+import com.germinare.simbia_mobile.data.api.model.postgres.EmployeePosts;
+import com.germinare.simbia_mobile.data.api.model.postgres.FetchUserPostsUseCase;
 import com.germinare.simbia_mobile.data.firestore.UserRepository;
 import com.germinare.simbia_mobile.utils.CameraGalleryUtils;
 import com.germinare.simbia_mobile.utils.StorageUtils;

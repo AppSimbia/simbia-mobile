@@ -161,4 +161,29 @@ public class PostgresRepository {
             }
         });
     }
+
+    public void listPostsByEmployee(Long id, Consumer<List<PostResponse>> onSuccessful) {
+        Log.d(TAG, "list posted by employee called with id: " + id);
+        Call<List<PostResponse>> call = apiService.findAllPostsByEmployee(id);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<List<PostResponse>> call, @NonNull Response<List<PostResponse>> response) {
+                Log.d(TAG, "listPostsByEmployee response code: " + response.code());
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "listPostsByEmployee success: " + response.body().size() + " posts received");
+                    onSuccessful.accept(response.body());
+                } else {
+                    Log.e(TAG, "listPostsByEmployee failed: " + response.message());
+                    onFailure.accept(MESSAGE_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<PostResponse>> call, @NonNull Throwable t) {
+                Log.e(TAG, "listPostsByEmployee error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
 }

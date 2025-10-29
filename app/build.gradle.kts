@@ -61,11 +61,9 @@ dependencies {
     implementation("androidx.credentials:credentials:1.5.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
-    // https://mvnrepository.com/artifact/com.github.bumptech.glide/glide
     implementation("com.github.bumptech.glide:glide:5.0.5")
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")
     implementation("com.google.firebase:firebase-storage:21.0.1")
     implementation("com.squareup.picasso:picasso:2.8")
-
 }

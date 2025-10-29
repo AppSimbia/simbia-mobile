@@ -9,7 +9,11 @@
         android:id="@+id/navigation_home"
         android:name="com.germinare.simbia_mobile.ui.features.home.fragments.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+    <action
+        android:id="@+id/action_homeFragment_to_legalGuideFragment"
+        app:destination="@id/navigation_legal_guide" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_feed"
         android:name="com.germinare.simbia_mobile.ui.features.home.fragments.feed.FeedFragment"
@@ -60,6 +64,7 @@
         android:id="@+id/navigation_legal_guide"
         android:name="com.germinare.simbia_mobile.ui.features.home.fragments.legalGuide.LegalGuideFragment"
         android:label="fragment_legal_guide"
-        tools:layout="@layout/fragment_legal_guide" />
+        tools:layout="@layout/fragment_legal_guide" >
+    </fragment>
 
 </navigation>

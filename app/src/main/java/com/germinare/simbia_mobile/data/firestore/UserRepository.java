@@ -3,6 +3,7 @@ package com.germinare.simbia_mobile.data.firestore;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.germinare.simbia_mobile.data.api.model.firestore.EmployeeFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 

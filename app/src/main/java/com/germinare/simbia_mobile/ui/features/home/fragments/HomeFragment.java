@@ -47,6 +47,8 @@ public class HomeFragment extends Fragment {
         userRepository = new UserRepository(requireContext());
         repository = new PostgresRepository(error -> AlertUtils.showDialogError(requireContext(), error));
 
+        binding.ivLegalGuide.setOnClickListener(v -> Navigation.findNavController(requireView()).navigate(R.id.action_homeFragment_to_legalGuideFragment));
+
         return binding.getRoot();
     }
 

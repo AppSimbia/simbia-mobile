@@ -1,4 +1,3 @@
-// app/src/main/java/com/germinare/simbia_mobile/utils/StorageUtils.java
 package com.germinare.simbia_mobile.utils;
 
 import android.content.Context;

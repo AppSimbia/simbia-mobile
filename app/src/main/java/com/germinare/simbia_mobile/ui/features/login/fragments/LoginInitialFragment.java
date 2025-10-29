@@ -123,11 +123,16 @@ public class LoginInitialFragment extends Fragment implements CameraGalleryUtils
                 user.getUid(),
                 java.util.Map.of("imageUri", downloadUrl),
                 Void -> {
-                    Toast.makeText(getContext(), "Imagem de perfil atualizada!", Toast.LENGTH_SHORT).show();
-                    goToNextScreen();
+                    if (isAdded()) {
+                        requireActivity().runOnUiThread(() ->
+                                Toast.makeText(requireContext(), "Imagem de perfil atualizada!", Toast.LENGTH_SHORT).show()
+                        );
+                        goToNextScreen();
+                    }
                 }
         );
     }
+
 
     private void showImageSourceDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
