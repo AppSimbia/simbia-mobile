@@ -85,6 +85,50 @@ public class AlertUtils {
         }
     }
 
+    public static void showDialogCustom(Context ctx, int layoutResId, DialogAlertBuilder builder){
+        Dialog alert = new Dialog(ctx);
+        alert.setContentView(layoutResId);
+        Objects.requireNonNull(alert.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
+
+        if (builder.onCustomViewCreated != null) {
+            builder.onCustomViewCreated.onViewCreated(alert.findViewById(android.R.id.content), alert);
+        }
+
+        TextView tittle = alert.findViewById(R.id.tx_tittle);
+        if (tittle != null) {
+            tittle.setText(builder.title);
+        }
+
+        TextView description = alert.findViewById(R.id.tx_description);
+        if (description != null) {
+            description.setText(builder.description);
+        }
+
+        Button btnAccept = alert.findViewById(R.id.btn_accept);
+        if (btnAccept != null) {
+            btnAccept.setText(builder.textAccept);
+            btnAccept.setOnClickListener(v -> {
+                if (builder.onAcceptClick != null)
+                    builder.onAcceptClick.onClick(alert);
+                else
+                    alert.dismiss();
+            });
+        }
+
+        Button btnCancel = alert.findViewById(R.id.btn_cancel);
+        if (btnCancel != null) {
+            btnCancel.setText(builder.textCancel);
+            btnCancel.setOnClickListener(v -> {
+                if (builder.onCancelClick != null)
+                    builder.onCancelClick.onClick(alert);
+                else
+                    alert.dismiss();
+            });
+        }
+
+        alert.show();
+    }
+
     public static class DialogAlertBuilder {
 
         String title;
@@ -94,33 +138,49 @@ public class AlertUtils {
 
         OnDialogClickListener onAcceptClick;
         OnDialogClickListener onCancelClick;
+        OnCustomViewCreatedListener onCustomViewCreated;
 
         public interface OnDialogClickListener {
             void onClick(Dialog dialog);
         }
 
-        public void setTitle(String title) {
+        public interface OnCustomViewCreatedListener {
+            void onViewCreated(View customView, Dialog dialog);
+        }
+
+        public DialogAlertBuilder setTitle(String title) {
             this.title = title;
+            return this;
         }
 
-        public void setDescription(String description) {
+        public DialogAlertBuilder setDescription(String description) {
             this.description = description;
+            return this;
         }
 
-        public void setTextAccept(String text) {
+        public DialogAlertBuilder setTextAccept(String text) {
             this.textAccept = text;
+            return this;
         }
 
-        public void setTextCancel(String text) {
+        public DialogAlertBuilder setTextCancel(String text) {
             this.textCancel = text;
+            return this;
         }
 
-        public void onAccept(OnDialogClickListener listener) {
+        public DialogAlertBuilder onAccept(OnDialogClickListener listener) {
             this.onAcceptClick = listener;
+            return this;
         }
 
-        public void onCancel(OnDialogClickListener listener) {
+        public DialogAlertBuilder onCancel(OnDialogClickListener listener) {
             this.onCancelClick = listener;
+            return this;
+        }
+
+        public DialogAlertBuilder onCustomViewCreated(OnCustomViewCreatedListener listener) {
+            this.onCustomViewCreated = listener;
+            return this;
         }
     }
 
