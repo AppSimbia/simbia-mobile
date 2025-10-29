@@ -1,6 +1,7 @@
 package com.germinare.simbia_mobile.ui.features.home.fragments.feed;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,15 +19,16 @@ import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.Filte
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.Post;
 import com.germinare.simbia_mobile.utils.AlertUtils;
 
+import java.util.List;
+
 public class ProductDetailsFragment extends Fragment {
 
     private FragmentProductDetailsBinding binding;
+    private static final List<String> classficationsLabels = List.of(
+            "Perigoso", "Não Perigoso Não Inerte", "Não Perigoso Inerte"
+    );
 
     public ProductDetailsFragment() {}
-
-    public static ProductDetailsFragment newInstance(){
-        return new ProductDetailsFragment();
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,14 +50,16 @@ public class ProductDetailsFragment extends Fragment {
         if (args != null){
             Post post = args.getParcelable("post");
 
-            binding.txNameIndustry.setText("Indústria de Lebuddha");
+            binding.txNameIndustry.setText(post.getIndustryName());
             binding.txProductTittle.setText(post.getTitle());
             binding.txDescriptionProduct.setText(post.getDescription());
-            binding.txPriceProduct.setText(formatterPrice(post.getPrice()));
-            binding.txQuantityProduct.setText(formatterQuantity(post.getQuantity()));
+            binding.txPriceProduct.setText(formatterPrice(String.valueOf(post.getPrice())));
+            binding.txQuantityProduct.setText(formatterQuantity(String.valueOf(post.getQuantity())));
 
-            FiltersAdapter filtersAdapter = new FiltersAdapter(requireContext(), new String[]{"Orgânicos", "Resíduos não perigoso"}, false);
-            binding.rvFiltersProduct.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+            FiltersAdapter filtersAdapter = new FiltersAdapter(requireContext(),
+                    List.of(post.getCategory(), classficationsLabels.get(Integer.parseInt(post.getClassification())-1)), false);
+            binding.rvFiltersProduct.setLayoutManager(new LinearLayoutManager(requireContext(),
+                    LinearLayoutManager.HORIZONTAL, false));
             binding.rvFiltersProduct.setAdapter(filtersAdapter);
 
             Glide.with(binding.imageIndustry.getContext())

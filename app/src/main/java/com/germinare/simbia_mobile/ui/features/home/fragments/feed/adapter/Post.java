@@ -3,18 +3,27 @@ package com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.germinare.simbia_mobile.data.api.model.postgres.PostResponse;
+import com.germinare.simbia_mobile.data.api.model.postgres.ProductCategoryResponse;
+
+import java.util.List;
+
 public class Post implements Parcelable {
 
     private Long idPost;
     private String title;
     private String description;
-    private String price;
-    private String quantity;
+    private Double price;
+    private Integer quantity;
     private String urlImage;
     private String urlIndustry;
+    private String industryName;
+    private String category;
+    private String classification;
 
-    // Construtor completo
-    public Post(Long idPost, String title, String description, String price, String quantity, String urlImage, String urlIndustry) {
+    public Post(Long idPost, String title, String description, Double price,
+                Integer quantity, String urlImage, String urlIndustry, String category,
+                String classification, String industryName) {
         this.idPost = idPost;
         this.title = title;
         this.description = description;
@@ -22,24 +31,37 @@ public class Post implements Parcelable {
         this.quantity = quantity;
         this.urlImage = urlImage;
         this.urlIndustry = urlIndustry;
+        this.category = category;
+        this.classification = classification;
+        this.industryName = industryName;
     }
 
-    // Construtor vazio
     public Post() {}
 
-    // Construtor usado pelo Parcelable
+    public Post(PostResponse response) {
+        this.idPost = response.getIdPost();
+        this.title = response.getTitle();
+        this.description = response.getDescription();
+        this.price = response.getPrice();
+        this.quantity = response.getQuantity();
+        this.urlImage = response.getImage();
+        this.urlIndustry = response.getIndustryImage();
+        this.category = response.getProductCategory().getCategoryName();
+        this.classification = response.getClassification();
+        this.industryName = response.getIndustryName();
+    }
+
     protected Post(Parcel in) {
-        if (in.readByte() == 0) {
-            idPost = null;
-        } else {
-            idPost = in.readLong();
-        }
+        idPost = in.readByte() == 0 ? null : in.readLong();
         title = in.readString();
         description = in.readString();
-        price = in.readString();
-        quantity = in.readString();
+        price = in.readByte() == 0 ? null : in.readDouble();
+        quantity = in.readByte() == 0 ? null : in.readInt();
         urlImage = in.readString();
         urlIndustry = in.readString();
+        category = in.readString();
+        classification = in.readString();
+        industryName = in.readString();
     }
 
     @Override
@@ -50,12 +72,29 @@ public class Post implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeLong(idPost);
         }
+
         dest.writeString(title);
         dest.writeString(description);
-        dest.writeString(price);
-        dest.writeString(quantity);
+
+        if (price == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(price);
+        }
+
+        if (quantity == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(quantity);
+        }
+
         dest.writeString(urlImage);
         dest.writeString(urlIndustry);
+        dest.writeString(category);
+        dest.writeString(classification);
+        dest.writeString(industryName);
     }
 
     @Override
@@ -88,11 +127,11 @@ public class Post implements Parcelable {
         return description;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public String getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
@@ -104,28 +143,16 @@ public class Post implements Parcelable {
         return urlIndustry;
     }
 
-    // Setters (caso precise modificar os dados depois)
-    public void setIdPost(Long idPost) {
-        this.idPost = idPost;
+    public String getCategory() {
+        return category;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getClassification() {
+        return classification;
     }
 
-    public void setPrice(String price) {
-        this.price = price;
+    public String getIndustryName() {
+        return industryName;
     }
 
-    public void setQuantity(String quantity) {
-        this.quantity = quantity;
-    }
-
-    public void setUrlImage(String urlImage) {
-        this.urlImage = urlImage;
-    }
-
-    public void setUrlIndustry(String urlIndustry) {
-        this.urlIndustry = urlIndustry;
-    }
 }

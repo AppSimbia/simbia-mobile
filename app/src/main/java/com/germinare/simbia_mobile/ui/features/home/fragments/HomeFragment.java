@@ -87,7 +87,10 @@ public class HomeFragment extends Fragment {
             postgresCache.setEmployee(document);
             repository.findIndustryById(document.getLong("industryId"), industry -> {
                 postgresCache.setIndustry(industry);
-                repository.listPostsByCnpj(industry.getCnpj(), postgresCache::setPosts);
+                repository.listPostsByCnpj(industry.getCnpj(), list -> {
+                    postgresCache.setPosts(list);
+                    postgresCache.setPostsFiltered(list);
+                });
             });
             repository.listProductCategories(postgresCache::setProductCategory);
         });

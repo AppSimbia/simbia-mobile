@@ -17,7 +17,6 @@ import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
@@ -46,8 +45,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
 
         holder.title.setText(post.getTitle());
         holder.price.setText("R$ "+ post.getPrice());
-        holder.quantity.setText(post.getQuantity());
-
+        holder.quantity.setText(String.valueOf(post.getQuantity()));
         Glide.with(holder.image.getContext())
                 .load(post.getUrlImage())
                 .into(holder.image);

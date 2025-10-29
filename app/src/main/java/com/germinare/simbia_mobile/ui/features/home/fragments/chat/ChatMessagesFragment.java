@@ -132,7 +132,7 @@ public class ChatMessagesFragment extends Fragment {
 
     private void showDialogSolictar(){
         Dialog alert = new Dialog(requireActivity());
-        alert.setContentView(R.layout.alert_match_solicitation);
+        alert.setContentView(R.layout.alert_payment_solicitation);
         alert.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         alert.setCancelable(false);
 

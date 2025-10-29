@@ -16,6 +16,7 @@ public class PostgresCache {
     private IndustryResponse industry;
     private List<ProductCategoryResponse> productCategory;
     private List<PostResponse> posts;
+    private List<PostResponse> postsFiltered;
 
     private final List<OnCacheListener> listeners = new ArrayList<>();
 
@@ -77,6 +78,15 @@ public class PostgresCache {
 
     public void setPosts(List<PostResponse> posts) {
         this.posts = posts;
+        notifyListeners();
+    }
+
+    public List<PostResponse> getPostsFiltered() {
+        return postsFiltered;
+    }
+
+    public void setPostsFiltered(List<PostResponse> postsFiltered) {
+        this.postsFiltered = postsFiltered;
         notifyListeners();
     }
 }

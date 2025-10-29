@@ -7,66 +7,76 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.germinare.simbia_mobile.R;
+import com.germinare.simbia_mobile.data.api.cache.PostgresCache;
+import com.germinare.simbia_mobile.data.api.model.postgres.ProductCategoryResponse;
+import com.germinare.simbia_mobile.data.api.repository.PostgresRepository;
 import com.germinare.simbia_mobile.databinding.FragmentFeedBinding;
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.FiltersAdapter;
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.Post;
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.PostAdapter;
+import com.germinare.simbia_mobile.utils.AlertUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FeedFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FeedFragment extends Fragment {
 
     private FragmentFeedBinding binding;
+    private PostgresRepository repository;
+    private PostgresCache postgresCache;
+    private AlertDialog progressDialog;
+    private FiltersAdapter filtersAdapter;
+    private PostAdapter postAdapter1;
+    private PostAdapter postAdapter2;
 
-    private static final String[] filters = {"Alimentício", "Cera", "Marcenaria", "Metalúrgico"};
+    private List<String> filters = new ArrayList<>();
+    private List<Post> posts = new ArrayList<>();
 
     public FeedFragment() {
-    }
-
-    public static FeedFragment newInstance() {
-        return new FeedFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        postgresCache = PostgresCache.getInstance();
+        repository = new PostgresRepository(error -> AlertUtils.showDialogError(requireContext(), error));
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentFeedBinding.inflate(inflater, container, false);
+
+        filtersAdapter = new FiltersAdapter(requireContext(), filters);
+        postAdapter1 = new PostAdapter(posts, this::onClickPost);
+        postAdapter2 = new PostAdapter(posts, this::onClickPost);
+
+        progressDialog = AlertUtils.showLoadingDialog(requireContext(), "");
+        postgresCache.addListener(this::updateUIFromCache);
+        updateUIFromCache();
+
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        FiltersAdapter filtersAdapter = new FiltersAdapter(requireContext(), filters);
         binding.rvFilters.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.rvFilters.setAdapter(filtersAdapter);
 
-        PostAdapter postAdapter = new PostAdapter(List.of(
-                new Post(1L, "Orgânicos Secos", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec  turpis tortor. Nunc non varius leo, quis iaculis magna. Sed sed eleifend turpis, vel vestibulum lectus.", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx"),
-                new Post(2L, "Orgânicos Secos", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec  turpis tortor. Nunc non varius leo, quis iaculis magna. Sed sed eleifend turpis, vel vestibulum lectus.", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx"),
-                new Post(3L, "Orgânicos Secos", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec  turpis tortor. Nunc non varius leo, quis iaculis magna. Sed sed eleifend turpis, vel vestibulum lectus.", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx"),
-                new Post(4L, "Orgânicos Secos", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec  turpis tortor. Nunc non varius leo, quis iaculis magna. Sed sed eleifend turpis, vel vestibulum lectus.", "1200.90", "12kg", "https://encurtador.com.br/e1DGN", "https://encurtador.com.br/PYjCx")
-        ), this::onClickPost);
         binding.rvPost1.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-        binding.rvPost1.setAdapter(postAdapter);
+        binding.rvPost1.setAdapter(postAdapter1);
 
         binding.rvPost2.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-        binding.rvPost2.setAdapter(postAdapter);
+        binding.rvPost2.setAdapter(postAdapter2);
 
     }
 
@@ -75,5 +85,26 @@ public class FeedFragment extends Fragment {
         args.putParcelable("post", post);
 
         Navigation.findNavController(requireView()).navigate(R.id.navigation_product_details, args);
+    }
+
+    private void updateUIFromCache(){
+        if (postgresCache.getProductCategory() != null && postgresCache.getPostsFiltered() != null) {
+            loadDataAdapters(filters,
+                    postgresCache.getProductCategory().stream().
+                            map(ProductCategoryResponse::getCategoryName).collect(Collectors.toList()),
+                    filtersAdapter);
+            loadDataAdapters(posts, postgresCache.getPostsFiltered().stream().map(Post::new).collect(Collectors.toList()),
+                    postAdapter1);
+            loadDataAdapters(posts, postgresCache.getPostsFiltered().stream().map(Post::new).collect(Collectors.toList()),
+                    postAdapter2);
+
+            AlertUtils.hideLoadingDialog(progressDialog);
+        }
+    }
+
+    private <T, D extends RecyclerView.Adapter> void loadDataAdapters(List<T> oldList, List<T> newList, D adapter){
+        oldList.clear();
+        oldList.addAll(newList);
+        adapter.notifyDataSetChanged();
     }
 }
