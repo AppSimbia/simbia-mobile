@@ -21,7 +21,8 @@ public class SolicitationSent extends AppCompatActivity {
 
         if (args != null) {
             binding.txSolicitationSentDescription.setText(
-                    binding.txSolicitationSentDescription.getText() + " " + args.getString("nameIndustry") + " será iniciada."
+                    binding.txSolicitationSentDescription.getText() + " " +
+                            args.getString("nameIndustry") + " será iniciada."
             );
         }
 

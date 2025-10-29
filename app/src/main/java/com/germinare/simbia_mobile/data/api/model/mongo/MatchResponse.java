@@ -62,4 +62,22 @@ public class MatchResponse {
     public String getStatus() {
         return status;
     }
+
+    @Override
+    public String toString() {
+        return "MatchResponse{" +
+                "id='" + id + '\'' +
+                ", idPost=" + idPost +
+                ", idEmployeePurchaser=" + idEmployeePurchaser +
+                ", idEmployeeSeller=" + idEmployeeSeller +
+                ", idIndustryPurchaser='" + idIndustryPurchaser + '\'' +
+                ", idIndustrySeller='" + idIndustrySeller + '\'' +
+                ", idChat='" + idChat + '\'' +
+                ", solicitationText='" + solicitationText + '\'' +
+                ", proposedValue=" + proposedValue +
+                ", quantity=" + quantity +
+                ", measureUnit=" + measureUnit +
+                ", status='" + status + '\'' +
+                '}';
+    }
 }

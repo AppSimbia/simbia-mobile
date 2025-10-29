@@ -5,6 +5,7 @@ import com.germinare.simbia_mobile.data.api.model.mongo.MatchRequest;
 import com.germinare.simbia_mobile.data.api.model.mongo.MatchResponse;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -16,10 +17,10 @@ import retrofit2.http.Query;
 public interface MongoApiService {
 
     @POST("/match")
-    Call<MatchResponse> createMatch(@Body MatchRequest request);
+    Call<MatchResponse> createMatch(@Body Map<String, Object> request);
 
     @POST("/match/status/{id}")
-    Call<String> changeStatusMatch(@Path("id") String id, @Query("action") String action, @Body MatchRequest request);
+    Call<String> changeStatusMatch(@Path("id") String id, @Query("action") String action, @Body Map<String, Object> request);
 
     @GET("/chats/{id}")
     Call<ChatResponse> findChatById(@Path("id") String id);

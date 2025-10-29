@@ -10,7 +10,9 @@ import com.germinare.simbia_mobile.data.api.model.mongo.MatchResponse;
 import com.germinare.simbia_mobile.data.api.retrofit.ApiServiceFactory;
 import com.germinare.simbia_mobile.data.api.service.MongoApiService;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import retrofit2.Call;
@@ -30,8 +32,8 @@ public class MongoRepository {
         Log.d(TAG, "MongoRepository initialized");
     }
 
-    public void createMatch(MatchRequest request, Consumer<MatchResponse> onSuccessful) {
-        Log.d(TAG, "createMatch called with request: " + request);
+    public void createMatch(Map<String, Object> request, Consumer<MatchResponse> onSuccessful) {
+        Log.d(TAG, "createMatch called with request: " + request.toString());
         Call<MatchResponse> call = apiService.createMatch(request);
 
         call.enqueue(new Callback<>() {
@@ -42,7 +44,11 @@ public class MongoRepository {
                     Log.d(TAG, "createMatch success: " + response.body());
                     onSuccessful.accept(response.body());
                 } else {
-                    Log.e(TAG, "createMatch failed: " + response.message());
+                    try {
+                        Log.e(TAG, "createMatch failed: " + response.errorBody().string());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     onFailure.accept(MESSAGE_ERROR);
                 }
             }
@@ -55,7 +61,7 @@ public class MongoRepository {
         });
     }
 
-    public void changeStatusMatch(String id, String action, MatchRequest request, Consumer<String> onSuccessful) {
+    public void changeStatusMatch(String id, String action, Map<String, Object> request, Consumer<String> onSuccessful) {
         Log.d(TAG, "changeStatusMatch called for id: " + id + ", action: " + action);
         Call<String> call = apiService.changeStatusMatch(id, action, request);
 
