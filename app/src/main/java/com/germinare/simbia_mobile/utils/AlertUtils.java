@@ -1,5 +1,7 @@
 package com.germinare.simbia_mobile.utils;
 
+import static android.view.View.GONE;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -74,6 +76,7 @@ public class AlertUtils {
 
         TextView tvMessage = view.findViewById(R.id.tv_loading_message);
         tvMessage.setText(message);
+        if (message.isEmpty()) tvMessage.setVisibility(GONE);
 
         alertDialog.show();
         return alertDialog;
