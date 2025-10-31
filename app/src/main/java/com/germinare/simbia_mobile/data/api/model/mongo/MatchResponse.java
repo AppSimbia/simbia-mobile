@@ -4,8 +4,8 @@ public class MatchResponse {
 
     private String id;
     private Long idPost;
-    private Long idEmployeePurchaser;
-    private Long idEmployeeSeller;
+    private String uidEmployeePurchaser;
+    private String uidEmployeeSeller;
     private String idIndustryPurchaser;
     private String idIndustrySeller;
     private String idChat;
@@ -23,12 +23,12 @@ public class MatchResponse {
         return idPost;
     }
 
-    public Long getIdEmployeePurchaser() {
-        return idEmployeePurchaser;
+    public String getUidEmployeePurchaser() {
+        return uidEmployeePurchaser;
     }
 
-    public Long getIdEmployeeSeller() {
-        return idEmployeeSeller;
+    public String getUidEmployeeSeller() {
+        return uidEmployeeSeller;
     }
 
     public String getIdIndustryPurchaser() {
@@ -61,23 +61,5 @@ public class MatchResponse {
 
     public String getStatus() {
         return status;
-    }
-
-    @Override
-    public String toString() {
-        return "MatchResponse{" +
-                "id='" + id + '\'' +
-                ", idPost=" + idPost +
-                ", idEmployeePurchaser=" + idEmployeePurchaser +
-                ", idEmployeeSeller=" + idEmployeeSeller +
-                ", idIndustryPurchaser='" + idIndustryPurchaser + '\'' +
-                ", idIndustrySeller='" + idIndustrySeller + '\'' +
-                ", idChat='" + idChat + '\'' +
-                ", solicitationText='" + solicitationText + '\'' +
-                ", proposedValue=" + proposedValue +
-                ", quantity=" + quantity +
-                ", measureUnit=" + measureUnit +
-                ", status='" + status + '\'' +
-                '}';
     }
 }

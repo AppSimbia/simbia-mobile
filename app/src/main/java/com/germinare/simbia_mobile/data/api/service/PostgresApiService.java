@@ -30,6 +30,9 @@ public interface PostgresApiService {
     @PUT("/posts/{id}")
     Call<PostResponse> updatePost(@Path("id") Long id, @Body Map<String, Object> map);
 
+    @GET("/posts/{id}")
+    Call<PostResponse> findPostById(@Path("id") Long id);
+
     @GET("/posts/list/{cnpj}/except")
     Call<List<PostResponse>> findAllPostsExceptCnpj(@Path("cnpj") String cnpj);
 

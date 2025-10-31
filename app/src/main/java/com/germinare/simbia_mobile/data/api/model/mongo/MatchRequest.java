@@ -5,8 +5,8 @@ import java.util.Map;
 public class MatchRequest {
 
     private Long idPost;
-    private Long idEmployeePurchaser;
-    private Long idEmployeeSeller;
+    private String uidEmployeePurchaser;
+    private String uidEmployeeSeller;
     private String idIndustryPurchaser;
     private String idIndustrySeller;
     private String solicitationText;
@@ -14,9 +14,9 @@ public class MatchRequest {
     private Long quantity;
     private Long measureUnit;
 
-    public MatchRequest(Long idPost, Long idEmployeePurchaser, String idIndustryPurchaser, String idIndustrySeller, String solicitationText) {
+    public MatchRequest(Long idPost, String uidEmployeePurchaser, String idIndustryPurchaser, String idIndustrySeller, String solicitationText) {
         this.idPost = idPost;
-        this.idEmployeePurchaser = idEmployeePurchaser;
+        this.uidEmployeePurchaser = uidEmployeePurchaser;
         this.idIndustryPurchaser = idIndustryPurchaser;
         this.idIndustrySeller = idIndustrySeller;
         this.solicitationText = solicitationText;
@@ -50,12 +50,12 @@ public class MatchRequest {
         return idPost;
     }
 
-    public Long getIdEmployeePurchaser() {
-        return idEmployeePurchaser;
+    public String getIdEmployeePurchaser() {
+        return uidEmployeePurchaser;
     }
 
-    public Long getIdEmployeeSeller() {
-        return idEmployeeSeller;
+    public String getIdEmployeeSeller() {
+        return uidEmployeeSeller;
     }
 
     public String getIdIndustryPurchaser() {

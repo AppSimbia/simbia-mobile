@@ -82,13 +82,7 @@ public class AlertUtils {
         return alertDialog;
     }
 
-    public static void hideLoadingDialog(AlertDialog progressDialog) {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
-    public static void showDialogCustom(Context ctx, int layoutResId, DialogAlertBuilder builder){
+    public static Dialog showDialogCustom(Context ctx, int layoutResId, DialogAlertBuilder builder){
         Dialog alert = new Dialog(ctx);
         alert.setContentView(layoutResId);
         Objects.requireNonNull(alert.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
@@ -130,6 +124,13 @@ public class AlertUtils {
         }
 
         alert.show();
+        return alert;
+    }
+
+    public static void hideDialog(Dialog dialog) {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
     }
 
     public static class DialogAlertBuilder {

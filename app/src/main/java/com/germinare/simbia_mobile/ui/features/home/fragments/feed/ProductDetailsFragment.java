@@ -2,7 +2,6 @@ package com.germinare.simbia_mobile.ui.features.home.fragments.feed;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.service.autofill.FieldClassification;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +51,7 @@ public class ProductDetailsFragment extends Fragment {
         postgresCache = PostgresCache.getInstance();
         repository = new MongoRepository(error -> {
             AlertUtils.showDialogError(requireContext(), error);
-            AlertUtils.hideLoadingDialog(progressDialog);
+            AlertUtils.hideDialog(progressDialog);
         });
         return binding.getRoot();
     }
@@ -99,7 +98,7 @@ public class ProductDetailsFragment extends Fragment {
             TextInputEditText description = V.findViewById(R.id.ed_solicitation_message);
             MatchRequest request = new MatchRequest(
                     post.getIdPost(),
-                    postgresCache.getEmployee().getEmployeeId(),
+                    postgresCache.getEmployee().getUid(),
                     postgresCache.getIndustry().getCnpj(),
                     post.getIndustryCnpj(),
                     description.getText().toString()
@@ -109,7 +108,7 @@ public class ProductDetailsFragment extends Fragment {
             repository.createMatch(MatchRequest.createRequest(request), response -> {
                 Intent intent = new Intent(requireActivity(), SolicitationSent.class);
                 intent.putExtra("industryName", post.getIndustryName());
-                AlertUtils.hideLoadingDialog(progressDialog);
+                AlertUtils.hideDialog(progressDialog);
                 startActivity(intent);
                 requireActivity().finish();
             });

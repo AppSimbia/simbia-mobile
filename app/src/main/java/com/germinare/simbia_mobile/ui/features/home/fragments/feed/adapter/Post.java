@@ -21,10 +21,11 @@ public class Post implements Parcelable {
     private String industryCnpj;
     private String category;
     private String classification;
+    private Integer measureUnit;
 
     public Post(Long idPost, String title, String description, Double price,
                 Integer quantity, String urlImage, String urlIndustry, String category,
-                String classification, String industryName, String industryCnpj) {
+                String classification, String industryName, String industryCnpj, Integer measureUnit) {
         this.idPost = idPost;
         this.title = title;
         this.description = description;
@@ -36,6 +37,7 @@ public class Post implements Parcelable {
         this.classification = classification;
         this.industryName = industryName;
         this.industryCnpj = industryCnpj;
+        this.measureUnit = measureUnit;
     }
 
     public Post() {}
@@ -52,6 +54,7 @@ public class Post implements Parcelable {
         this.classification = response.getClassification();
         this.industryName = response.getIndustryName();
         this.industryCnpj = response.getIndustryCnpj();
+        this.measureUnit = Integer.parseInt(response.getMeasureUnit());
     }
 
     protected Post(Parcel in) {
@@ -66,6 +69,7 @@ public class Post implements Parcelable {
         classification = in.readString();
         industryName = in.readString();
         industryCnpj = in.readString();
+        measureUnit = in.readInt();
     }
 
     @Override
@@ -100,6 +104,7 @@ public class Post implements Parcelable {
         dest.writeString(classification);
         dest.writeString(industryName);
         dest.writeString(industryCnpj);
+        dest.writeInt(measureUnit);
     }
 
     @Override
@@ -162,5 +167,9 @@ public class Post implements Parcelable {
 
     public String getIndustryCnpj() {
         return industryCnpj;
+    }
+
+    public Integer getMeasureUnit() {
+        return measureUnit;
     }
 }

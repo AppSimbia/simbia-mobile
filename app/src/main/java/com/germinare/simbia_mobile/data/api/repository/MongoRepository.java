@@ -33,7 +33,7 @@ public class MongoRepository {
     }
 
     public void createMatch(Map<String, Object> request, Consumer<MatchResponse> onSuccessful) {
-        Log.d(TAG, "createMatch called with request: " + request.toString());
+        Log.d(TAG, "createMatch called with request: " + request);
         Call<MatchResponse> call = apiService.createMatch(request);
 
         call.enqueue(new Callback<>() {
@@ -44,11 +44,7 @@ public class MongoRepository {
                     Log.d(TAG, "createMatch success: " + response.body());
                     onSuccessful.accept(response.body());
                 } else {
-                    try {
-                        Log.e(TAG, "createMatch failed: " + response.errorBody().string());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    Log.e(TAG, "createMatch failed: " + response.message());
                     onFailure.accept(MESSAGE_ERROR);
                 }
             }

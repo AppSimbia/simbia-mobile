@@ -112,6 +112,31 @@ public class PostgresRepository {
         });
     }
 
+    public void findPostById(Long id, Consumer<PostResponse> onSuccessful) {
+        Log.d(TAG, "findPostById called with id: " + id);
+        Call<PostResponse> call = apiService.findPostById(id);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<PostResponse> call, @NonNull Response<PostResponse> response) {
+                Log.d(TAG, "findPostById response code: " + response.code());
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "findPostById success: " + response.body());
+                    onSuccessful.accept(response.body());
+                } else {
+                    Log.e(TAG, "findPostById failed: " + response.message());
+                    onFailure.accept(MESSAGE_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<PostResponse> call, @NonNull Throwable t) {
+                Log.e(TAG, "findPostById error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
+
     public void listPostsByCnpj(String cnpj, Consumer<List<PostResponse>> onSuccessful) {
         Log.d(TAG, "listPostsByCnpj called with cnpj: " + cnpj);
         Call<List<PostResponse>> call = apiService.findAllPostsExceptCnpj(cnpj);
