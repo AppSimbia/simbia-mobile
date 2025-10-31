@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_post_carrosel"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    android:clipToOutline="true"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- 📸 Imagem de fundo -->
+        <ImageView
+            android:id="@+id/image_carrossel_post"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/carrosel_mock" />
+
+        <!-- 🟤 Sombra gradiente -->
+        <LinearLayout
+            android:id="@+id/layout_dots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="12dp"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_margin="3dp"
+                android:background="@drawable/dot_active" />
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_margin="3dp"
+                android:background="@drawable/dot_inactive" />
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_margin="3dp"
+                android:background="@drawable/dot_inactive" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/gradient_bottom_overlay" />
+
+        <!-- 📄 Textos -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tx_carrossel_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Orgânicos secos (farináceos)"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/tx_carrossel_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mensal – 880kg"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/tx_carrossel_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Eusébio | CE"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+        <!-- 🔘 Indicadores -->
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image_industry_post"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:scaleType="centerCrop"
+            app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+            app:strokeColor="@color/md_theme_primary"
+            app:strokeWidth="1dp"
+            tools:srcCompat="@tools:sample/avatars" />
+    </FrameLayout>
+
+</androidx.cardview.widget.CardView>

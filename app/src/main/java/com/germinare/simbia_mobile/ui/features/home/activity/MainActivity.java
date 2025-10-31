@@ -20,9 +20,8 @@ import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.databinding.ActivityMainBinding;
 import com.germinare.simbia_mobile.ui.features.home.drawer.DrawerAdapter;
 import com.germinare.simbia_mobile.ui.features.home.drawer.DrawerItem;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.germinare.simbia_mobile.ui.features.profile.activity.ProfileActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private NavController navController;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
                 R.id.navigation_home,
                 R.id.navigation_feed,
                 R.id.navigation_product_details,
-                R.id.navigation_solicitation_match,
                 R.id.navigation_post,
                 R.id.navigation_chat,
                 R.id.navigation_chat_messages,
@@ -100,8 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 navView.getMenu().findItem(R.id.navigation_eva).setChecked(true);
             } else if (destination.getId() == R.id.navigation_chat_messages) {
                 navView.getMenu().findItem(R.id.navigation_chat).setChecked(true);
-            } else if (destination.getId() == R.id.navigation_product_details ||
-                    destination.getId() == R.id.navigation_solicitation_match) {
+            } else if (destination.getId() == R.id.navigation_product_details) {
                 navView.getMenu().findItem(R.id.navigation_feed).setChecked(true);
             }
 
@@ -138,8 +134,6 @@ public class MainActivity extends AppCompatActivity {
 
         if ("feed".equals(fragmentToLoad)) {
             navController.navigate(R.id.navigation_feed);
-        } else if ("solicitationMatch".equals(fragmentToLoad)){
-            navController.navigate(R.id.navigation_solicitation_match);
         }
     }
 }

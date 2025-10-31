@@ -1,5 +1,6 @@
 package com.germinare.simbia_mobile.data.api.service;
 
+import com.germinare.simbia_mobile.data.api.model.postgres.IndustryResponse;
 import com.germinare.simbia_mobile.data.api.model.postgres.PostRequest;
 import com.germinare.simbia_mobile.data.api.model.postgres.PostResponse;
 import com.germinare.simbia_mobile.data.api.model.postgres.ProductCategoryResponse;
@@ -18,12 +19,22 @@ public interface PostgresApiService {
 
     // ENDPOINTS
 
+    // EMPLOYEE
+    @GET("/industries/id/{id}")
+    Call<IndustryResponse> findIndustryById(@Path("id") Long id);
+
     // POSTS
     @POST("/posts")
     Call<PostResponse> createPost(@Body PostRequest post);
 
     @PUT("/posts/{id}")
     Call<PostResponse> updatePost(@Path("id") Long id, @Body Map<String, Object> map);
+
+    @GET("/posts/{id}")
+    Call<PostResponse> findPostById(@Path("id") Long id);
+
+    @GET("/posts/list/{cnpj}/except")
+    Call<List<PostResponse>> findAllPostsExceptCnpj(@Path("cnpj") String cnpj);
 
     @GET("/posts/category/list")
     Call<List<ProductCategoryResponse>> findAllProductsCategories();

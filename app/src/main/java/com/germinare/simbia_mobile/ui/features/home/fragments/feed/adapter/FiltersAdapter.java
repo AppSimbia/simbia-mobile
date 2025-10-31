@@ -13,20 +13,25 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.germinare.simbia_mobile.R;
+import com.germinare.simbia_mobile.data.api.cache.PostgresCache;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class FiltersAdapter extends RecyclerView.Adapter<FiltersAdapter.FilterHolder> {
 
     private final Context ctx;
-    private final String[] filters;
+    private final PostgresCache postgresCache;
+    private final List<String> filters;
     private final Map<String, Boolean> mapFilters = new HashMap<>();
     private final boolean interactible;
     private int selectedPosition = RecyclerView.NO_POSITION;
 
-    public FiltersAdapter(Context ctx, String[] filters){
+    public FiltersAdapter(Context ctx, List<String> filters){
         this.ctx = ctx;
+        this.postgresCache = PostgresCache.getInstance();
         this.filters = filters;
         this.interactible = true;
 
@@ -35,8 +40,9 @@ public class FiltersAdapter extends RecyclerView.Adapter<FiltersAdapter.FilterHo
         }
     }
 
-    public FiltersAdapter(Context ctx, String[] filters, boolean interactible){
+    public FiltersAdapter(Context ctx, List<String> filters, boolean interactible){
         this.ctx = ctx;
+        this.postgresCache = PostgresCache.getInstance();
         this.filters = filters;
         this.interactible = interactible;
 
@@ -58,10 +64,11 @@ public class FiltersAdapter extends RecyclerView.Adapter<FiltersAdapter.FilterHo
 
     @Override
     public void onBindViewHolder(@NonNull FilterHolder holder, int position) {
-        String filter = filters[position];
+        final int positionE = holder.getAbsoluteAdapterPosition();
+        String filter = filters.get(positionE);
         holder.filter.setText(filter);
 
-        boolean isSelected = position == selectedPosition;
+        boolean isSelected = positionE == selectedPosition;
 
         if (isSelected) {
             holder.card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.md_theme_primary));
@@ -75,22 +82,32 @@ public class FiltersAdapter extends RecyclerView.Adapter<FiltersAdapter.FilterHo
             holder.card.setOnClickListener(v -> {
                 int oldPosition = selectedPosition;
 
-                if (selectedPosition == position) {
+                postgresCache.setPostsFiltered(
+                        postgresCache.getPosts().stream()
+                                .filter(post -> post.getProductCategory().getCategoryName().equals(filter))
+                                .collect(Collectors.toList())
+                );
+
+                if (selectedPosition == positionE) {
                     selectedPosition = RecyclerView.NO_POSITION;
-                    notifyItemChanged(position);
+                    postgresCache.setPostsFiltered(postgresCache.getPosts());
+                    notifyItemChanged(positionE);
                 } else {
-                    selectedPosition = position;
+                    selectedPosition = positionE;
                     notifyItemChanged(oldPosition);
                     notifyItemChanged(selectedPosition);
                 }
             });
+        } else {
+            holder.card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.md_theme_primary));
+            holder.filter.setTextColor(ContextCompat.getColor(ctx, R.color.md_theme_inverseOnSurface));
         }
     }
 
 
     @Override
     public int getItemCount() {
-        return filters.length;
+        return filters.size();
     }
 
     public static class FilterHolder extends RecyclerView.ViewHolder {

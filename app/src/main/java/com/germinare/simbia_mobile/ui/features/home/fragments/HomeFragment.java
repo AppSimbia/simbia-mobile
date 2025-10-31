@@ -1,5 +1,6 @@
 package com.germinare.simbia_mobile.ui.features.home.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,10 +16,22 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.germinare.simbia_mobile.R;
+import com.germinare.simbia_mobile.data.api.cache.PostgresCache;
+import com.germinare.simbia_mobile.data.api.repository.PostgresRepository;
+import com.germinare.simbia_mobile.data.fireauth.UserAuth;
+import com.germinare.simbia_mobile.data.firestore.UserRepository;
 import com.germinare.simbia_mobile.databinding.FragmentHomeBinding;
+import com.germinare.simbia_mobile.ui.features.splashScreen.SplashScreen;
+import com.germinare.simbia_mobile.utils.AlertUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseUser;
 
 public class HomeFragment extends Fragment {
+
+    private UserAuth userAuth;
+    private PostgresRepository repository;
+    private UserRepository userRepository;
+    private PostgresCache postgresCache;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private FragmentHomeBinding binding;
     private Runnable navigationRunnable;
@@ -28,12 +41,19 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
+
+        postgresCache = PostgresCache.getInstance();
+        userAuth = new UserAuth();
+        userRepository = new UserRepository(requireContext());
+        repository = new PostgresRepository(error -> AlertUtils.showDialogError(requireContext(), error));
+
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        loadData();
         setupInputHandling();
     }
 
@@ -52,6 +72,26 @@ public class HomeFragment extends Fragment {
         super.onDestroyView();
         handler.removeCallbacksAndMessages(null);
         binding = null;
+    }
+
+    private void loadData(){
+        FirebaseUser user = userAuth.getCurrentUser();
+        if (user == null) {
+            startActivity(new Intent(requireActivity(), SplashScreen.class));
+            requireActivity().finish();
+        }
+
+        userRepository.getUserByUid(user.getUid(), document -> {
+            postgresCache.setEmployee(document);
+            repository.findIndustryById(document.getLong("industryId"), industry -> {
+                postgresCache.setIndustry(industry);
+                repository.listPostsByCnpj(industry.getCnpj(), list -> {
+                    postgresCache.setPosts(list);
+                    postgresCache.setPostsFiltered(list);
+                });
+            });
+            repository.listProductCategories(postgresCache::setProductCategory);
+        });
     }
 
     private void setupInputHandling() {
