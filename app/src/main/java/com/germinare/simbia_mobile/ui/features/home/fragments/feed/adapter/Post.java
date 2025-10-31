@@ -172,4 +172,22 @@ public class Post implements Parcelable {
     public Integer getMeasureUnit() {
         return measureUnit;
     }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "idPost=" + idPost +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", urlImage='" + urlImage + '\'' +
+                ", urlIndustry='" + urlIndustry + '\'' +
+                ", industryName='" + industryName + '\'' +
+                ", industryCnpj='" + industryCnpj + '\'' +
+                ", category='" + category + '\'' +
+                ", classification='" + classification + '\'' +
+                ", measureUnit=" + measureUnit +
+                '}';
+    }
 }

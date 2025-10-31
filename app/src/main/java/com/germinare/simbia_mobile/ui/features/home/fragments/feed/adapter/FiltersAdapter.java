@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.data.api.cache.PostgresCache;
+import com.germinare.simbia_mobile.data.api.cache.Cache;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class FiltersAdapter extends RecyclerView.Adapter<FiltersAdapter.FilterHolder> {
 
     private final Context ctx;
-    private final PostgresCache postgresCache;
+    private final Cache cache;
     private final List<String> filters;
     private final Map<String, Boolean> mapFilters = new HashMap<>();
     private final boolean interactible;
@@ -31,7 +31,7 @@ public class FiltersAdapter extends RecyclerView.Adapter<FiltersAdapter.FilterHo
 
     public FiltersAdapter(Context ctx, List<String> filters){
         this.ctx = ctx;
-        this.postgresCache = PostgresCache.getInstance();
+        this.cache = Cache.getInstance();
         this.filters = filters;
         this.interactible = true;
 
@@ -42,7 +42,7 @@ public class FiltersAdapter extends RecyclerView.Adapter<FiltersAdapter.FilterHo
 
     public FiltersAdapter(Context ctx, List<String> filters, boolean interactible){
         this.ctx = ctx;
-        this.postgresCache = PostgresCache.getInstance();
+        this.cache = Cache.getInstance();
         this.filters = filters;
         this.interactible = interactible;
 
@@ -82,15 +82,15 @@ public class FiltersAdapter extends RecyclerView.Adapter<FiltersAdapter.FilterHo
             holder.card.setOnClickListener(v -> {
                 int oldPosition = selectedPosition;
 
-                postgresCache.setPostsFiltered(
-                        postgresCache.getPosts().stream()
+                cache.setPostsFiltered(
+                        cache.getPosts().stream()
                                 .filter(post -> post.getProductCategory().getCategoryName().equals(filter))
                                 .collect(Collectors.toList())
                 );
 
                 if (selectedPosition == positionE) {
                     selectedPosition = RecyclerView.NO_POSITION;
-                    postgresCache.setPostsFiltered(postgresCache.getPosts());
+                    cache.setPostsFiltered(cache.getPosts());
                     notifyItemChanged(positionE);
                 } else {
                     selectedPosition = positionE;

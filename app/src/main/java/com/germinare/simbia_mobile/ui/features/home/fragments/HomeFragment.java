@@ -16,7 +16,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.data.api.cache.PostgresCache;
+import com.germinare.simbia_mobile.data.api.cache.Cache;
+import com.germinare.simbia_mobile.data.api.repository.MongoRepository;
 import com.germinare.simbia_mobile.data.api.repository.PostgresRepository;
 import com.germinare.simbia_mobile.data.fireauth.UserAuth;
 import com.germinare.simbia_mobile.data.firestore.UserRepository;
@@ -30,8 +31,9 @@ public class HomeFragment extends Fragment {
 
     private UserAuth userAuth;
     private PostgresRepository repository;
+    private MongoRepository mongoRepository;
     private UserRepository userRepository;
-    private PostgresCache postgresCache;
+    private Cache cache;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private FragmentHomeBinding binding;
     private Runnable navigationRunnable;
@@ -42,7 +44,7 @@ public class HomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
 
-        postgresCache = PostgresCache.getInstance();
+        cache = Cache.getInstance();
         userAuth = new UserAuth();
         userRepository = new UserRepository(requireContext());
         repository = new PostgresRepository(error -> AlertUtils.showDialogError(requireContext(), error));
@@ -82,15 +84,16 @@ public class HomeFragment extends Fragment {
         }
 
         userRepository.getUserByUid(user.getUid(), document -> {
-            postgresCache.setEmployee(document);
+            cache.setEmployee(document);
+//            mongoRepository.findAllChatByEmployeeId(document.getLong("employeeId"), cache::setChats);
             repository.findIndustryById(document.getLong("industryId"), industry -> {
-                postgresCache.setIndustry(industry);
+                cache.setIndustry(industry);
                 repository.listPostsByCnpj(industry.getCnpj(), list -> {
-                    postgresCache.setPosts(list);
-                    postgresCache.setPostsFiltered(list);
+                    cache.setPosts(list);
+                    cache.setPostsFiltered(list);
                 });
             });
-            repository.listProductCategories(postgresCache::setProductCategory);
+            repository.listProductCategories(cache::setProductCategory);
         });
     }
 

@@ -15,9 +15,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.data.api.cache.PostgresCache;
+import com.germinare.simbia_mobile.data.api.cache.Cache;
 import com.germinare.simbia_mobile.data.api.model.firestore.EmployeeFirestore;
 import com.germinare.simbia_mobile.data.api.model.postgres.PostRequest;
 import com.germinare.simbia_mobile.data.api.model.postgres.ProductCategoryResponse;
@@ -39,7 +40,7 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
     private FragmentPostBinding binding;
     private PostgresRepository repository;
     private StorageUtils storage;
-    private PostgresCache postgresCache;
+    private Cache cache;
     private Bitmap imageBitmap;
     private AlertDialog progressDialog;
     private EmployeeFirestore employee;
@@ -60,7 +61,7 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        postgresCache = PostgresCache.getInstance();
+        cache = Cache.getInstance();
         storage = new StorageUtils();
         cameraGalleryUtils = new CameraGalleryUtils(this, this);
         repository = new PostgresRepository(error -> {
@@ -83,7 +84,7 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
         });
 
         progressDialog = AlertUtils.showLoadingDialog(requireContext(), "");
-        postgresCache.addListener(this::updateUIFromCache);
+        cache.addListener(this::updateUIFromCache);
         updateUIFromCache();
 
         binding.spAddPhoto.setOnClickListener(v -> showImageSourceDialog());
@@ -162,6 +163,8 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
                                     AlertUtils.hideDialog(progressDialog);
                                     binding.btnPostar.setEnabled(true);
                                     Toast.makeText(requireContext(), "Post Realizado com sucesso", Toast.LENGTH_SHORT).show();
+                                    Navigation.findNavController(requireView())
+                                            .navigate(R.id.navigation_home);
                                 })
         ));
     }
@@ -239,9 +242,9 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
     }
 
     private void updateUIFromCache(){
-        if (postgresCache.getProductCategory() != null && postgresCache.getEmployee() != null){
-            categories = postgresCache.getProductCategory();
-            employee = postgresCache.getEmployee();
+        if (cache.getProductCategory() != null && cache.getEmployee() != null){
+            categories = cache.getProductCategory();
+            employee = cache.getEmployee();
             AlertUtils.hideDialog(progressDialog);
         }
     }

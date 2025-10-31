@@ -16,29 +16,12 @@ import com.germinare.simbia_mobile.ui.features.home.fragments.chat.adapter.ChatA
 
 import java.util.UUID;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ChatInitialFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ChatInitialFragment extends Fragment {
 
     private FragmentChatInitialBinding binding;
     private ChatAdapter adapter;
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     public ChatInitialFragment() {
-        // Required empty public constructor
-    }
-
-    public static ChatInitialFragment newInstance(String param1, String param2) {
-        ChatInitialFragment fragment = new ChatInitialFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -64,5 +47,6 @@ public class ChatInitialFragment extends Fragment {
                 "teste",
                 1L
         ));
+
     }
 }

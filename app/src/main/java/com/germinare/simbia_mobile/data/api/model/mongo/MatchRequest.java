@@ -31,7 +31,7 @@ public class MatchRequest {
     public static Map<String, Object> createRequest(MatchRequest request){
         return Map.of(
                 "idPost", request.getIdPost(),
-                "idEmployeePurchaser", request.getIdEmployeePurchaser(),
+                "uidEmployeePurchaser", request.getIdEmployeePurchaser(),
                 "idIndustryPurchaser", request.getIdIndustryPurchaser(),
                 "idIndustrySeller", request.getIdIndustrySeller(),
                 "solicitationText", request.getSolicitationText()

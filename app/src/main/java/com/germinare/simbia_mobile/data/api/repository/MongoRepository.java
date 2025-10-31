@@ -44,7 +44,11 @@ public class MongoRepository {
                     Log.d(TAG, "createMatch success: " + response.body());
                     onSuccessful.accept(response.body());
                 } else {
-                    Log.e(TAG, "createMatch failed: " + response.message());
+                    try {
+                        Log.e(TAG, "createMatch failed: " + response.errorBody().string());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     onFailure.accept(MESSAGE_ERROR);
                 }
             }
