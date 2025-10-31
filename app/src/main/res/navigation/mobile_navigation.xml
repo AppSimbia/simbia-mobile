@@ -10,9 +10,16 @@
         android:name="com.germinare.simbia_mobile.ui.features.home.fragments.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home">
-    <action
-        android:id="@+id/action_homeFragment_to_legalGuideFragment"
-        app:destination="@id/navigation_legal_guide" />
+        <action
+            android:id="@+id/action_homeFragment_to_legalGuideFragment"
+            app:destination="@id/navigation_legal_guide" />
+        <action
+            android:id="@+id/action_navigation_home_to_challengesFragment"
+            app:destination="@id/navigation_challenges" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_impacts"
+            app:destination="@id/navigation_impacts" />
+
     </fragment>
     <fragment
         android:id="@+id/navigation_feed"
@@ -66,5 +73,15 @@
         android:label="fragment_legal_guide"
         tools:layout="@layout/fragment_legal_guide" >
     </fragment>
+    <fragment
+        android:id="@+id/navigation_challenges"
+        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.challenges.ChallengesFragment"
+        android:label="fragment_challenges"
+        tools:layout="@layout/fragment_challenges" />
+    <fragment
+        android:id="@+id/challengeDetailsFragment"
+        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.challenges.ChallengeDetailsFragment"
+        android:label="fragment_challenge_details"
+        tools:layout="@layout/fragment_challenge_details" />
 
 </navigation>

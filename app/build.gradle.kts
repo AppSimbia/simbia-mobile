@@ -66,4 +66,5 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")
     implementation("com.google.firebase:firebase-storage:21.0.1")
     implementation("com.squareup.picasso:picasso:2.8")
+    implementation("androidx.core:core:1.13.1")
 }

@@ -20,8 +20,7 @@ import com.germinare.simbia_mobile.R;
  */
 public class ImpactsFragment extends Fragment {
 
-    private WebView webViewPowerBI1;
-    private WebView webViewPowerBI2;
+    private WebView webViewPowerBI3;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -69,8 +68,7 @@ public class ImpactsFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_impacts, container, false);
 
-        webViewPowerBI1 = view.findViewById(R.id.webviewPowerBI1);
-        webViewPowerBI2 = view.findViewById(R.id.webviewPowerBI2);
+        webViewPowerBI3 = view.findViewById(R.id.webviewPowerBI3);
 
         setupWebView();
 
@@ -78,33 +76,21 @@ public class ImpactsFragment extends Fragment {
     }
 
     private void setupWebView() {
-        WebSettings webSettings1 = webViewPowerBI1.getSettings();
-        WebSettings webSettings2 = webViewPowerBI2.getSettings();
+        WebSettings webSettings3 = webViewPowerBI3.getSettings();
 
-        webSettings1.setJavaScriptEnabled(true);
-        webSettings2.setJavaScriptEnabled(true);
-        webSettings1.setDomStorageEnabled(true);
-        webSettings2.setDomStorageEnabled(true);
+        webSettings3.setJavaScriptEnabled(true);
+        webSettings3.setDomStorageEnabled(true);
 
-        String powerBiUrl1 = "https://app.powerbi.com/reportEmbed?reportId=079c5a38-4a09-4b4d-a078-d56714d1b370&autoAuth=true&ctid=b148f14c-2397-402c-ab6a-1b4711177ac0";
-        String powerBiUrl2 = "https://app.powerbi.com/groups/me/reports/24941bbe-9cab-49e1-80b8-7203ec1b94d7/e7be94090433d8d120cf?ctid=b148f14c-2397-402c-ab6a-1b4711177ac0&experience=power-bi";
+        String powerBiUrl3 = "https://app.powerbi.com/view?r=eyJrIjoiZjE1YTY2ZjktNmEwZi00OGQ3LTk4YjUtYjM2MjJjZWE4NzNhIiwidCI6ImIxNDhmMTRjLTIzOTctNDAyYy1hYjZhLTFiNDcxMTE3N2FjMCJ9";
 
 
-        webViewPowerBI1.setWebViewClient(new WebViewClient() {
+        webViewPowerBI3.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                webViewPowerBI1.setVisibility(View.VISIBLE);
+                webViewPowerBI3.setVisibility(View.VISIBLE);
             }
         });
 
-        webViewPowerBI2.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                webViewPowerBI1.setVisibility(View.VISIBLE);
-            }
-        });
-
-        webViewPowerBI1.loadUrl(powerBiUrl1);
-        webViewPowerBI2.loadUrl(powerBiUrl2);
+        webViewPowerBI3.loadUrl(powerBiUrl3);
     }
 }

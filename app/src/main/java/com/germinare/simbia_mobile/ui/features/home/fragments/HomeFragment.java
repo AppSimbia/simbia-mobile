@@ -9,6 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,6 +40,9 @@ public class HomeFragment extends Fragment {
     private Runnable navigationRunnable;
     private String lastText = "";
 
+    private WebView webViewPowerBI1;
+    private WebView webViewPowerBI2;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -48,6 +54,10 @@ public class HomeFragment extends Fragment {
         repository = new PostgresRepository(error -> AlertUtils.showDialogError(requireContext(), error));
 
         binding.ivLegalGuide.setOnClickListener(v -> Navigation.findNavController(requireView()).navigate(R.id.action_homeFragment_to_legalGuideFragment));
+        binding.ivPainelImpacto.setOnClickListener(v -> Navigation.findNavController(requireView()).navigate(R.id.action_navigation_home_to_navigation_impacts));
+
+        binding.constraintLayout4.setOnClickListener(v -> Navigation.findNavController(requireView()).navigate(R.id.action_navigation_home_to_challengesFragment));
+
 
         return binding.getRoot();
     }

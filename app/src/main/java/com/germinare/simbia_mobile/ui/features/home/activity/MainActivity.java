@@ -1,28 +1,27 @@
 package com.germinare.simbia_mobile.ui.features.home.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.databinding.ActivityMainBinding;
 import com.germinare.simbia_mobile.ui.features.profile.activity.ProfileActivity;
+import com.germinare.simbia_mobile.utils.NotificationHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -86,6 +85,21 @@ public class MainActivity extends AppCompatActivity {
             );
             startActivity(intent);
         });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+            }
+        }
+
+        // LEMBRAR DE TIRAR ESSA PORRA
+        NotificationHelper.showNotification(
+                this,
+                "Bem-vindo ao Simbia!",
+                "É bom ter você de volta 🌱"
+        );
+
     }
 
     @Override

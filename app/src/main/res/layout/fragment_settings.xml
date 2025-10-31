@@ -14,28 +14,16 @@
         android:paddingBottom="32dp">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_post1"
+            android:id="@+id/rv_post2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="30dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            tools:itemCount="1" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_post2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="30dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.506"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rv_post1"
             tools:itemCount="1">
 
         </androidx.recyclerview.widget.RecyclerView>
@@ -79,9 +67,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Marcelo Jr"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="?android:attr/textColorPrimary" />
+                        android:textStyle="bold" />
 
                     <ImageView
                         android:id="@+id/iv_edit_name"
@@ -99,8 +87,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="E-mail:"
-                    android:textSize="14sp"
-                    android:textColor="?android:attr/textColorSecondary" />
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/tv_email"
@@ -112,8 +100,8 @@
                     android:paddingEnd="12dp"
                     android:paddingBottom="8dp"
                     android:text="marcelo.junior@raizen.com"
-                    android:textSize="16sp"
-                    android:textColor="?android:attr/textColorPrimary" />
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -207,6 +195,18 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="92dp"
+            android:backgroundTint="@color/md_theme_error"
+            android:text="SAIR"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rv_post2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
