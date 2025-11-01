@@ -14,7 +14,6 @@ public class RetrofitClient {
             .writeTimeout(50, TimeUnit.SECONDS)
             .build();
 
-
     public static Retrofit create(String baseUrl) {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)

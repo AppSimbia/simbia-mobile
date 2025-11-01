@@ -43,7 +43,7 @@ import java.util.Map;
 
 public class SettingsFragment extends Fragment implements CameraGalleryUtils.ImageResultListener {
 
-    private Button btnLogout;
+    private ImageView btnLogout;
 
     private RecyclerView rvPosts;
     private PostProfileAdapter postAdapter;
@@ -89,7 +89,7 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
 
         ivProfileIcon.setOnClickListener(v -> showImageSourceDialog());
 
-        btnLogout = view.findViewById(R.id.btn_logout);
+        btnLogout = view.findViewById(R.id.iv_logout);
         btnLogout.setOnClickListener(v -> {
             mAuth.signOut();
             requireActivity().finish();

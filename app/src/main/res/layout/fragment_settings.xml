@@ -41,13 +41,14 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <!-- ImageView do perfil ajustado para Glide -->
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_profile_icon"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:contentDescription="Ícone de Perfil"
                 android:scaleType="centerCrop"
-                android:src="@drawable/photo_default" />
+                android:src="@drawable/photo_default"
+                app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -66,7 +67,7 @@
                         android:id="@+id/tv_user_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Marcelo Jr"
+                        android:text="Nome do funcionário"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -79,6 +80,16 @@
                         android:contentDescription="Editar Nome"
                         android:src="@drawable/outline_edit"
                         app:tint="?android:attr/textColorPrimary" />
+
+                    <ImageView
+                        android:id="@+id/iv_logout"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="8dp"
+                        android:contentDescription="Editar E-mail"
+                        android:src="@drawable/outline_login_24"
+                        app:tint="?android:attr/textColorPrimary" />
+
                 </LinearLayout>
 
                 <TextView
@@ -99,10 +110,12 @@
                     android:paddingTop="8dp"
                     android:paddingEnd="12dp"
                     android:paddingBottom="8dp"
-                    android:text="marcelo.junior@raizen.com"
+                    android:text="funcionario.email@email.com"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textSize="16sp" />
+
             </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
@@ -195,19 +208,5 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
-
-        <Button
-            android:id="@+id/btn_logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="92dp"
-            android:backgroundTint="@color/md_theme_error"
-            android:text="SAIR"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rv_post2" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </ScrollView>

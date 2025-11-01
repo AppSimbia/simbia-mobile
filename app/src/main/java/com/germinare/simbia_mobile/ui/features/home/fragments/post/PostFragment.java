@@ -47,11 +47,11 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
     private CameraGalleryUtils cameraGalleryUtils;
 
     private static final List<String> classifications = Arrays.asList(
-            "A", "B", "C"
+            "Perigoso", "Não perigoso não inerte", "Não perigoso inerte"
     );
     private static final List<String> measuresUnits = Arrays.asList(
             "Kg", "Litro", "Metro", "Unidade"
-            );
+    );
 
 
     public PostFragment() {
@@ -64,7 +64,7 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
         storage = new StorageUtils();
         cameraGalleryUtils = new CameraGalleryUtils(this, this);
         repository = new PostgresRepository(error -> {
-            AlertUtils.hideLoadingDialog(progressDialog);
+            AlertUtils.hideDialog(progressDialog);
             binding.btnPostar.setEnabled(true);
             AlertUtils.showDialogError(
                     requireContext(),
@@ -159,7 +159,7 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
                                 post.getIdPost(),
                                 Map.of("image", downloadUri),
                                 postUpdate -> {
-                                    AlertUtils.hideLoadingDialog(progressDialog);
+                                    AlertUtils.hideDialog(progressDialog);
                                     binding.btnPostar.setEnabled(true);
                                     Toast.makeText(requireContext(), "Post Realizado com sucesso", Toast.LENGTH_SHORT).show();
                                 })
@@ -242,7 +242,7 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
         if (postgresCache.getProductCategory() != null && postgresCache.getEmployee() != null){
             categories = postgresCache.getProductCategory();
             employee = postgresCache.getEmployee();
-            AlertUtils.hideLoadingDialog(progressDialog);
+            AlertUtils.hideDialog(progressDialog);
         }
     }
 }

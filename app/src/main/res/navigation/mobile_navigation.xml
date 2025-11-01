@@ -58,11 +58,6 @@
         android:label="fragment_product_details"
         tools:layout="@layout/fragment_product_details" />
     <fragment
-        android:id="@+id/navigation_solicitation_match"
-        android:name="com.germinare.simbia_mobile.ui.features.home.fragments.feed.SolicitationMatchFragment"
-        android:label="fragment_solicitation_match"
-        tools:layout="@layout/fragment_solicitation_match" />
-    <fragment
         android:id="@+id/navigation_impacts"
         android:name="com.germinare.simbia_mobile.ui.features.home.fragments.impacts.ImpactsFragment"
         android:label="fragment_impacts"

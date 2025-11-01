@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.recyclerview)
     implementation(libs.legacy.support.v4)
+    implementation(libs.viewpager2)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

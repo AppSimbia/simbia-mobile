@@ -62,7 +62,7 @@ public class LegalGuideFragment extends Fragment {
         Consumer<String> onFailure = errorMessage -> {
         };
 
-        IntegrationRepository repository = new IntegrationRepository(apiService, onFailure);
+        IntegrationRepository repository = new IntegrationRepository(onFailure);
 
         LegalGuideViewModel.Factory factory = new LegalGuideViewModel.Factory(repository);
         viewModel = new ViewModelProvider(this, factory).get(LegalGuideViewModel.class);

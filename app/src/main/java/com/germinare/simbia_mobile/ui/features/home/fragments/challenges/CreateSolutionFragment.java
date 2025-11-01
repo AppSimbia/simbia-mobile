@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.germinare.simbia_mobile.data.fireauth.UserAuth;
 import com.germinare.simbia_mobile.data.firestore.UserRepository;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -40,10 +39,8 @@ public class CreateSolutionFragment extends Fragment {
     private MongoApiService mongoApiService;
 
     public CreateSolutionFragment() {
-        // Construtor público obrigatório
     }
 
-    // Método de fábrica para criar uma instância com o ID do desafio
     public static CreateSolutionFragment newInstance(String challengeId) {
         CreateSolutionFragment fragment = new CreateSolutionFragment();
         Bundle args = new Bundle();
@@ -103,13 +100,10 @@ public class CreateSolutionFragment extends Fragment {
 
         String uid = userAuth.getCurrentUser().getUid();
 
-        // 1. Inicia a busca pelo employeeId de forma assíncrona
         userRepository.getUserByUid(uid, document -> {
-            // 2. Este código só será executado DEPOIS que o Firebase retornar o documento.
             if (document.exists() && document.contains("employeeId")) {
                 Long idEmployeeSolution = document.getLong("employeeId");
 
-                // 3. Agora que temos o employeeId, podemos construir e enviar o request
                 if (idEmployeeSolution != null) {
                     performApiCall(idEmployeeSolution, title, text);
                 } else {
@@ -121,9 +115,6 @@ public class CreateSolutionFragment extends Fragment {
         });
     }
 
-    /**
-     * Função auxiliar para encapsular a chamada da API.
-     */
     private void performApiCall(Long idEmployeeSolution, String title, String text) {
         if (challengeId == null) {
             Toast.makeText(getContext(), "Erro interno: ID do desafio ausente.", Toast.LENGTH_SHORT).show();

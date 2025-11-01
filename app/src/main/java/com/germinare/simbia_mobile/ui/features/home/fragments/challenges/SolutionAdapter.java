@@ -18,9 +18,6 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
 
     private List<SolutionResponse> solutions;
 
-    // Você pode adicionar um listener aqui se quiser que o clique no card leve a uma tela de detalhes da solução
-    // private OnSolutionClickListener listener;
-
     public SolutionAdapter(List<SolutionResponse> solutions) {
         this.solutions = solutions != null ? solutions : new ArrayList<>();
     }
@@ -44,9 +41,6 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
         return solutions.size();
     }
 
-    /**
-     * Atualiza a lista de soluções e notifica o RecyclerView.
-     */
     public void updateList(List<SolutionResponse> newSolutions) {
         this.solutions.clear();
         if (newSolutions != null) {
@@ -66,7 +60,6 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
 
         public SolutionViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Mapeie os IDs do seu item_solution_suggestion.xml
             ivAuthorLogo = itemView.findViewById(R.id.iv_author_logo);
             tvAuthorName = itemView.findViewById(R.id.tv_author_name);
             tvSolutionTitle = itemView.findViewById(R.id.tv_solution_title);
@@ -74,15 +67,8 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
         }
 
         public void bind(SolutionResponse solution) {
-            // Preenche os dados
             tvSolutionTitle.setText(solution.getTitle());
             tvSolutionShortText.setText(solution.getText());
-
-            // O logo (ivAuthorLogo) geralmente requer uma biblioteca de carregamento de imagem (como Glide ou Picasso)
-            // e uma URL para ser carregado. Por enquanto, ele usa o logo padrão.
-
-            // Lógica para clique no item (se necessário)
-            // tvViewDetails.setOnClickListener(v -> { ... });
         }
     }
 }
