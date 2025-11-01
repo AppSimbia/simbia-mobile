@@ -18,7 +18,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.germinare.simbia_mobile.R;
+import com.germinare.simbia_mobile.data.api.cache.Cache;
+import com.germinare.simbia_mobile.data.api.model.mongo.MessageRequest;
+import com.germinare.simbia_mobile.data.api.repository.MongoRepository;
 import com.germinare.simbia_mobile.databinding.FragmentChatMessagesBinding;
+import com.germinare.simbia_mobile.ui.features.home.fragments.chat.adapter.Chat;
 import com.germinare.simbia_mobile.ui.features.home.fragments.chat.adapter.MessageChat;
 import com.germinare.simbia_mobile.ui.features.home.fragments.chat.adapter.MessagesChatAdapter;
 import com.germinare.simbia_mobile.utils.AlertUtils;
@@ -27,29 +31,16 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ChatMessagesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ChatMessagesFragment extends Fragment {
 
     private FragmentChatMessagesBinding binding;
     private MessagesChatAdapter adapter;
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private Cache cache;
+    private MongoRepository repository;
+    private Chat chat;
     private static final List<String> formasPagamento = List.of("PIX", "Externo");
 
     public ChatMessagesFragment() {}
-
-    public static ChatMessagesFragment newInstance(String param1, String param2) {
-        ChatMessagesFragment fragment = new ChatMessagesFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {super.onCreate(savedInstanceState);}
@@ -58,6 +49,8 @@ public class ChatMessagesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentChatMessagesBinding.inflate(inflater, container, false);
+        cache = Cache.getInstance();
+        repository = new MongoRepository(error -> AlertUtils.showDialogError(requireContext(), error));
         return binding.getRoot();
     }
 
@@ -65,11 +58,12 @@ public class ChatMessagesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         final Bundle args = getArguments();
-        adapter = new MessagesChatAdapter(getContext());
+        adapter = new MessagesChatAdapter(getContext(), cache.getEmployee());
         binding.listMessages.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.listMessages.setAdapter(adapter);
 
         if (args != null){
+            chat = args.getParcelable("chat");
             List<MessageChat> messages = args.getParcelableArrayList("messages");
             messages.forEach(messageChat -> adapter.addMessage(messageChat));
         }
@@ -78,23 +72,18 @@ public class ChatMessagesFragment extends Fragment {
             final Editable messageContent = binding.etChatMessage.getText();
 
             if (messageContent != null && !messageContent.toString().isEmpty()){
-                adapter.addMessage(new MessageChat(
-                        UUID.randomUUID().toString(),
-                        "1",
-                        "2",
-                        messageContent.toString()
-                ));
-                adapter.addMessage(new MessageChat(
-                        UUID.randomUUID().toString(),
-                        "2",
-                        "1",
-                        messageContent.toString()
-                ));
+                repository.addMessage(chat.getId(), new MessageRequest(
+                        messageContent.toString(),
+                        cache.getEmployee().getEmployeeId(),
+                        chat.getId()
+                ), chatResponse -> {
+                    adapter.addMessage(new MessageChat(cache.getEmployee().getEmployeeId(), messageContent.toString()));
+                    binding.listMessages.post(() ->
+                            binding.listMessages.smoothScrollToPosition(adapter.getItemCount() - 1)
+                    );
+                });
 
                 binding.etChatMessage.setText("");
-                binding.listMessages.post(() ->
-                        binding.listMessages.smoothScrollToPosition(adapter.getItemCount() - 1)
-                );
             }
         });
 

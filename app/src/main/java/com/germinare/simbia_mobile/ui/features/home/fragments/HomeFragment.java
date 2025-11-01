@@ -17,6 +17,7 @@ import androidx.navigation.Navigation;
 
 import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.data.api.cache.Cache;
+import com.germinare.simbia_mobile.data.api.model.firestore.EmployeeFirestore;
 import com.germinare.simbia_mobile.data.api.repository.MongoRepository;
 import com.germinare.simbia_mobile.data.api.repository.PostgresRepository;
 import com.germinare.simbia_mobile.data.fireauth.UserAuth;
@@ -48,6 +49,7 @@ public class HomeFragment extends Fragment {
         userAuth = new UserAuth();
         userRepository = new UserRepository(requireContext());
         repository = new PostgresRepository(error -> AlertUtils.showDialogError(requireContext(), error));
+        mongoRepository = new MongoRepository(error -> AlertUtils.showDialogError(requireContext(), error));
 
         return binding.getRoot();
     }
@@ -84,8 +86,9 @@ public class HomeFragment extends Fragment {
         }
 
         userRepository.getUserByUid(user.getUid(), document -> {
-            cache.setEmployee(document);
-//            mongoRepository.findAllChatByEmployeeId(document.getLong("employeeId"), cache::setChats);
+            EmployeeFirestore employee = new EmployeeFirestore(document);
+            cache.setEmployee(employee);
+            mongoRepository.findAllChatByEmployeeId(employee.getUid(), cache::setChats);
             repository.findIndustryById(document.getLong("industryId"), industry -> {
                 cache.setIndustry(industry);
                 repository.listPostsByCnpj(industry.getCnpj(), list -> {

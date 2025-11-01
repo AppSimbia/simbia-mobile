@@ -10,9 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.germinare.simbia_mobile.R;
+import com.germinare.simbia_mobile.data.api.model.firestore.EmployeeFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MessagesChatAdapter extends RecyclerView.Adapter<MessagesChatAdapter.MessagesChatViewHolder> {
 
@@ -20,15 +22,17 @@ public class MessagesChatAdapter extends RecyclerView.Adapter<MessagesChatAdapte
     private static final int MESSAGE_TYPE_RECEIVED = 2;
     private final Context context;
     private final List<MessageChat> messages;
+    private final EmployeeFirestore employee;
 
-    public MessagesChatAdapter(Context context) {
+    public MessagesChatAdapter(Context context, EmployeeFirestore employee) {
         this.context = context;
+        this.employee = employee;
         this.messages = new ArrayList<>();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return messages.get(position).getIdUserSent().equals("1") ? MESSAGE_TYPE_SEND : MESSAGE_TYPE_RECEIVED;
+        return Objects.equals(messages.get(position).getIdEmployee(), employee.getEmployeeId()) ? MESSAGE_TYPE_SEND : MESSAGE_TYPE_RECEIVED;
     }
 
     @NonNull
@@ -55,7 +59,7 @@ public class MessagesChatAdapter extends RecyclerView.Adapter<MessagesChatAdapte
     public void onBindViewHolder(@NonNull MessagesChatViewHolder holder, int position) {
         final MessageChat message = messages.get(position);
 
-        if (message.getIdUserSent().equals("1")){
+        if (Objects.equals(messages.get(position).getIdEmployee(), employee.getEmployeeId())){
             holder.txMessageSent.setText(message.getContent());
         }else{
             holder.txMessageReceived.setText(message.getContent());
@@ -66,11 +70,6 @@ public class MessagesChatAdapter extends RecyclerView.Adapter<MessagesChatAdapte
     public int getItemCount() {
         return messages.size();
     }
-
-    public List<MessageChat> getMessages() {
-        return this.messages;
-    }
-
     public void addMessage(MessageChat message){
         this.messages.add(message);
         notifyItemInserted(getItemCount()-1);

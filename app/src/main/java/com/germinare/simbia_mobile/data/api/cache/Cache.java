@@ -33,6 +33,10 @@ public class Cache {
         return instance;
     }
 
+    public void clearCache(){
+        instance = null;
+    }
+
     public void addListener(OnCacheListener listener){
         this.listeners.add(listener);
     }
@@ -51,8 +55,8 @@ public class Cache {
         return employee;
     }
 
-    public void setEmployee(DocumentSnapshot documentSnapshot) {
-        this.employee = new EmployeeFirestore(documentSnapshot);
+    public void setEmployee(EmployeeFirestore employee) {
+        this.employee = employee;
         notifyListeners();
     }
 

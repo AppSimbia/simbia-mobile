@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -196,7 +195,6 @@ public class FeedFragment extends Fragment {
                 postgresRepository.findPostById(idPost, post -> {
                     List<Post> newList = new ArrayList<>(postsSuggest);
                     newList.add(new Post(post));
-                    Log.d("teste", newList.toString());
                     loadDataAdapters(postsSuggest, newList, postAdapterSuggest);
                 });
             }

@@ -5,13 +5,13 @@ import java.util.List;
 
 public class ChatResponse {
     private String id;
-    private List<Long> participants;
+    private List<String> participants;
     private List<Message> messages;
 
     public class Message{
         private Long idEmployee;
         private String message;
-        private Instant createdAt;
+        private String createdAt;
         private boolean read;
 
         public Long getIdEmployee() {
@@ -22,7 +22,7 @@ public class ChatResponse {
             return message;
         }
 
-        public Instant getCreatedAt() {
+        public String getCreatedAt() {
             return createdAt;
         }
 
@@ -35,7 +35,7 @@ public class ChatResponse {
         return id;
     }
 
-    public List<Long> getParticipants() {
+    public List<String> getParticipants() {
         return participants;
     }
 

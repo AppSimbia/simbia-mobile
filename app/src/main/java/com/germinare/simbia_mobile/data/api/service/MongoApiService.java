@@ -3,6 +3,7 @@ package com.germinare.simbia_mobile.data.api.service;
 import com.germinare.simbia_mobile.data.api.model.mongo.ChatResponse;
 import com.germinare.simbia_mobile.data.api.model.mongo.MatchRequest;
 import com.germinare.simbia_mobile.data.api.model.mongo.MatchResponse;
+import com.germinare.simbia_mobile.data.api.model.mongo.MessageRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,10 @@ public interface MongoApiService {
     @GET("/chats/{id}")
     Call<ChatResponse> findChatById(@Path("id") String id);
 
+    @POST("/chats/{id}/messages")
+    Call<ChatResponse> addMessage(@Path("id") String id, @Body MessageRequest request);
+
     @GET("/chats/list/{id}")
-    Call<List<ChatResponse>> findAllChatByEmployeeId(@Path("id") Long id);
+    Call<List<ChatResponse>> findAllChatByEmployeeId(@Path("id") String id);
 
 }

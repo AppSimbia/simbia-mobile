@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.germinare.simbia_mobile.data.api.model.mongo.ChatResponse;
 import com.germinare.simbia_mobile.data.api.model.mongo.MatchRequest;
 import com.germinare.simbia_mobile.data.api.model.mongo.MatchResponse;
+import com.germinare.simbia_mobile.data.api.model.mongo.MessageRequest;
 import com.germinare.simbia_mobile.data.api.retrofit.ApiServiceFactory;
 import com.germinare.simbia_mobile.data.api.service.MongoApiService;
 
@@ -55,6 +56,35 @@ public class MongoRepository {
 
             @Override
             public void onFailure(@NonNull Call<MatchResponse> call, @NonNull Throwable t) {
+                Log.e(TAG, "createMatch error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
+
+    public void addMessage(String id, MessageRequest request, Consumer<ChatResponse> onSuccessful) {
+        Log.d(TAG, "addMessage called with request: " + request);
+        Call<ChatResponse> call = apiService.addMessage(id, request);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ChatResponse> call, @NonNull Response<ChatResponse> response) {
+                Log.d(TAG, "addMessage response code: " + response.code());
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "addMessage success: " + response.body());
+                    onSuccessful.accept(response.body());
+                } else {
+                    try {
+                        Log.e(TAG, "addMessage failed: " + response.errorBody().string());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    onFailure.accept(MESSAGE_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ChatResponse> call, @NonNull Throwable t) {
                 Log.e(TAG, "createMatch error: ", t);
                 onFailure.accept(MESSAGE_ERROR);
             }
@@ -111,7 +141,7 @@ public class MongoRepository {
         });
     }
 
-    public void findAllChatByEmployeeId(Long employeeId, Consumer<List<ChatResponse>> onSuccessful) {
+    public void findAllChatByEmployeeId(String employeeId, Consumer<List<ChatResponse>> onSuccessful) {
         Log.d(TAG, "findAllChatByEmployeeId called with id: " + employeeId);
         Call<List<ChatResponse>> call = apiService.findAllChatByEmployeeId(employeeId);
 
