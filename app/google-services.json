@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "378459638272-1ajmtb4ng1qtmnurl236al2bk175f15p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.germinare.simbia_mobile",
+            "certificate_hash": "426e80a9f8986a3c144c3724ac047bf302de2896"
+          }
+        },
+        {
           "client_id": "378459638272-d1s67o7oqed9l2e9n8uqgj487mdc9kkr.apps.googleusercontent.com",
           "client_type": 3
         }

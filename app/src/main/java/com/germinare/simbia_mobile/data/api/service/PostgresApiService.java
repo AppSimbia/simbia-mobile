@@ -42,4 +42,7 @@ public interface PostgresApiService {
     @GET("/posts/category/list")
     Call<List<ProductCategoryResponse>> findAllProductsCategories();
 
+    @GET("/posts/list/{id}/employee")
+    Call<List<PostResponse>> findAllPostsByEmployee(@Path("id") Long id);
+
 }

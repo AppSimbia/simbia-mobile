@@ -1,4 +1,3 @@
-// app/src/main/java/com/germinare/simbia_mobile/utils/CameraGalleryUtils.java
 package com.germinare.simbia_mobile.utils;
 
 import android.Manifest;
@@ -46,7 +45,6 @@ public class CameraGalleryUtils {
         this.context = fragment.requireContext();
         this.listener = listener;
 
-        // Resultado da câmera
         takePictureLauncher = fragment.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -59,7 +57,6 @@ public class CameraGalleryUtils {
                 }
         );
 
-        // Resultado da galeria
         pickImageLauncher = fragment.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -71,7 +68,6 @@ public class CameraGalleryUtils {
                 }
         );
 
-        // Permissão de câmera
         requestCameraPermissionLauncher = fragment.registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
                 isGranted -> {
@@ -83,7 +79,6 @@ public class CameraGalleryUtils {
                 }
         );
 
-        // Permissão de galeria
         requestStoragePermissionLauncher = fragment.registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
                 isGranted -> {
@@ -99,7 +94,6 @@ public class CameraGalleryUtils {
         );
     }
 
-    // Tirar foto
     public void takePhoto() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -107,7 +101,6 @@ public class CameraGalleryUtils {
         } else requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA);
     }
 
-    // Escolher da galeria
     public void selectImageFromGallery() {
         String permission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                 ? Manifest.permission.READ_MEDIA_IMAGES
@@ -139,7 +132,6 @@ public class CameraGalleryUtils {
                 String authority = context.getPackageName() + ".fileprovider";
                 photoUri = FileProvider.getUriForFile(context, authority, photoFile);
 
-                // Garante leitura para qualquer app que precise gravar via FileProvider
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
@@ -166,12 +158,10 @@ public class CameraGalleryUtils {
         return photoUri;
     }
 
-    // Novo: expõe o File caso exista (útil para upload interno)
     public File getPhotoFile() {
         return photoFile;
     }
 
-    // Novo: retorna uma Uri adequada para upload (prefere Uri.fromFile quando o File existe)
     public Uri getUriForUpload() {
         if (photoFile != null && photoFile.exists()) {
             return Uri.fromFile(photoFile);

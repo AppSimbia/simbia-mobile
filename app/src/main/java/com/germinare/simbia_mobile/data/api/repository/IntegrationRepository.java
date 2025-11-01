@@ -4,13 +4,14 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.germinare.simbia_mobile.data.api.model.integration.LawResponse;
 import com.germinare.simbia_mobile.data.api.model.integration.PostSuggestRequest;
 import com.germinare.simbia_mobile.data.api.model.integration.PostSuggestResponse;
-import com.germinare.simbia_mobile.data.api.model.mongo.MatchResponse;
 import com.germinare.simbia_mobile.data.api.retrofit.ApiServiceFactory;
 import com.germinare.simbia_mobile.data.api.service.IntegrationApiService;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.function.Consumer;
 
 import retrofit2.Call;
@@ -24,12 +25,33 @@ public class IntegrationRepository {
     private final Consumer<String> onFailure;
     private static final String MESSAGE_ERROR = "Ocorreu um erro inesperado. Tente novamente mais tarde.";
 
+
     public IntegrationRepository(Consumer<String> onFailure) {
         this.onFailure = onFailure;
         this.apiService = ApiServiceFactory.getIntegrationApi();
         Log.d(TAG, "MongoRepository initialized");
     }
+    public void listLaws(final Consumer<List<LawResponse>> onSuccessful) {
 
+        Call<List<LawResponse>> call = apiService.findAllLaws();
+
+        call.enqueue(new Callback<List<LawResponse>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<LawResponse>> call, @NonNull Response<List<LawResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    onSuccessful.accept(response.body());
+                } else {
+                    onFailure.accept(MESSAGE_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<LawResponse>> call, @NonNull Throwable t) {
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+
+    }
     public void suggestPost(PostSuggestRequest request, Consumer<PostSuggestResponse> onSuccessful){
         Log.d(TAG, "suggestPost called with request: " + request.toString());
         Call<PostSuggestResponse> call = apiService.suggestPost(request);

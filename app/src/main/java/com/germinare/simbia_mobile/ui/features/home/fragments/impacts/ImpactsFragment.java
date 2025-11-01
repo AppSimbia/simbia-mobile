@@ -1,6 +1,5 @@
-package com.germinare.simbia_mobile.ui.features.profile.fragments;
+package com.germinare.simbia_mobile.ui.features.home.fragments.impacts;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,17 +7,20 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.ui.features.splashScreen.SplashScreen;
-import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
+ * Use the {@link ImpactsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProfileFragment extends Fragment {
+public class ImpactsFragment extends Fragment {
+
+    private WebView webViewPowerBI3;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,12 +28,10 @@ public class ProfileFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    FirebaseAuth objAuth = FirebaseAuth.getInstance();
-
     private String mParam1;
     private String mParam2;
 
-    public ProfileFragment() {
+    public ImpactsFragment() {
         // Required empty public constructor
     }
 
@@ -41,11 +41,11 @@ public class ProfileFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileConfig.
+     * @return A new instance of fragment ImpactsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
+    public static ImpactsFragment newInstance(String param1, String param2) {
+        ImpactsFragment fragment = new ImpactsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -66,27 +66,31 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_impacts, container, false);
 
-        // Clique no ícone de configurações → abre SettingsFragment
-        view.findViewById(R.id.settings_icon).setOnClickListener(v -> {
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.profile_fragment_container, new SettingsFragment())
-                    .addToBackStack(null)
-                    .commit();
-        });
+        webViewPowerBI3 = view.findViewById(R.id.webviewPowerBI3);
 
-        // Clique no botão SAIR → fecha a Activity (ou faz logout)
-        view.findViewById(R.id.btn_sair).setOnClickListener(v -> {
-            objAuth.signOut();
-            requireActivity().finish();
-            Intent intent = new Intent(requireActivity(), SplashScreen.class);
-            startActivity(intent);
-        });
-
-        // Aqui você pode adicionar listeners para switches ou outros elementos se necessário
+        setupWebView();
 
         return view;
+    }
+
+    private void setupWebView() {
+        WebSettings webSettings3 = webViewPowerBI3.getSettings();
+
+        webSettings3.setJavaScriptEnabled(true);
+        webSettings3.setDomStorageEnabled(true);
+
+        String powerBiUrl3 = "https://app.powerbi.com/view?r=eyJrIjoiZjE1YTY2ZjktNmEwZi00OGQ3LTk4YjUtYjM2MjJjZWE4NzNhIiwidCI6ImIxNDhmMTRjLTIzOTctNDAyYy1hYjZhLTFiNDcxMTE3N2FjMCJ9";
+
+
+        webViewPowerBI3.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                webViewPowerBI3.setVisibility(View.VISIBLE);
+            }
+        });
+
+        webViewPowerBI3.loadUrl(powerBiUrl3);
     }
 }
