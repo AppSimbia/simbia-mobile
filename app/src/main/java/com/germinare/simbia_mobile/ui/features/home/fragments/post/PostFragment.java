@@ -47,7 +47,7 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
     private CameraGalleryUtils cameraGalleryUtils;
 
     private static final List<String> classifications = Arrays.asList(
-            "A", "B", "C"
+            "Perigoso", "Não perigoso não inerte", "Não perigoso inerte"
     );
     private static final List<String> measuresUnits = Arrays.asList(
             "Kg", "Litro", "Metro", "Unidade"

@@ -3,6 +3,7 @@ package com.germinare.simbia_mobile.ui.features.home.fragments.chat;
 import static android.view.View.VISIBLE;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.LayoutInflater;
@@ -15,12 +16,16 @@ import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.databinding.FragmentChatMessagesBinding;
 import com.germinare.simbia_mobile.ui.features.home.fragments.chat.adapter.MessageChat;
 import com.germinare.simbia_mobile.ui.features.home.fragments.chat.adapter.MessagesChatAdapter;
+import com.germinare.simbia_mobile.ui.features.payment.activity.PaymentActivity;
 import com.germinare.simbia_mobile.utils.AlertUtils;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -156,7 +161,12 @@ public class ChatMessagesFragment extends Fragment {
         alert.show();
     }
 
-    private void solicitarConfirmacao(){}private void showDialogCancelar(){
+    private void solicitarConfirmacao(){
+        Intent intent = new Intent(requireActivity(), PaymentActivity.class);
+        requireActivity().startActivity(intent);
+    }
+
+    private void showDialogCancelar(){
         AlertUtils.DialogAlertBuilder alertBuilder = new AlertUtils.DialogAlertBuilder();
         alertBuilder.setTitle("Abandonar Match");
         alertBuilder.setDescription("Deseja mesmo abandonar esse Match?");

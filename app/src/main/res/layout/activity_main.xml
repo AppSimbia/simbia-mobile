@@ -28,33 +28,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize">
 
-                <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="24dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    app:srcCompat="@drawable/outline_menu_24" />
-
                 <TextView
                     android:id="@+id/toolbar_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_gravity="start"
                     android:fontFamily="@font/plus_jakarta_sans"
                     android:textAppearance="?attr/textAppearanceTitleLarge"
                     android:textColor="?attr/colorOnSurface" />
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/imageView"
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    app:srcCompat="@drawable/logo_simbia" />
+                    app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+                    app:srcCompat="@drawable/photo_default" />
             </com.google.android.material.appbar.MaterialToolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <!-- NAV HOST -->
         <fragment
             android:id="@+id/nav_host_fragment_activity_main"
             android:name="androidx.navigation.fragment.NavHostFragment"
@@ -67,7 +60,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- BOTTOM NAV -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/nav_view"
             android:layout_width="0dp"
@@ -82,37 +74,4 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- MENU LATERAL -->
-    <!-- DRAWER MENU COM RECYCLER -->
-    <LinearLayout
-        android:layout_width="280dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@color/md_theme_primaryContainer"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <!-- Título -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Acesso Rápido"
-            android:textColor="@android:color/white"
-            android:layout_gravity="center_horizontal"
-            android:fontFamily="@font/k2d_bold"
-            android:layout_marginTop="60dp"
-            android:textSize="30sp"
-            android:paddingBottom="16dp" />
-
-        <!-- RecyclerView para os itens -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/drawerRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipToPadding="false" />
-
-    </LinearLayout>
-
 </androidx.drawerlayout.widget.DrawerLayout>

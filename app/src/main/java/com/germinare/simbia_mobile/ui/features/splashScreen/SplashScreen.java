@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.germinare.simbia_mobile.databinding.ActivitySplashScreenBinding;
 import com.germinare.simbia_mobile.ui.features.home.activity.MainActivity;
 import com.germinare.simbia_mobile.ui.features.login.activity.LoginActivity;
+import com.germinare.simbia_mobile.ui.features.login.activity.LoginChangedPasswordActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -66,6 +67,13 @@ public class SplashScreen extends AppCompatActivity {
             view.setAlpha(0f);
             view.setTranslationY(200f);
         }
+
+        binding.btnSignin.setOnClickListener(v -> {
+            if (binding.btnSignin.getVisibility() == VISIBLE) {
+                Intent intent = new Intent(SplashScreen.this, LoginChangedPasswordActivity.class);
+                startActivity(intent);
+            }
+        });
 
         binding.btnFirstAccess.setOnClickListener(V -> {
             if (binding.btnSignin.getVisibility() == VISIBLE) {

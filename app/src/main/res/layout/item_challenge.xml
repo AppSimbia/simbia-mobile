@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/logo_simbia"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_brand_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="24sp"
+            android:fontFamily="@font/k2d_bold"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toEndOf="@id/iv_logo"
+            app:layout_constraintTop_toTopOf="@id/iv_logo"
+            app:layout_constraintBottom_toBottomOf="@id/iv_logo" />
+
+        <TextView
+            android:id="@+id/tv_challenge_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Lorem ipsum dolor sit amet, dolore"
+            android:textSize="20sp"
+            android:fontFamily="@font/k2d_bold"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_logo" />
+
+        <TextView
+            android:id="@+id/tv_challenge_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+            android:textSize="16sp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_challenge_title" />
+
+        <TextView
+            android:id="@+id/tv_suggest_solution"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sugerir Solução"
+            android:textSize="16sp"
+            android:textColor="@color/md_theme_primary"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toStartOf="@id/iv_arrow"
+            app:layout_constraintTop_toBottomOf="@id/tv_challenge_description"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <ImageView
+            android:id="@+id/iv_arrow"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/baseline_arrow_forward_ios_24"
+            android:layout_marginStart="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_suggest_solution"
+            app:layout_constraintBottom_toBottomOf="@id/tv_suggest_solution" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
