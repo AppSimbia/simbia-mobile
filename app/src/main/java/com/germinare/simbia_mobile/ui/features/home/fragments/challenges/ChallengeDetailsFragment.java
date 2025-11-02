@@ -29,7 +29,7 @@ import retrofit2.Response;
 
 public class ChallengeDetailsFragment extends Fragment {
 
-    private static final String TAG = "ChallengeDetailsFragment"; // Tag para logs
+    private static final String TAG = "ChallengeDetailsFragment";
 
     private String challengeId;
     private TextView tvCompany;
@@ -45,7 +45,6 @@ public class ChallengeDetailsFragment extends Fragment {
     private SolutionAdapter solutionAdapter;
 
     public ChallengeDetailsFragment() {
-        // Construtor público obrigatório
     }
 
     @Override

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/image_post"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintDimensionRatio="16:9"
+            android:scaleType="centerCrop"
+            android:src="@drawable/carrosel_mock" />
+
+        <TextView
+            android:id="@+id/tx_title_post"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/image_post"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="Título do Post"
+            android:textStyle="bold"
+            android:textColor="@color/md_theme_onSurface"/>
+
+        <TextView
+            android:id="@+id/tx_preco_post"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            app:layout_constraintTop_toBottomOf="@id/tx_title_post"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="R$ 100" />
+
+        <TextView
+            android:id="@+id/tx_qntd_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            app:layout_constraintTop_toBottomOf="@id/tx_title_post"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="Qtd: 10" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image_industry_post"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/tx_qntd_post"
+            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/photo_default"
+            app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

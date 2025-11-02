@@ -4,6 +4,7 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.germinare.simbia_mobile.data.api.model.firestore.EmployeeFirestore;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -42,5 +43,9 @@ public class UserRepository {
                 .addOnSuccessListener(onSucessFunction::accept)
                 .addOnFailureListener(e ->
                         Toast.makeText(ctx, "Erro ao atualizar usuário: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    public DocumentReference getUserDocumentReference(String uid) {
+        return db.collection(COLLECTION_NAME).document(uid);
     }
 }

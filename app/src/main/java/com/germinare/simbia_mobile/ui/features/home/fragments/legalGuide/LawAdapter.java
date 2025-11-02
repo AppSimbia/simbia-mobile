@@ -14,12 +14,16 @@ import java.util.List;
 
 public class LawAdapter extends RecyclerView.Adapter<LawAdapter.LawViewHolder> {
 
-    private List<LawResponse> lawList = new ArrayList<>();
+    public interface OnLawClickListener {
+        void onLawClick(String url);
+    }
 
-    public LawAdapter(List<LawResponse> initialList) {
-        if (initialList != null) {
-            this.lawList = initialList;
-        }
+    private List<LawResponse> lawList = new ArrayList<>();
+    private final OnLawClickListener listener;
+
+    public LawAdapter(List<LawResponse> initialList, OnLawClickListener listener) {
+        if (initialList != null) this.lawList = initialList;
+        this.listener = listener;
     }
 
     public void submitList(List<LawResponse> newList) {
@@ -32,7 +36,7 @@ public class LawAdapter extends RecyclerView.Adapter<LawAdapter.LawViewHolder> {
     public LawViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_law, parent, false);
-        return new LawViewHolder(view);
+        return new LawViewHolder(view, listener);
     }
 
     @Override
@@ -48,27 +52,34 @@ public class LawAdapter extends RecyclerView.Adapter<LawAdapter.LawViewHolder> {
 
     public static class LawViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView tvTitle;
-        private final TextView tvEmenta;
-        private final TextView tvArea;
-        private final TextView tvAssunto;
+        private final TextView tvTitle, tvEmenta, tvArea, tvAssunto;
+        private final View btnVerDetalhes;
 
-        public LawViewHolder(@NonNull View itemView) {
+        public LawViewHolder(@NonNull View itemView, OnLawClickListener listener) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tv_law_title);
             tvEmenta = itemView.findViewById(R.id.tv_law_ementa);
             tvArea = itemView.findViewById(R.id.tv_law_area);
             tvAssunto = itemView.findViewById(R.id.tv_law_assunto);
+            btnVerDetalhes = itemView.findViewById(R.id.btn_view_details);
+
+            btnVerDetalhes.setOnClickListener(v -> {
+                if (listener != null && getBindingAdapterPosition() != RecyclerView.NO_POSITION) {
+                    LawResponse law = (LawResponse) v.getTag();
+                    listener.onLawClick(law.getLink());
+                }
+            });
         }
 
         public void bind(LawResponse law) {
             String title = String.format("%s nº %s/%d", law.getDocumento(), law.getNumero(), law.getAno());
             tvTitle.setText(title);
-
             tvEmenta.setText(law.getEmenta());
+            tvArea.setText("Área: " + law.getArea());
+            tvAssunto.setText("Assunto: " + law.getAssunto());
 
-            tvArea.setText(String.format("Área: %s", law.getArea()));
-            tvAssunto.setText(String.format("Assunto: %s", law.getAssunto()));
+            btnVerDetalhes.setTag(law);
         }
     }
 }
+

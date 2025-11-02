@@ -68,4 +68,5 @@ dependencies {
     implementation("com.google.firebase:firebase-storage:21.0.1")
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("androidx.core:core:1.13.1")
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
 }

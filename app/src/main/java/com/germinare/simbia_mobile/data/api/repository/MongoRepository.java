@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.germinare.simbia_mobile.data.api.model.mongo.ChalengeResponse;
 import com.germinare.simbia_mobile.data.api.model.mongo.ChatResponse;
 import com.germinare.simbia_mobile.data.api.model.mongo.MatchRequest;
 import com.germinare.simbia_mobile.data.api.model.mongo.MatchResponse;
@@ -131,4 +132,24 @@ public class MongoRepository {
             }
         });
     }
+
+    public void listChallenges(Consumer<List<ChalengeResponse>> onSuccess) {
+        Call<List<ChalengeResponse>> call = apiService.listChallenges();
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<List<ChalengeResponse>> call, @NonNull Response<List<ChalengeResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    onSuccess.accept(response.body());
+                } else {
+                    onFailure.accept("Falha ao buscar desafios");
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<ChalengeResponse>> call, @NonNull Throwable t) {
+                onFailure.accept("Erro de rede ao buscar desafios");
+            }
+        });
+    }
+
 }

@@ -4,10 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.germinare.simbia_mobile.R;
 
 import java.util.ArrayList;
@@ -20,8 +22,10 @@ public class MessagesChatBotAdapter extends RecyclerView.Adapter<MessagesChatBot
 
     private static final int MESSAGE_TYPE_SEND = 1;
     private static final int MESSAGE_TYPE_RECEIVED = 2;
+    private static final int MESSAGE_TYPE_LOADING = 3;
     private final Context context;
     private final List<MessageChatBot> messages;
+
 
     public MessagesChatBotAdapter(Context context) {
         this.context = context;
@@ -30,12 +34,29 @@ public class MessagesChatBotAdapter extends RecyclerView.Adapter<MessagesChatBot
 
     @Override
     public int getItemViewType(int position) {
-        return messages.get(position).getIdUserSent().equals("1") ? MESSAGE_TYPE_SEND : MESSAGE_TYPE_RECEIVED;
+        MessageChatBot message = messages.get(position);
+
+        if (message.isLoading()) {
+            return MESSAGE_TYPE_LOADING; // Usa o layout de GIF
+        } else if (message.getIdUserSent().equals("1")) {
+            return MESSAGE_TYPE_SEND;
+        } else {
+            return MESSAGE_TYPE_RECEIVED;
+        }
     }
 
     @Override
     public MessagesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == MESSAGE_TYPE_SEND) {
+        if (viewType == MESSAGE_TYPE_LOADING) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.messages_row_loading_gif, // Certifique-se de que este layout existe
+                    parent,
+                    false
+            );
+            return new MessagesViewHolder(view);
+        }
+
+        else if (viewType == MESSAGE_TYPE_SEND) {
             View view = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.messages_row_sent,
                     parent,
@@ -56,9 +77,18 @@ public class MessagesChatBotAdapter extends RecyclerView.Adapter<MessagesChatBot
     public void onBindViewHolder(final MessagesViewHolder holder, int position) {
         final MessageChatBot message = messages.get(position);
 
-        if (message.getIdUserSent().equals("1")){
+        if (holder.getItemViewType() == MESSAGE_TYPE_LOADING) {
+            // LÓGICA DO GLIDE: Carrega o GIF na ImageView
+            Glide.with(context)
+                    .asGif()
+                    .load(message.getGifUrl())
+                    .into(holder.gifLoadingView); // Usa a nova View do ViewHolder
+
+        } else if (message.getIdUserSent().equals("1")){
+            // Exibe mensagem enviada (somente se não for loading)
             holder.txMessageSent.setText(message.getContent());
-        }else{
+        } else {
+            // Exibe mensagem recebida (somente se não for loading)
             holder.txMessageReceived.setText(message.getContent());
         }
     }
@@ -79,11 +109,17 @@ public class MessagesChatBotAdapter extends RecyclerView.Adapter<MessagesChatBot
 
     public static class MessagesViewHolder extends RecyclerView.ViewHolder {
         final TextView txMessageSent, txMessageReceived;
+        final ImageView gifLoadingView; // Novo campo para a ImageView do GIF
 
         MessagesViewHolder(View view){
             super(view);
+
+            // Tenta encontrar as TextViews (existem nos layouts de Send e Received)
             this.txMessageSent = view.findViewById(R.id.txMessageSent);
             this.txMessageReceived = view.findViewById(R.id.txMessageReceived);
+
+            // Tenta encontrar a ImageView do GIF (existe apenas no messages_row_loading_gif)
+            this.gifLoadingView = view.findViewById(R.id.gif_loading_view);
         }
     }
 }
