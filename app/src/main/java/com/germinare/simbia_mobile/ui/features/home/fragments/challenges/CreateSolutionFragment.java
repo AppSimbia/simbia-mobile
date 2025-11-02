@@ -11,11 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.germinare.simbia_mobile.data.api.model.mongo.ChallengeResponse;
 import com.germinare.simbia_mobile.data.firestore.UserRepository;
 import com.google.android.material.textfield.TextInputEditText;
 
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.data.api.model.mongo.ChalengeResponse;
 import com.germinare.simbia_mobile.data.api.model.mongo.SolutionRequest;
 import com.germinare.simbia_mobile.data.api.retrofit.ApiServiceFactory;
 import com.germinare.simbia_mobile.data.api.service.MongoApiService;
@@ -128,7 +128,7 @@ public class CreateSolutionFragment extends Fragment {
 
         mongoApiService.createSolution(challengeId, request).enqueue(new Callback<>() {
             @Override
-            public void onResponse(@NonNull Call<ChalengeResponse> call, @NonNull Response<ChalengeResponse> response) {
+            public void onResponse(@NonNull Call<ChallengeResponse> call, @NonNull Response<ChallengeResponse> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(getContext(), "Solução enviada com sucesso!", Toast.LENGTH_LONG).show();
                     if (getActivity() != null) {
@@ -140,7 +140,7 @@ public class CreateSolutionFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ChalengeResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ChallengeResponse> call, @NonNull Throwable t) {
                 Toast.makeText(getContext(), "Falha na conexão: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });

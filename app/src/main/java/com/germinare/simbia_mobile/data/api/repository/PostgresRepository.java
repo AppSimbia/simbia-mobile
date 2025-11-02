@@ -58,6 +58,35 @@ public class PostgresRepository {
         });
     }
 
+    public void findIndustryByIdEmployee(Long id, Consumer<IndustryResponse> onSuccessful) {
+        Log.d(TAG, "findIndustryByIdEmployee called with id: " + id);
+        Call<IndustryResponse> call = apiService.findIndustryByIdEmployee(id);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<IndustryResponse> call, @NonNull Response<IndustryResponse> response) {
+                Log.d(TAG, "findIndustryByIdEmployee response: " + response.code());
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "findIndustryByIdEmployee success: " + response.body());
+                    onSuccessful.accept(response.body());
+                } else {
+                    try {
+                        Log.e(TAG, "findIndustryByIdEmployee failed: " + response.errorBody().string());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    onFailure.accept(MESSAGE_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<IndustryResponse> call, @NonNull Throwable t) {
+                Log.e(TAG, "findIndustryByIdEmployee error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
+
     public void findIndustryByCnpj(String cnpj, Consumer<IndustryResponse> onSuccessful) {
         Log.d(TAG, "findIndustryById called with cnpj: " + cnpj);
         Call<IndustryResponse> call = apiService.findIndustryByCnpj(cnpj);

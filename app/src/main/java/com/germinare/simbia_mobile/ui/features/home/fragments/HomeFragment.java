@@ -10,30 +10,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.data.api.cache.Cache;
 import com.germinare.simbia_mobile.data.api.model.firestore.EmployeeFirestore;
-import com.germinare.simbia_mobile.data.api.repository.MongoRepository;
-import com.germinare.simbia_mobile.data.api.cache.PostgresCache;
-import com.germinare.simbia_mobile.data.api.model.mongo.ChalengeResponse;
-import com.germinare.simbia_mobile.data.api.model.postgres.IndustryResponse;
 import com.germinare.simbia_mobile.data.api.model.postgres.PostResponse;
+import com.germinare.simbia_mobile.data.api.repository.MongoRepository;
 import com.germinare.simbia_mobile.data.api.repository.PostgresRepository;
-import com.germinare.simbia_mobile.data.api.retrofit.ApiServiceFactory;
-import com.germinare.simbia_mobile.data.api.service.MongoApiService;
 import com.germinare.simbia_mobile.data.fireauth.UserAuth;
 import com.germinare.simbia_mobile.data.firestore.UserRepository;
 import com.germinare.simbia_mobile.databinding.FragmentHomeBinding;
-import com.germinare.simbia_mobile.ui.features.home.fragments.challenges.ChallengeAdapter;
+import com.germinare.simbia_mobile.ui.features.home.fragments.challenges.Challenge;
+import com.germinare.simbia_mobile.ui.features.home.fragments.challenges.ChallengePagerAdapter;
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.Post;
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.PostPagerAdapter;
 import com.germinare.simbia_mobile.ui.features.splashScreen.SplashScreen;
@@ -43,14 +37,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
 
@@ -70,12 +58,13 @@ public class HomeFragment extends Fragment {
     private String lastText = "";
 
     private final List<Post> topThreePosts = new ArrayList<>();
-    private ChallengeAdapter challengeAdapter;
+    private final List<Challenge> latestTwoChallenges = new ArrayList<>();
+    private ChallengePagerAdapter challengePagerAdapter;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mongoApiService = ApiServiceFactory.getMongoApi();
     }
 
     @Override
@@ -83,25 +72,30 @@ public class HomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
 
-        postgresCache = PostgresCache.getInstance();
+        cache = Cache.getInstance();
         userAuth = new UserAuth();
         userRepository = new UserRepository(requireContext());
-        repository = new PostgresRepository(error ->
-                Toast.makeText(requireContext(), "Erro: " + error, Toast.LENGTH_LONG).show());
         repository = new PostgresRepository(error -> AlertUtils.showDialogError(requireContext(), error));
         mongoRepository = new MongoRepository(error -> AlertUtils.showDialogError(requireContext(), error));
 
         postPagerAdapter = new PostPagerAdapter(topThreePosts, this::onClickPost);
+        challengePagerAdapter = new ChallengePagerAdapter(latestTwoChallenges, response -> {
+            Log.d(TAG, "Desafio clicado: " + response.getId());
+            Bundle bundle = new Bundle();
+            bundle.putString("challengeId", response.getId());
+            Navigation.findNavController(requireView())
+                    .navigate(R.id.challengeDetailsFragment, bundle);
+        });
+        binding.vpChallengesHome.setAdapter(challengePagerAdapter);
+        binding.vpChallengesHome.setOffscreenPageLimit(3);
+        binding.vpChallengesHome.setClipToPadding(false);
+        binding.vpChallengesHome.setClipChildren(false);
+        binding.vpChallengesHome.getChildAt(0).setOverScrollMode(View.OVER_SCROLL_NEVER);
 
-        // Navegação para Painel de Impacto e Guia Legal
         binding.ivLegalGuide.setOnClickListener(v -> Navigation.findNavController(requireView())
                 .navigate(R.id.action_homeFragment_to_legalGuideFragment));
         binding.ivPainelImpacto.setOnClickListener(v -> Navigation.findNavController(requireView())
                 .navigate(R.id.action_navigation_home_to_navigation_impacts));
-
-        // Configura RecyclerView dos desafios
-        binding.rvChallengesHome.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.rvChallengesHome.setHasFixedSize(true);
 
         return binding.getRoot();
     }
@@ -118,7 +112,6 @@ public class HomeFragment extends Fragment {
         loadData();
         setupInputHandling();
         setupCarrossel();
-        fetchChallenges();
     }
 
     @Override
@@ -168,74 +161,20 @@ public class HomeFragment extends Fragment {
             });
             repository.listProductCategories(cache::setProductCategory);
         });
-    }
 
-    private void fetchChallenges() {
-        Log.d(TAG, "fetchChallenges: solicitando desafios...");
-        mongoApiService.listChallenges().enqueue(new Callback<List<ChalengeResponse>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<ChalengeResponse>> call, @NonNull Response<List<ChalengeResponse>> response) {
-                if (response.isSuccessful() && response.body() != null && binding != null) {
-                    List<ChalengeResponse> challenges = response.body();
-                    Log.d(TAG, "fetchChallenges: " + challenges.size() + " desafios recebidos");
+        mongoRepository.findAllChallenges(response -> {
+            latestTwoChallenges.clear();
 
-                    // Pega apenas os 2 mais recentes
-                    List<ChalengeResponse> latestTwoChallenges = new ArrayList<>();
-                    if (!challenges.isEmpty()) latestTwoChallenges.add(challenges.get(0));
-                    if (challenges.size() > 1) latestTwoChallenges.add(challenges.get(1));
+            latestTwoChallenges.addAll((response.size() > 3 ? response.subList(0, 3) : response).stream()
+                    .map(Challenge::new).collect(Collectors.toList()));
 
-                    Log.d(TAG, "fetchChallenges: usando " + latestTwoChallenges.size() + " desafios mais recentes");
-
-                    // Inicializa industryMap vazio
-                    Map<Long, IndustryResponse> industryMap = new HashMap<>();
-
-                    // Inicializa adapter
-                    challengeAdapter = new ChallengeAdapter(industryMap, new ChallengeAdapter.OnChallengeClickListener() {
-                        @Override
-                        public void onSuggestSolutionClick(ChalengeResponse challenge) {
-                            // Aqui você pode abrir tela de sugerir solução
-                            Log.d(TAG, "Sugerir solução: " + challenge.getId());
-                        }
-
-                        @Override
-                        public void onClick(ChalengeResponse challenge) {
-                            Log.d(TAG, "Desafio clicado: " + challenge.getId());
-                            Bundle bundle = new Bundle();
-                            bundle.putString("challengeId", challenge.getId());
-                            Navigation.findNavController(requireView())
-                                    .navigate(R.id.challengeDetailsFragment, bundle);
-                        }
-                    });
-
-                    binding.rvChallengesHome.setAdapter(challengeAdapter);
-                    challengeAdapter.setChallenges(latestTwoChallenges);
-
-                    // Preenche industryMap a partir do employeeId
-                    for (ChalengeResponse ch : latestTwoChallenges) {
-                        Long employeeId = ch.getIdEmployeeQuestion();
-                        if (employeeId != null) {
-                            repository.findIndustryById(employeeId, industry -> {
-                                if (industry != null) {
-                                    industryMap.put(employeeId, industry);
-                                    // Notifica adapter sobre atualização
-                                    if (challengeAdapter != null) {
-                                        challengeAdapter.notifyDataSetChanged();
-                                    }
-                                }
-                            });
-                        }
-                    }
-
-                } else {
-                    Log.e(TAG, "fetchChallenges: resposta inválida ou vazia");
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<List<ChalengeResponse>> call, @NonNull Throwable t) {
-                Log.e(TAG, "Erro ao buscar desafios", t);
-                Toast.makeText(requireContext(), "Falha ao buscar desafios", Toast.LENGTH_SHORT).show();
-            }
+            latestTwoChallenges.forEach(challenge -> {
+                repository.findIndustryByIdEmployee(challenge.getIdEmployeeQuestion(), industryResponse -> {
+                    challenge.setIndustryImage(industryResponse.getImage());
+                    challenge.setIndustryName(industryResponse.getIndustryName());
+                    challengePagerAdapter.notifyDataSetChanged();
+                });
+            });
         });
     }
 

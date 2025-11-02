@@ -26,6 +26,9 @@ public interface PostgresApiService {
     @GET("/industries/cnpj/{cnpj}")
     Call<IndustryResponse> findIndustryByCnpj(@Path("cnpj") String cnpj);
 
+    @GET("/industries/id/{id}/employee")
+    Call<IndustryResponse> findIndustryByIdEmployee(@Path("id") Long id);
+
     // POSTS
     @POST("/posts")
     Call<PostResponse> createPost(@Body PostRequest post);

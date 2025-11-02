@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.germinare.simbia_mobile.R; // Import do arquivo R
-import com.germinare.simbia_mobile.data.api.model.mongo.ChalengeResponse;
+import com.germinare.simbia_mobile.data.api.model.mongo.ChallengeResponse;
 import com.germinare.simbia_mobile.data.api.retrofit.ApiServiceFactory;
 import com.germinare.simbia_mobile.data.api.service.MongoApiService;
 
@@ -28,11 +28,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 // Implementando a interface de clique para receber o evento do Adapter
-public class ChallengesFragment extends Fragment implements ChallengeAdapter.OnChallengeClickListener {
+public class ChallengesFragment extends Fragment {
 
     private RecyclerView rvChallenges;
-    private ChallengeAdapter adapter;
-    private List<ChalengeResponse> challengeList = new ArrayList<>();
+    private ChallengePagerAdapter adapter;
+    private List<ChallengeResponse> challengeList = new ArrayList<>();
     private MongoApiService mongoApiService;
 
     // Constante para o ID do contêiner principal da sua Activity
@@ -61,17 +61,17 @@ public class ChallengesFragment extends Fragment implements ChallengeAdapter.OnC
         rvChallenges.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Inicializa o adapter com a lista vazia e a interface de clique (this)
-        adapter = new ChallengeAdapter(challengeList, this);
+//        adapter = new ChallengeAdapter(challengeList, this);
         rvChallenges.setAdapter(adapter);
 
         fetchChallenges();
     }
 
     private void fetchChallenges() {
-        mongoApiService.listChallenges().enqueue(new Callback<List<ChalengeResponse>>() {
+        mongoApiService.listChallenges().enqueue(new Callback<List<ChallengeResponse>>() {
             // ... (Implementação do onResponse e onFailure para carregar a lista) ...
             @Override
-            public void onResponse(@NonNull Call<List<ChalengeResponse>> call, @NonNull Response<List<ChalengeResponse>> response) {
+            public void onResponse(@NonNull Call<List<ChallengeResponse>> call, @NonNull Response<List<ChallengeResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     challengeList.clear();
                     challengeList.addAll(response.body());
@@ -83,36 +83,10 @@ public class ChallengesFragment extends Fragment implements ChallengeAdapter.OnC
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<ChalengeResponse>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<ChallengeResponse>> call, @NonNull Throwable t) {
                 Log.e("ChallengesFragment", "Falha na requisição da API: " + t.getMessage());
                 Toast.makeText(getContext(), "Erro de conexão.", Toast.LENGTH_SHORT).show();
             }
         });
     }
-
-    /**
-     * Lógica de navegação para a tela de criação de solução.
-     * Implementa o método da interface ChallengeAdapter.OnChallengeClickListener.
-     */
-    @Override
-    public void onSuggestSolutionClick(ChalengeResponse challenge) {
-        String challengeId = challenge.getId();
-
-        try {
-            NavController navController = NavHostFragment.findNavController(this);
-
-            Bundle args = new Bundle();
-            // A chave "challengeId" deve ser a mesma do nav_graph.xml
-            args.putString("challengeId", challengeId);
-
-            // Use o ID do novo Fragmento de Detalhes
-            // Substitua R.id.challengeDetailsFragment pelo ID REAL no seu nav_graph.xml
-            navController.navigate(R.id.challengeDetailsFragment, args);
-
-        } catch (Exception e) {
-            Log.e("ChallengesFragment", "Erro ao navegar: " + e.getMessage());
-            Toast.makeText(getContext(), "Erro de navegação. Verifique o Nav Graph.", Toast.LENGTH_LONG).show();
-        }
-    }
-
 }

@@ -17,11 +17,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.data.api.model.mongo.ChalengeResponse;
+import com.germinare.simbia_mobile.data.api.model.mongo.ChallengeResponse;
 import com.germinare.simbia_mobile.data.api.model.mongo.SolutionRequest;
 import com.germinare.simbia_mobile.data.api.retrofit.ApiServiceFactory;
 import com.germinare.simbia_mobile.data.api.service.MongoApiService;
-import com.germinare.simbia_mobile.ui.features.home.fragments.challenges.SolutionAdapter;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -103,15 +102,15 @@ public class ChallengeDetailsFragment extends Fragment {
      * Implementa a chamada GET /desafios/{id} para carregar detalhes e soluções.
      */
     private void fetchChallengeDetails(String id) {
-        mongoApiService.getChallengeById(id).enqueue(new Callback<ChalengeResponse>() {
+        mongoApiService.getChallengeById(id).enqueue(new Callback<ChallengeResponse>() {
             @Override
-            public void onResponse(@NonNull Call<ChalengeResponse> call, @NonNull Response<ChalengeResponse> response) {
+            public void onResponse(@NonNull Call<ChallengeResponse> call, @NonNull Response<ChallengeResponse> response) {
                 // 💡 LOG: Loga o URL da requisição GET
                 Log.d(TAG, "GET URL: " + call.request().url());
                 Log.d(TAG, "GET Response Code: " + response.code());
 
                 if (response.isSuccessful() && response.body() != null) {
-                    ChalengeResponse details = response.body();
+                    ChallengeResponse details = response.body();
 
                     // 💡 LOG: Sucesso, loga o título recebido
                     Log.d(TAG, "Detalhes do Desafio carregados: " + details.getTitle());
@@ -135,7 +134,7 @@ public class ChallengeDetailsFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ChalengeResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ChallengeResponse> call, @NonNull Throwable t) {
                 // 🚨 LOG: Erro de conexão/rede
                 Log.e(TAG, "Erro de API (GET): " + t.getMessage(), t);
                 Toast.makeText(getContext(), "Erro de conexão ao carregar desafio.", Toast.LENGTH_LONG).show();
@@ -167,10 +166,10 @@ public class ChallengeDetailsFragment extends Fragment {
                 ", Título: " + title +
                 ", Descrição length: " + description.length());
 
-        mongoApiService.createSolution(challengeId, request).enqueue(new Callback<ChalengeResponse>() {
+        mongoApiService.createSolution(challengeId, request).enqueue(new Callback<ChallengeResponse>() {
 
             @Override
-            public void onResponse(@NonNull Call<ChalengeResponse> call, @NonNull Response<ChalengeResponse> response) {
+            public void onResponse(@NonNull Call<ChallengeResponse> call, @NonNull Response<ChallengeResponse> response) {
                 // 💡 LOG: Loga o URL da requisição POST
                 Log.d(TAG, "POST URL: " + call.request().url());
                 Log.d(TAG, "POST Response Code: " + response.code());
@@ -200,7 +199,7 @@ public class ChallengeDetailsFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ChalengeResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ChallengeResponse> call, @NonNull Throwable t) {
                 // 🚨 LOG: Erro de conexão/rede
                 Log.e(TAG, "Erro de API (POST): " + t.getMessage(), t);
                 Toast.makeText(getContext(), "Erro de conexão. Não foi possível enviar a solução.", Toast.LENGTH_LONG).show();

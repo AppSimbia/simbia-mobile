@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.germinare.simbia_mobile.data.api.model.mongo.ChallengeResponse;
 import com.germinare.simbia_mobile.data.api.model.mongo.ChatResponse;
 import com.germinare.simbia_mobile.data.api.model.mongo.MatchResponse;
 import com.germinare.simbia_mobile.data.api.model.mongo.MessageRequest;
@@ -232,6 +233,31 @@ public class MongoRepository {
 
             @Override
             public void onFailure(@NonNull Call<List<ChatResponse>> call, @NonNull Throwable t) {
+                Log.e(TAG, "findAllChatByEmployeeId error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
+
+    public void findAllChallenges(Consumer<List<ChallengeResponse>> onSuccessful) {
+        Log.d(TAG, "findAllChallenges called");
+        Call<List<ChallengeResponse>> call = apiService.listChallenges();
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<List<ChallengeResponse>> call, @NonNull Response<List<ChallengeResponse>> response) {
+                Log.d(TAG, "findAllChallenges response code: " + response.code());
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "findAllChallenges success: " + response.body().size() + " chats received");
+                    onSuccessful.accept(response.body());
+                } else {
+                    Log.e(TAG, "findAllChallenges failed: " + response.message());
+                    onFailure.accept(MESSAGE_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<ChallengeResponse>> call, @NonNull Throwable t) {
                 Log.e(TAG, "findAllChatByEmployeeId error: ", t);
                 onFailure.accept(MESSAGE_ERROR);
             }
