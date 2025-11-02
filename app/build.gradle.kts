@@ -68,4 +68,8 @@ dependencies {
     implementation("com.google.firebase:firebase-storage:21.0.1")
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("androidx.core:core:1.13.1")
+    implementation("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
+    implementation("io.reactivex.rxjava2:rxjava:2.2.21")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
+    implementation("org.java-websocket:Java-WebSocket:1.3.6")
 }

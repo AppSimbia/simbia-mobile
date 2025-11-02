@@ -10,4 +10,28 @@ public class MessageRequest {
         this.idEmployee = idEmployee;
         this.idChat = idChat;
     }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Long getIdEmployee() {
+        return idEmployee;
+    }
+
+    public void setIdEmployee(Long idEmployee) {
+        this.idEmployee = idEmployee;
+    }
+
+    public String getIdChat() {
+        return idChat;
+    }
+
+    public void setIdChat(String idChat) {
+        this.idChat = idChat;
+    }
 }

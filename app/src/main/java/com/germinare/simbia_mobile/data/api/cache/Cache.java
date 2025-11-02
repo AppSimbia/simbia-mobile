@@ -5,7 +5,6 @@ import com.germinare.simbia_mobile.data.api.model.mongo.ChatResponse;
 import com.germinare.simbia_mobile.data.api.model.postgres.IndustryResponse;
 import com.germinare.simbia_mobile.data.api.model.postgres.PostResponse;
 import com.germinare.simbia_mobile.data.api.model.postgres.ProductCategoryResponse;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;

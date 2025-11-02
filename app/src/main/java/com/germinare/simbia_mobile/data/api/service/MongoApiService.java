@@ -2,6 +2,9 @@ package com.germinare.simbia_mobile.data.api.service;
 
 import com.germinare.simbia_mobile.data.api.model.mongo.ChalengeRequest;
 import com.germinare.simbia_mobile.data.api.model.mongo.ChalengeResponse;
+import com.germinare.simbia_mobile.data.api.model.mongo.ChatResponse;
+import com.germinare.simbia_mobile.data.api.model.mongo.MatchResponse;
+import com.germinare.simbia_mobile.data.api.model.mongo.MessageRequest;
 import com.germinare.simbia_mobile.data.api.model.mongo.SolutionRequest;
 
 import java.util.List;
@@ -13,11 +16,6 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-
-import com.germinare.simbia_mobile.data.api.model.mongo.ChatResponse;
-import com.germinare.simbia_mobile.data.api.model.mongo.MatchResponse;
-
-import java.util.Map;
 
 public interface MongoApiService {
 
@@ -43,7 +41,7 @@ public interface MongoApiService {
     Call<ChatResponse> addMessage(@Path("id") String id, @Body MessageRequest request);
 
     @GET("/chats/list/{id}")
-    Call<List<ChatResponse>> findAllChatByEmployeeId(@Path("id") Long id);
+    Call<List<ChatResponse>> findAllChatByEmployeeId(@Path("id") String id);
 
     @POST("/desafios/create/solucao")
     Call<ChalengeResponse> createSolution(@Query("idDesafio") String id, @Body SolutionRequest request);

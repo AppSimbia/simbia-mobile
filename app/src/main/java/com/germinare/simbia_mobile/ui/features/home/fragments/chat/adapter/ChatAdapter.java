@@ -17,6 +17,7 @@ import androidx.cardview.widget.CardView;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.germinare.simbia_mobile.R;
 import com.google.android.material.imageview.ShapeableImageView;
 
@@ -54,6 +55,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         }else{
             holder.btnNewchats.setVisibility(INVISIBLE);
         }
+
+        Glide.with(context)
+                .load(chat.getUrl())
+                .into(holder.imageChat);
 
         holder.cardView.setOnClickListener(V -> {
             Bundle envelope = new Bundle();
