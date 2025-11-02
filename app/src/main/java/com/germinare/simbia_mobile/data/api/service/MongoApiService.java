@@ -43,4 +43,7 @@ public interface MongoApiService {
 
     @POST("/desafios/create/solucao")
     Call<ChalengeResponse> createSolution(@Query("idDesafio") String id, @Body SolutionRequest request);
+
+    @POST("/match/avaliable/{id}")
+    Call<List<MatchResponse>> findMatchesAvaliable(@Path("id") Long id);
 }
