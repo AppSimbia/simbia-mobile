@@ -12,17 +12,20 @@ public class MessageChat implements Parcelable {
     private Long idEmployee;
     private String createdAt;
     private String content;
+    private boolean isSpecialMessage;
 
     public MessageChat(ChatResponse.Message message) {
         this.idEmployee = message.getIdEmployee();
         this.content = message.getMessage();
         this.createdAt = message.getCreatedAt();
+        this.isSpecialMessage = message.isSpecialMessage();
     }
 
-    public MessageChat(Long idEmployee, String content) {
+    public MessageChat(Long idEmployee, String content, boolean isSpecialMessage) {
         this.idEmployee = idEmployee;
         this.content = content;
         this.createdAt = Instant.now().toString();
+        this.isSpecialMessage = isSpecialMessage;
     }
 
     protected MessageChat(Parcel in) {
@@ -31,8 +34,9 @@ public class MessageChat implements Parcelable {
         } else {
             idEmployee = in.readLong();
         }
-        content = in.readString();
         createdAt = in.readString();
+        content = in.readString();
+        isSpecialMessage = in.readByte() != 0;
     }
 
     @Override
@@ -43,9 +47,9 @@ public class MessageChat implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeLong(idEmployee);
         }
-
-        dest.writeString(content);
         dest.writeString(createdAt);
+        dest.writeString(content);
+        dest.writeByte((byte) (isSpecialMessage ? 1 : 0));
     }
 
     @Override
@@ -90,12 +94,21 @@ public class MessageChat implements Parcelable {
         this.content = content;
     }
 
+    public boolean isSpecialMessage() {
+        return isSpecialMessage;
+    }
+
+    public void setSpecialMessage(boolean specialMessage) {
+        isSpecialMessage = specialMessage;
+    }
+
     @Override
     public String toString() {
         return "MessageChat{" +
                 "idEmployee=" + idEmployee +
                 ", createdAt='" + createdAt + '\'' +
                 ", content='" + content + '\'' +
+                ", isSpecialMessage=" + isSpecialMessage +
                 '}';
     }
 }

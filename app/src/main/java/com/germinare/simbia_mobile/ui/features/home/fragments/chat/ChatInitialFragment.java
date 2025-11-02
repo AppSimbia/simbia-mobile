@@ -1,7 +1,6 @@
 package com.germinare.simbia_mobile.ui.features.home.fragments.chat;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,7 @@ import com.germinare.simbia_mobile.ui.features.home.fragments.chat.adapter.Messa
 import com.germinare.simbia_mobile.utils.AlertUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,8 +69,10 @@ public class ChatInitialFragment extends Fragment {
 
     private void updateUIFromCache() {
         if (cache.getChats() != null && cache.getIndustry() != null) {
-            chats.clear();
-            Log.d("teste", String.valueOf(cache.getChats().size()));
+            List<Chat> tempChats = new ArrayList<>();
+            int totalChats = cache.getChats().size();
+            int[] processedCount = {0};
+
             for (ChatResponse chatResponse : cache.getChats()) {
                 userRepository.getUserByUid(
                         chatResponse.getParticipants()
@@ -86,22 +88,27 @@ public class ChatInitialFragment extends Fragment {
                                         industryResponse.getImage(),
                                         chatResponse.getMessages().stream().map(MessageChat::new).collect(Collectors.toList()),
                                         chatResponse.getMessages().stream()
-                                                .filter(message -> !message.isRead())
+                                                .filter(message -> !message.isRead() && !message.getIdEmployee().equals(cache.getEmployee().getEmployeeId()))
                                                 .count()
                                 );
 
-                                List<Chat> newList = new ArrayList<>(chats);
-                                newList.add(chat);
-                                Log.d("teste", newList.toString());
-                                loadDataAdapters(chats, newList, adapter);
+                                tempChats.add(chat);
+                                processedCount[0]++;
+
+                                if (processedCount[0] == totalChats) {
+                                    chats.clear();
+                                    chats.addAll(tempChats);
+                                    Collections.sort(chats);
+                                    adapter.notifyDataSetChanged();
+                                    AlertUtils.hideDialog(progressDialog);
+                                }
                             });
                         }
                 );
             }
-
-            AlertUtils.hideDialog(progressDialog);
         }
     }
+
 
 
     private <T, D extends RecyclerView.Adapter<?>> void loadDataAdapters(List<T> oldList, List<T> newList, D adapter){

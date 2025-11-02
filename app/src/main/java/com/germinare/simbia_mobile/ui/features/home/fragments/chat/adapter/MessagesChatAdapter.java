@@ -20,6 +20,7 @@ public class MessagesChatAdapter extends RecyclerView.Adapter<MessagesChatAdapte
 
     private static final int MESSAGE_TYPE_SEND = 1;
     private static final int MESSAGE_TYPE_RECEIVED = 2;
+    private static final int MESSAGE_TYPE_SPECIAL = 3;
     private final Context context;
     private final List<MessageChat> messages;
     private final EmployeeFirestore employee;
@@ -32,7 +33,15 @@ public class MessagesChatAdapter extends RecyclerView.Adapter<MessagesChatAdapte
 
     @Override
     public int getItemViewType(int position) {
-        return Objects.equals(messages.get(position).getIdEmployee(), employee.getEmployeeId()) ? MESSAGE_TYPE_SEND : MESSAGE_TYPE_RECEIVED;
+        MessageChat message = messages.get(position);
+
+        if (message.isSpecialMessage()) {
+            return MESSAGE_TYPE_SPECIAL;
+        } else if (Objects.equals(message.getIdEmployee(), employee.getEmployeeId())){
+            return MESSAGE_TYPE_SEND;
+        } else {
+            return MESSAGE_TYPE_RECEIVED;
+        }
     }
 
     @NonNull
@@ -45,9 +54,16 @@ public class MessagesChatAdapter extends RecyclerView.Adapter<MessagesChatAdapte
                     false
             );
             return new MessagesChatViewHolder(view);
-        } else {
+        } else if (viewType == MESSAGE_TYPE_RECEIVED) {
             View view = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.messages_row_received,
+                    parent,
+                    false
+            );
+            return new MessagesChatViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.message_row_special,
                     parent,
                     false
             );
@@ -59,7 +75,9 @@ public class MessagesChatAdapter extends RecyclerView.Adapter<MessagesChatAdapte
     public void onBindViewHolder(@NonNull MessagesChatViewHolder holder, int position) {
         final MessageChat message = messages.get(position);
 
-        if (Objects.equals(messages.get(position).getIdEmployee(), employee.getEmployeeId())){
+        if (message.isSpecialMessage()){
+            holder.txMessageSpecial.setText(message.getContent());
+        } else if (Objects.equals(messages.get(position).getIdEmployee(), employee.getEmployeeId())){
             holder.txMessageSent.setText(message.getContent());
         }else{
             holder.txMessageReceived.setText(message.getContent());
@@ -75,12 +93,13 @@ public class MessagesChatAdapter extends RecyclerView.Adapter<MessagesChatAdapte
         notifyItemInserted(getItemCount()-1);
     }
     public static class MessagesChatViewHolder extends RecyclerView.ViewHolder {
-        final TextView txMessageSent, txMessageReceived;
+        final TextView txMessageSent, txMessageReceived, txMessageSpecial;
 
         MessagesChatViewHolder(View view){
             super(view);
             this.txMessageSent = view.findViewById(R.id.txMessageSent);
             this.txMessageReceived = view.findViewById(R.id.txMessageReceived);
+            this.txMessageSpecial = view.findViewById(R.id.txMessageSpecial);
         }
     }
 }

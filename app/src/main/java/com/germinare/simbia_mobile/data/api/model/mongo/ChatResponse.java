@@ -1,6 +1,5 @@
 package com.germinare.simbia_mobile.data.api.model.mongo;
 
-import java.time.Instant;
 import java.util.List;
 
 public class ChatResponse {
@@ -13,6 +12,7 @@ public class ChatResponse {
         private String message;
         private String createdAt;
         private boolean read;
+        private boolean specialMessage;
 
         public Long getIdEmployee() {
             return idEmployee;
@@ -28,6 +28,10 @@ public class ChatResponse {
 
         public boolean isRead() {
             return read;
+        }
+
+        public boolean isSpecialMessage() {
+            return specialMessage;
         }
     }
 

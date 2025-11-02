@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Chat implements Parcelable {
+public class Chat implements Parcelable, Comparable<Chat> {
 
     private String id;
     private String name;
@@ -87,24 +87,12 @@ public class Chat implements Parcelable {
         return url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public List<MessageChat> getMessages() {
         return messages;
     }
 
-    public void setMessages(List<MessageChat> messages) {
-        this.messages = messages;
-    }
-
     public Long getNewMessages() {
         return newMessages;
-    }
-
-    public void setNewMessages(Long newMessages) {
-        this.newMessages = newMessages;
     }
 
     @Override
@@ -116,5 +104,10 @@ public class Chat implements Parcelable {
                 ", messages=" + (messages != null ? messages.size() : 0) +
                 ", newMessages=" + newMessages +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Chat o) {
+        return this.name.compareTo(o.getName());
     }
 }
