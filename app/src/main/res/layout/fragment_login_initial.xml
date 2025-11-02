@@ -10,34 +10,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/iv_profile_photo_login_initial"
-            android:layout_width="198dp"
-            android:layout_height="161dp"
-            android:layout_marginTop="20dp"
-            android:src="@drawable/photo_default"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_login_initial"
-            app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full" />
-
         <TextView
             android:id="@+id/text_update_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="60dp"
+            android:layout_marginTop="2dp"
             android:layout_marginEnd="60dp"
             android:fontFamily="@font/plus_jakarta_sans"
-            android:textStyle="bold"
 
             android:gravity="center_horizontal"
             android:text="Alterar imagem"
             android:textSize="14sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_profile_photo_login_initial" />
+            app:layout_constraintTop_toBottomOf="@+id/imageView8" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_email_login_initial"
@@ -139,6 +128,17 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/view2_login_initial"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageView8"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/photo_default"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_login_initial"
+            app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

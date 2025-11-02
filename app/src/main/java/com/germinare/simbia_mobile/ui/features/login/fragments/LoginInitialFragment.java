@@ -18,6 +18,7 @@ import androidx.navigation.Navigation;
 import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.databinding.FragmentLoginInitialBinding;
 import com.germinare.simbia_mobile.data.firestore.UserRepository;
+import com.germinare.simbia_mobile.utils.BaseLoginUtils;
 import com.germinare.simbia_mobile.utils.CameraGalleryUtils;
 import com.germinare.simbia_mobile.utils.StorageUtils;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,68 +33,56 @@ public class LoginInitialFragment extends Fragment implements CameraGalleryUtils
     private UserRepository userRepository;
     private StorageUtils storageUtils;
     private CameraGalleryUtils cameraGalleryUtils;
+    private BaseLoginUtils baseLoginUtils;
     private Uri selectedImageUri;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentLoginInitialBinding.inflate(inflater, container, false);
-        View view = binding.getRoot();
 
         mAuth = FirebaseAuth.getInstance();
         userRepository = new UserRepository(requireContext());
         storageUtils = new StorageUtils();
-
         cameraGalleryUtils = new CameraGalleryUtils(this, this);
+        baseLoginUtils = new BaseLoginUtils(requireContext());
 
-        binding.ivProfilePhotoLoginInitial.setOnClickListener(v -> showImageSourceDialog());
+        binding.imageView8.setOnClickListener(v -> showImageSourceDialog());
 
         binding.btnFollowLoginInitial.setOnClickListener(v -> {
             String email = binding.etEmailLoginInitial.getText().toString().trim();
             String password = binding.etPasswordLoginInitial.getText().toString().trim();
-
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(getContext(), "Preencha todos os campos", Toast.LENGTH_SHORT).show();
                 return;
             }
-
             loginAndCheckFirstAccess(email, password);
         });
 
-        return view;
+        return binding.getRoot();
     }
 
     private void loginAndCheckFirstAccess(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = authResult.getUser();
-                    if (user == null) {
-                        Toast.makeText(getContext(), "Erro inesperado: usuário não retornado.", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                    if (user == null) return;
 
-                    String uid = user.getUid();
-
-                    userRepository.getUserByUid(uid, document -> {
-                        if (document.exists()) {
-                            Boolean firstAccess = document.getBoolean("firstAccess");
-                            if (firstAccess != null && firstAccess) {
+                    // Bloqueia login automático se já fez o 1º acesso
+                    baseLoginUtils.checkFirstAccess(
+                            firstAccess -> {
+                                // PRIMEIRO ACESSO: precisa foto e ir para trocar senha
                                 if (selectedImageUri != null) {
-                                    uploadProfileImage(uid, selectedImageUri);
+                                    uploadProfileImage(user.getUid(), selectedImageUri);
                                 } else {
-                                    goToNextScreen();
+                                    Toast.makeText(getContext(), "Selecione uma foto de perfil.", Toast.LENGTH_SHORT).show();
                                 }
-                            } else {
-                                Toast.makeText(getContext(), "Usuário já acessou o sistema.", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            Toast.makeText(getContext(), "Documento do usuário não encontrado.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                            },
+                            () -> Toast.makeText(getContext(), "O usuário já fez o primeiro acesso.", Toast.LENGTH_SHORT).show()
+                    );
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(getContext(), "Erro ao fazer login: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
+                        Toast.makeText(getContext(), "Erro ao fazer login: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void uploadProfileImage(String uid, Uri imageUri) {
@@ -105,7 +94,7 @@ public class LoginInitialFragment extends Fragment implements CameraGalleryUtils
         }
 
         if (bitmap == null) {
-            goToNextScreen();
+            Toast.makeText(getContext(), "Erro ao processar imagem.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -122,17 +111,16 @@ public class LoginInitialFragment extends Fragment implements CameraGalleryUtils
         userRepository.updateFieldByUid(
                 user.getUid(),
                 java.util.Map.of("imageUri", downloadUrl),
-                Void -> {
+                unused -> {
                     if (isAdded()) {
                         requireActivity().runOnUiThread(() ->
-                                Toast.makeText(requireContext(), "Imagem de perfil atualizada!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), "Perfil atualizado com sucesso!", Toast.LENGTH_SHORT).show()
                         );
-                        goToNextScreen();
+                        goToPasswordChangeScreen();
                     }
                 }
         );
     }
-
 
     private void showImageSourceDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
@@ -159,7 +147,7 @@ public class LoginInitialFragment extends Fragment implements CameraGalleryUtils
     @Override
     public void onImageSelected(Uri imageUri) {
         selectedImageUri = imageUri;
-        binding.ivProfilePhotoLoginInitial.setImageURI(imageUri);
+        binding.imageView8.setImageURI(imageUri);
     }
 
     @Override
@@ -172,14 +160,27 @@ public class LoginInitialFragment extends Fragment implements CameraGalleryUtils
         Toast.makeText(getContext(), "Permissão negada: " + permission, Toast.LENGTH_SHORT).show();
     }
 
+    private void goToPasswordChangeScreen() {
+        NavController navController = Navigation.findNavController(requireView());
+        navController.navigate(R.id.loginVerificationFragment);
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
 
-    private void goToNextScreen() {
-        NavController navController = Navigation.findNavController(requireView());
-        navController.navigate(R.id.login_navigation);
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Bloqueia o login automático se apertar back
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            baseLoginUtils.checkFirstAccess(
+                    firstAccess -> {}, // nada se ainda não fez o primeiro acesso
+                    () -> mAuth.signOut() // se já fez 1º acesso, desloga
+            );
+        }
     }
 }
