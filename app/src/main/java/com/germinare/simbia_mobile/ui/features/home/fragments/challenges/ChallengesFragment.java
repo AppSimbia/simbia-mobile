@@ -6,131 +6,157 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.navigation.Navigation;
 
-import com.germinare.simbia_mobile.data.api.model.mongo.ChalengeResponse;
-import com.germinare.simbia_mobile.data.api.model.postgres.IndustryResponse;
+import com.germinare.simbia_mobile.R;
+
+import com.germinare.simbia_mobile.data.api.model.firestore.EmployeeFirestore;
+import com.germinare.simbia_mobile.data.api.model.mongo.ChallengeRequest;
+import com.germinare.simbia_mobile.data.api.model.mongo.ChallengeResponse;
 import com.germinare.simbia_mobile.data.api.repository.MongoRepository;
 import com.germinare.simbia_mobile.data.api.repository.PostgresRepository;
-import com.germinare.simbia_mobile.databinding.FragmentChallengesBinding;
+import com.germinare.simbia_mobile.data.fireauth.UserAuth;
+import com.germinare.simbia_mobile.data.firestore.UserRepository;
+import com.germinare.simbia_mobile.utils.NotificationHelper;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class ChallengesFragment extends Fragment implements ChallengeAdapter.OnChallengeClickListener {
+public class ChallengesFragment extends Fragment {
 
-    private static final String TAG = "ChallengesFragment";
+    private UserAuth userAuth;
+    private UserRepository userRepository;
 
-    private FragmentChallengesBinding binding;
-    private ChallengeAdapter adapter;
-    private final List<ChalengeResponse> challengeList = new ArrayList<>();
-    private final Map<Long, IndustryResponse> industryMap = new HashMap<>();
+    private RecyclerView rvChallenges;
+    private ChallengePagerAdapter challengeAdapter;
+    private final List<Challenge> challengeList = new ArrayList<>();
 
     private MongoRepository mongoRepository;
     private PostgresRepository postgresRepository;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mongoRepository = new MongoRepository(this::showError);
-        postgresRepository = new PostgresRepository(this::showError);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_challenges, container, false);
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentChallengesBinding.inflate(inflater, container, false);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        adapter = new ChallengeAdapter(industryMap, this);
-        binding.rvChallenges.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.rvChallenges.setAdapter(adapter);
+        mongoRepository = new MongoRepository(error -> Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show());
+        postgresRepository = new PostgresRepository(error -> Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show());
+
+        if (getContext() != null) {
+            userAuth = new UserAuth();
+            userRepository = new UserRepository(getContext());
+        }
+
+        rvChallenges = view.findViewById(R.id.rv_challenges);
+        rvChallenges.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        challengeAdapter = new ChallengePagerAdapter(challengeList, challenge -> {
+            Log.d("ChallengesFragment", "Desafio clicado: " + challenge.getId());
+            Bundle bundle = new Bundle();
+            bundle.putString("challengeId", challenge.getId());
+            Navigation.findNavController(requireView())
+                    .navigate(R.id.challengeDetailsFragment, bundle);
+        });
+
+        rvChallenges.setAdapter(challengeAdapter);
+
+        Button proposeChallengeButton = view.findViewById(R.id.button);
+        proposeChallengeButton.setOnClickListener(v -> attemptCreateChallenge());
 
         fetchChallenges();
-
-        return binding.getRoot();
     }
 
-    private void fetchChallenges() {
-        mongoRepository.listChallenges(challenges -> {
-            if (challenges != null && !challenges.isEmpty()) {
-                challengeList.clear();
-                for (int i = 0; i < Math.min(2, challenges.size()); i++) {
-                    challengeList.add(challenges.get(i));
-                }
-                fetchIndustriesForChallenges();
-            } else {
-                showError("Nenhum desafio encontrado");
-            }
+
+    private void attemptCreateChallenge() {
+        FirebaseUser currentUser = userAuth.getCurrentUser();
+
+        if (currentUser == null || getContext() == null) {
+            Toast.makeText(getContext(), "Usuário não autenticado.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        userRepository.getUserByUid(currentUser.getUid(), document -> {
+            EmployeeFirestore employeeData = new EmployeeFirestore(document);
+
+            showCreateChallengeDialog(employeeData.getEmployeeId());
         });
     }
 
-    private void fetchIndustriesForChallenges() {
-        if (challengeList.isEmpty()) return;
 
-        // Buscar todas as indústrias necessárias
-        for (ChalengeResponse challenge : challengeList) {
-            Long employeeId = challenge.getIdEmployeeQuestion();
-            if (employeeId != null && !industryMap.containsKey(employeeId)) {
-                postgresRepository.findIndustryById(employeeId, industry -> {
-                    if (industry != null) {
-                        industryMap.put(employeeId, industry);
-                        adapter.notifyDataSetChanged(); // Atualiza adapter
-                    }
+    private void fetchChallenges() {
+        mongoRepository.findAllChallenges(response -> {
+            challengeList.clear();
+
+            for (ChallengeResponse cr : response) {
+                challengeList.add(new Challenge(cr));
+            }
+
+            for (Challenge challenge : challengeList) {
+                postgresRepository.findIndustryByIdEmployee(challenge.getIdEmployeeQuestion(), industry -> {
+                    challenge.setIndustryImage(industry.getImage());
+                    challenge.setIndustryName(industry.getIndustryName());
+                    challengeAdapter.notifyDataSetChanged();
                 });
             }
-        }
 
-        adapter.setChallenges(challengeList); // Atualiza lista de desafios
+            challengeAdapter.notifyDataSetChanged();
+        });
     }
 
-    // ------------------- INTERFACE DO ADAPTER -------------------
+    private void showCreateChallengeDialog(Long employeeId) {
+        if (getContext() == null) return;
 
-    @Override
-    public void onSuggestSolutionClick(ChalengeResponse challenge) {
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Sugerir Solução")
-                .setMessage(challenge.getTitle())
-                .setPositiveButton("OK", null)
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_create_challenge, null);
+        final EditText etTitle = dialogView.findViewById(R.id.et_challenge_title);
+        final EditText etDescription = dialogView.findViewById(R.id.et_challenge_description);
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Propor Novo Desafio")
+                .setView(dialogView)
+                .setPositiveButton("Criar Desafio", (dialog, which) -> {
+                    String title = etTitle.getText().toString().trim();
+                    String description = etDescription.getText().toString().trim();
+
+                    if (title.isEmpty() || description.isEmpty()) {
+                        Toast.makeText(getContext(), "Preencha o Título e a Descrição.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    ChallengeRequest request = new ChallengeRequest(
+                            employeeId,
+                            title,
+                            description
+                    );
+
+                    mongoRepository.createChallenge(request, challengeResponse -> {
+                        if (getContext() != null) {
+
+                            NotificationHelper.showNotification(
+                                    requireContext(),
+                                    "Desafio enviado!",
+                                    "Seu desafio foi enviado com sucesso!"
+                            );
+                        }
+
+                        fetchChallenges();
+                    });
+                })
+                .setNegativeButton("Cancelar", null)
                 .show();
-    }
-
-    @Override
-    public void onClick(ChalengeResponse challenge) {
-        // Aqui apenas mostramos os detalhes do desafio
-        Long employeeId = challenge.getIdEmployeeQuestion();
-        String companyName = "Empresa desconhecida";
-        if (employeeId != null && industryMap.containsKey(employeeId)) {
-            companyName = industryMap.get(employeeId).getIndustryName();
-        }
-
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Detalhes do Desafio")
-                .setMessage("Título: " + challenge.getTitle() + "\nEmpresa: " + companyName)
-                .setPositiveButton("OK", null)
-                .show();
-    }
-
-    // ------------------- AUXILIARES -------------------
-
-    private void showError(String message) {
-        Log.e(TAG, message);
-        if (isAdded()) {
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Erro")
-                    .setMessage(message)
-                    .setPositiveButton("OK", null)
-                    .show();
-        }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 }

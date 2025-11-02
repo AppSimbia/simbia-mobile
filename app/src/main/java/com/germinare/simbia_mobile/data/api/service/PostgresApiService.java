@@ -23,6 +23,12 @@ public interface PostgresApiService {
     @GET("/industries/id/{id}")
     Call<IndustryResponse> findIndustryById(@Path("id") Long id);
 
+    @GET("/industries/cnpj/{cnpj}")
+    Call<IndustryResponse> findIndustryByCnpj(@Path("cnpj") String cnpj);
+
+    @GET("/industries/id/{id}/employee")
+    Call<IndustryResponse> findIndustryByIdEmployee(@Path("id") Long id);
+
     // POSTS
     @POST("/posts")
     Call<PostResponse> createPost(@Body PostRequest post);
@@ -41,5 +47,8 @@ public interface PostgresApiService {
 
     @GET("/posts/list/{id}/employee")
     Call<List<PostResponse>> findAllPostsByEmployee(@Path("id") Long id);
+
+    @PUT("/employees/{id}")
+    Call<Void> updateEmployee(@Path("id") Long id, @Body Map<String, Object> map);
 
 }

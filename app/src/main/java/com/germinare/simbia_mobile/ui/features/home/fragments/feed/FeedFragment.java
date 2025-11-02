@@ -4,13 +4,11 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.data.api.cache.PostgresCache;
+import com.germinare.simbia_mobile.data.api.cache.Cache;
 import com.germinare.simbia_mobile.data.api.model.integration.PostSuggestRequest;
 import com.germinare.simbia_mobile.data.api.model.postgres.ProductCategoryResponse;
 import com.germinare.simbia_mobile.data.api.repository.IntegrationRepository;
@@ -45,7 +43,7 @@ import java.util.stream.Collectors;
 public class FeedFragment extends Fragment {
 
     private FragmentFeedBinding binding;
-    private PostgresCache postgresCache;
+    private Cache cache;
     private IntegrationRepository integrationRepository;
     private PostgresRepository postgresRepository;
     private AlertDialog progressDialog;
@@ -74,7 +72,7 @@ public class FeedFragment extends Fragment {
             AlertUtils.hideDialog(progressDialog);
         };
 
-        postgresCache = PostgresCache.getInstance();
+        cache = Cache.getInstance();
         integrationRepository = new IntegrationRepository(onError);
         postgresRepository = new PostgresRepository(onError);
     }
@@ -91,7 +89,7 @@ public class FeedFragment extends Fragment {
         postAdapterSuggest = new PostAdapter(postsSuggest, this::onClickPost, false);
 
         progressDialog = AlertUtils.showLoadingDialog(requireContext(), "");
-        postgresCache.addListener(this::updateUIFromCache);
+        cache.addListener(this::updateUIFromCache);
         updateUIFromCache();
 
         return binding.getRoot();
@@ -151,13 +149,13 @@ public class FeedFragment extends Fragment {
     }
 
     private void updateUIFromCache(){
-        if (postgresCache.getProductCategory() != null && postgresCache.getPostsFiltered() != null) {
-            List<Post> allPosts = postgresCache.getPostsFiltered().stream()
+        if (cache.getProductCategory() != null && cache.getPostsFiltered() != null) {
+            List<Post> allPosts = cache.getPostsFiltered().stream()
                     .map(Post::new)
                     .collect(Collectors.toList());
 
             loadDataAdapters(filters,
-                    postgresCache.getProductCategory().stream()
+                    cache.getProductCategory().stream()
                             .map(ProductCategoryResponse::getCategoryName)
                             .collect(Collectors.toList()),
                     filtersAdapter);
@@ -179,19 +177,20 @@ public class FeedFragment extends Fragment {
 
     private void suggestPost(Dialog dialog){
         PostSuggestRequest request = new PostSuggestRequest(
-                postgresCache.getProductCategory().stream()
+                cache.getProductCategory().stream()
                         .filter(category -> category.getCategoryName().equals(((AutoCompleteTextView) dialog.findViewById(R.id.alert_actv_categoria)).getText().toString()))
                         .map(ProductCategoryResponse::getId)
                         .findFirst().orElse(null),
                 ((TextInputEditText) dialog.findViewById(R.id.alert_et_quantidade)).getText().toString(),
                 String.valueOf(measuresUnits.indexOf(
                         ((AutoCompleteTextView) dialog.findViewById(R.id.alert_actv_unidade)).getText().toString())+1),
-                String.valueOf(postgresCache.getEmployee().getIndustryId())
+                String.valueOf(cache.getEmployee().getIndustryId())
         );
         AlertUtils.hideDialog(dialog);
         progressDialog = AlertUtils.showLoadingDialog(requireContext(), "Pensando...");
 
         integrationRepository.suggestPost(request, response -> {
+            postsSuggest.clear();
             for (Long idPost : response.getData()) {
                 postgresRepository.findPostById(idPost, post -> {
                     List<Post> newList = new ArrayList<>(postsSuggest);

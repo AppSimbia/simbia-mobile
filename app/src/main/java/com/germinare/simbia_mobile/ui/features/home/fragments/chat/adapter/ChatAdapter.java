@@ -5,6 +5,7 @@ import static android.view.View.INVISIBLE;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import androidx.cardview.widget.CardView;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.germinare.simbia_mobile.R;
 import com.google.android.material.imageview.ShapeableImageView;
 
@@ -27,9 +29,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     private Context context;
     private List<Chat> chats;
 
-    public ChatAdapter(Context context) {
+    public ChatAdapter(Context context, List<Chat> chats) {
         this.context = context;
-        this.chats = new ArrayList<>();
+        this.chats = chats;
     }
 
     @NonNull
@@ -46,7 +48,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         final Chat chat = chats.get(position);
-        
+
         holder.txNameChat.setText(chat.getName());
         if (chat.getNewMessages() > 0){
             holder.btnNewchats.setText(String.valueOf(chat.getNewMessages()));
@@ -54,29 +56,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             holder.btnNewchats.setVisibility(INVISIBLE);
         }
 
-        holder.cardView.setOnClickListener(V -> {
-            List<MessageChat> messages = new ArrayList<>();
-            messages.add(new MessageChat(
-                    UUID.randomUUID().toString(),
-                    "1",
-                    "2",
-                    "KKKKKKKKKKKKKKKKKKKKK"
-            ));
-            messages.add(new MessageChat(
-                    UUID.randomUUID().toString(),
-                    "1",
-                    "2",
-                    "oi"
-            ));
-            messages.add(new MessageChat(
-                    UUID.randomUUID().toString(),
-                    "2",
-                    "1",
-                    "te odeio, otário"
-            ));
+        Glide.with(context)
+                .load(chat.getUrl())
+                .into(holder.imageChat);
 
+        holder.cardView.setOnClickListener(V -> {
             Bundle envelope = new Bundle();
-            envelope.putParcelableArrayList("messages", (ArrayList<? extends Parcelable>) messages);
+            envelope.putParcelable("chat", chat);
+            envelope.putParcelableArrayList("messages", (ArrayList<? extends Parcelable>) chat.getMessages());
             Navigation.findNavController(V).navigate(R.id.navigation_chat_messages, envelope);
         });
     }
@@ -86,13 +73,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         return chats.size();
     }
 
-    public List<Chat> getChats() {
-        return this.chats;
-    }
-
-    public void addChat(Chat message){
-        this.chats.add(message);
-    }
     static class ChatViewHolder extends RecyclerView.ViewHolder {
 
         final CardView cardView;

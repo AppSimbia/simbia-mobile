@@ -9,12 +9,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,8 +28,6 @@ import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.data.api.model.postgres.FetchUserPostsUseCase;
 import com.germinare.simbia_mobile.data.api.model.postgres.PostResponse;
 import com.germinare.simbia_mobile.data.api.repository.PostgresRepository;
-import com.germinare.simbia_mobile.data.api.service.MongoApiService;
-import com.germinare.simbia_mobile.data.api.retrofit.RetrofitClient;
 import com.germinare.simbia_mobile.data.firestore.UserRepository;
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.Post;
 import com.germinare.simbia_mobile.ui.features.splashScreen.SplashScreen;
@@ -41,13 +43,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class SettingsFragment extends Fragment implements CameraGalleryUtils.ImageResultListener {
 
     private ImageView btnLogout;
+    private ImageView ivEditName;
     private RecyclerView rvPosts;
     private PostProfileAdapter postAdapter;
     private FetchUserPostsUseCase fetchUserPostsUseCase;
@@ -60,6 +59,10 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
     private FirebaseAuth mAuth;
     private UserRepository userRepository;
     private StorageUtils storageUtils;
+    private PostgresRepository postgresRepository;
+
+    private Switch switchDarkMode;
+    private android.content.SharedPreferences sharedPreferences;
 
     public SettingsFragment() {}
 
@@ -71,7 +74,7 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
         userRepository = new UserRepository(requireContext());
         storageUtils = new StorageUtils();
 
-        PostgresRepository postgresRepository = new PostgresRepository(
+        postgresRepository = new PostgresRepository(
                 error -> AlertUtils.showDialogError(requireContext(), error)
         );
         fetchUserPostsUseCase = new FetchUserPostsUseCase(requireContext(), postgresRepository);
@@ -87,6 +90,7 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
         tvEmail = view.findViewById(R.id.tv_email);
         tvRankingPosition = view.findViewById(R.id.tv_ranking_position);
         tvMatchesCount = view.findViewById(R.id.tv_matches_count);
+        ivEditName = view.findViewById(R.id.iv_edit_name);
 
         rvPosts = view.findViewById(R.id.rv_post2);
         postAdapter = new PostProfileAdapter(new ArrayList<>());
@@ -101,15 +105,93 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
         rvPosts.setAdapter(postAdapter);
 
         ivProfileIcon.setOnClickListener(v -> showImageSourceDialog());
+
         btnLogout = view.findViewById(R.id.iv_logout);
         btnLogout.setOnClickListener(v -> showCustomLogoutDialog());
 
         loadUserInfo();
         loadUserPosts();
-        loadPostsCount();
-        loadMatchesCount();
+        setupListeners();
+
+        switchDarkMode = view.findViewById(R.id.switch_dark_mode);
+        sharedPreferences = requireContext().getSharedPreferences("MY_CACHE", getContext().MODE_PRIVATE);
+
+        boolean isDarkMode = sharedPreferences.getBoolean("dark_mode", false);
+        switchDarkMode.setChecked(isDarkMode);
+        AppCompatDelegate.setDefaultNightMode(
+                isDarkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
+        );
+
+        switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            sharedPreferences.edit().putBoolean("dark_mode", isChecked).apply();
+            AppCompatDelegate.setDefaultNightMode(
+                    isChecked ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
+            );
+        });
 
         return view;
+    }
+
+    private void setupListeners() {
+        ivEditName.setOnClickListener(v -> showEditNameDialog());
+    }
+
+    private void showEditNameDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Editar Nome");
+
+        final View customLayout = getLayoutInflater().inflate(R.layout.dialog_edit_name, null);
+        final EditText etNewName = customLayout.findViewById(R.id.et_new_name);
+        etNewName.setText(tvUserName.getText());
+        builder.setView(customLayout);
+
+        builder.setPositiveButton("Salvar", (dialog, which) -> {
+            String newName = etNewName.getText().toString().trim();
+            if (!newName.isEmpty() && !newName.equals(tvUserName.getText().toString())) {
+                updateUserName(newName);
+            } else if (newName.isEmpty()) {
+                Toast.makeText(requireContext(), "O nome não pode ser vazio.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
+    private void updateUserName(String newName) {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(requireContext(), "Usuário não autenticado.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String uid = currentUser.getUid();
+        Map<String, Object> firestoreMap = Map.of("name", newName);
+
+        userRepository.updateFieldByUid(uid, firestoreMap, aVoid -> {
+            Log.d("SettingsFragment", "Nome atualizado no Firestore com sucesso.");
+            tvUserName.setText(newName);
+
+            userRepository.getUserByUid(uid, document -> {
+                Long employeeId = document.getLong("employeeId");
+                if (employeeId != null) {
+                    Map<String, Object> postgresMap = Map.of("employeeName", newName);
+
+                    if (postgresRepository != null) {
+                        postgresRepository.updateEmployee(employeeId, postgresMap, result -> {
+                            Toast.makeText(requireContext(), "Nome atualizado com sucesso!", Toast.LENGTH_SHORT).show();
+                            Log.d("SettingsFragment", "Nome atualizado no Postgres com sucesso.");
+                        });
+                    } else {
+                        Log.e("SettingsFragment", "PostgresRepository não inicializado.");
+                        Toast.makeText(requireContext(), "Erro interno. Repositório não encontrado.", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Atenção: Nome atualizado no app, mas ID de funcionário não encontrado para o servidor.", Toast.LENGTH_LONG).show();
+                    Log.e("SettingsFragment", "employeeId is null for Postgres update. Update on Firestore succeeded.");
+                }
+            });
+        });
     }
 
     private void loadUserPosts() {
@@ -145,67 +227,6 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
                     .into(ivProfileIcon);
         }
     }
-
-    private void loadPostsCount() {
-        fetchUserPostsUseCase.execute(
-                postResponses -> {
-                    int countLastMonth = 0;
-                    long currentTime = System.currentTimeMillis();
-                    long millis30Days = 30L * 24 * 60 * 60 * 1000;
-
-                    for (PostResponse post : postResponses) {
-                        if (post.getCreatedAt() != null) {
-                            long postTime = post.getCreatedAt().getTime();
-                            if (currentTime - postTime <= millis30Days) countLastMonth++;
-                        }
-                    }
-                    tvRankingPosition.setText(String.valueOf(countLastMonth));
-                },
-                errorMessage -> tvRankingPosition.setText("0")
-        );
-    }
-
-    private void loadMatchesCount() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user == null) return;
-
-        userRepository.getUserByUid(user.getUid(), document -> {
-            Long employeeId = document.getLong("employeeId");
-            if (employeeId == null) {
-                tvMatchesCount.setText("0");
-                return;
-            }
-
-            MongoApiService service = ApiClient.getMongoService();
-            service.findAllChatByEmployeeId(employeeId).enqueue(new Callback<List<com.germinare.simbia_mobile.data.api.model.mongo.ChatResponse>>() {
-                @Override
-                public void onResponse(Call<List<com.germinare.simbia_mobile.data.api.model.mongo.ChatResponse>> call, Response<List<com.germinare.simbia_mobile.data.api.model.mongo.ChatResponse>> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        int countLastMonth = 0;
-                        long currentTime = System.currentTimeMillis();
-                        long millis30Days = 30L * 24 * 60 * 60 * 1000;
-
-                        for (com.germinare.simbia_mobile.data.api.model.mongo.ChatResponse chat : response.body()) {
-                            if (chat.getCreatedAt() != null) {
-                                long chatTime = chat.getCreatedAt().getTime();
-                                if (currentTime - chatTime <= millis30Days) countLastMonth++;
-                            }
-                        }
-                        tvMatchesCount.setText(String.valueOf(countLastMonth));
-                    } else {
-                        tvMatchesCount.setText("0");
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<List<com.germinare.simbia_mobile.data.api.model.mongo.ChatResponse>> call, Throwable t) {
-                    tvMatchesCount.setText("0");
-                }
-            });
-        });
-    }
-
-    // ------------------------ logout, cache e imagens ------------------------
 
     private void showCustomLogoutDialog() {
         View dialogView = getLayoutInflater().inflate(R.layout.alert_default, null);

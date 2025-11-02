@@ -3,21 +3,22 @@ package com.germinare.simbia_mobile.ui.features.home.fragments.post;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.data.api.cache.PostgresCache;
+import com.germinare.simbia_mobile.data.api.cache.Cache;
 import com.germinare.simbia_mobile.data.api.model.firestore.EmployeeFirestore;
 import com.germinare.simbia_mobile.data.api.model.postgres.PostRequest;
 import com.germinare.simbia_mobile.data.api.model.postgres.ProductCategoryResponse;
@@ -27,7 +28,6 @@ import com.germinare.simbia_mobile.utils.AlertUtils;
 import com.germinare.simbia_mobile.utils.CameraGalleryUtils;
 import com.germinare.simbia_mobile.utils.StorageUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +39,7 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
     private FragmentPostBinding binding;
     private PostgresRepository repository;
     private StorageUtils storage;
-    private PostgresCache postgresCache;
+    private Cache cache;
     private Bitmap imageBitmap;
     private AlertDialog progressDialog;
     private EmployeeFirestore employee;
@@ -60,7 +60,7 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        postgresCache = PostgresCache.getInstance();
+        cache = Cache.getInstance();
         storage = new StorageUtils();
         cameraGalleryUtils = new CameraGalleryUtils(this, this);
         repository = new PostgresRepository(error -> {
@@ -83,7 +83,7 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
         });
 
         progressDialog = AlertUtils.showLoadingDialog(requireContext(), "");
-        postgresCache.addListener(this::updateUIFromCache);
+        cache.addListener(this::updateUIFromCache);
         updateUIFromCache();
 
         binding.spAddPhoto.setOnClickListener(v -> showImageSourceDialog());
@@ -94,7 +94,13 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
 
     @Override
     public void onImageSelected(Uri imageUri) {
-        setPhotoToImageView(imageUri);
+        Bitmap rotatedBitmap = CameraGalleryUtils.rotateImageIfRequired(requireContext(), imageUri);
+
+        if (rotatedBitmap != null) {
+            setPhotoToImageView(imageUri, rotatedBitmap);
+        } else {
+            Toast.makeText(requireContext(), "Erro ao processar a imagem.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -104,22 +110,15 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
 
     @Override
     public void onPermissionDenied(String permission) {
+        Toast.makeText(requireContext(), "Permissão negada: " + permission, Toast.LENGTH_SHORT).show();
     }
 
-    private void setPhotoToImageView(Uri uri) {
-        Bitmap imageBitmap = null;
-        try {
-            imageBitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
-        } catch (IOException e) {
-            AlertUtils.showDialogError(
-                    requireContext(),
-                    "Imagem Comprometida."
-            );
-        }
-        if (imageBitmap == null) return;
+    private void setPhotoToImageView(Uri uri, Bitmap rotatedBitmap) {
+        if (rotatedBitmap == null) return;
+
         binding.spAddPhoto.setImageURI(uri);
         binding.spAddPhoto.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
-        this.imageBitmap = imageBitmap;
+        this.imageBitmap = rotatedBitmap;
     }
 
     private void createPost(){
@@ -162,8 +161,34 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
                                     AlertUtils.hideDialog(progressDialog);
                                     binding.btnPostar.setEnabled(true);
                                     Toast.makeText(requireContext(), "Post Realizado com sucesso", Toast.LENGTH_SHORT).show();
+                                    Navigation.findNavController(requireView())
+                                            .navigate(R.id.navigation_home);
                                 })
         ));
+    }
+
+    private void showPostImageDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View view = getLayoutInflater().inflate(R.layout.dialog_view_image, null);
+        builder.setView(view);
+
+        AlertDialog dialog = builder.create();
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        ImageView ivFullImage = view.findViewById(R.id.iv_full_image);
+        Button btnClose = view.findViewById(R.id.btn_close);
+
+        if (imageBitmap != null) {
+            ivFullImage.setImageBitmap(imageBitmap);
+        } else {
+            Toast.makeText(requireContext(), "Nenhuma imagem para visualizar.", Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+            return;
+        }
+
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
     }
 
     private void showImageSourceDialog() {
@@ -191,20 +216,11 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
             cameraGalleryUtils.takePhoto();
         });
 
-        if (cameraGalleryUtils.getCurrentPhotoUri() != null) {
+        if (this.imageBitmap != null) {
             tvViewImage.setVisibility(View.VISIBLE);
             tvViewImage.setOnClickListener(v -> {
-                AlertDialog.Builder builder_ = new AlertDialog.Builder(requireContext());
-                View customView_ = getLayoutInflater().inflate(R.layout.dialog_image, null);
-                builder_.setView(customView_);
-
-                final AlertDialog dialog_ = builder_.create();
-
-                if (dialog_.getWindow() != null) {
-                    dialog_.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                }
-
-                dialog_.show();
+                dialog.dismiss();
+                showPostImageDialog();
             });
         } else {
             tvViewImage.setVisibility(View.GONE);
@@ -239,9 +255,9 @@ public class PostFragment extends Fragment implements CameraGalleryUtils.ImageRe
     }
 
     private void updateUIFromCache(){
-        if (postgresCache.getProductCategory() != null && postgresCache.getEmployee() != null){
-            categories = postgresCache.getProductCategory();
-            employee = postgresCache.getEmployee();
+        if (cache.getProductCategory() != null && cache.getEmployee() != null){
+            categories = cache.getProductCategory();
+            employee = cache.getEmployee();
             AlertUtils.hideDialog(progressDialog);
         }
     }

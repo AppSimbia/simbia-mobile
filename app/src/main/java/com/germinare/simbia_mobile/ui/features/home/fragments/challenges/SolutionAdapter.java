@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,12 +15,18 @@ import com.germinare.simbia_mobile.data.api.model.mongo.SolutionResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.SolutionViewHolder> {
 
     private List<SolutionResponse> solutions;
 
-    public SolutionAdapter(List<SolutionResponse> solutions) {
+    private final String authorName;
+    private final String authorLogoUrl;
+
+    public SolutionAdapter(List<SolutionResponse> solutions, String authorName, String authorLogoUrl) {
         this.solutions = solutions != null ? solutions : new ArrayList<>();
+        this.authorName = authorName;
+        this.authorLogoUrl = authorLogoUrl;
     }
 
     @NonNull
@@ -33,6 +40,7 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
     @Override
     public void onBindViewHolder(@NonNull SolutionViewHolder holder, int position) {
         SolutionResponse solution = solutions.get(position);
+
         holder.bind(solution);
     }
 
@@ -49,19 +57,15 @@ public class SolutionAdapter extends RecyclerView.Adapter<SolutionAdapter.Soluti
         notifyDataSetChanged();
     }
 
-
     static class SolutionViewHolder extends RecyclerView.ViewHolder {
 
         ImageView ivAuthorLogo;
         TextView tvAuthorName;
         TextView tvSolutionTitle;
         TextView tvSolutionShortText;
-        TextView tvViewDetails;
 
         public SolutionViewHolder(@NonNull View itemView) {
             super(itemView);
-            ivAuthorLogo = itemView.findViewById(R.id.iv_author_logo);
-            tvAuthorName = itemView.findViewById(R.id.tv_author_name);
             tvSolutionTitle = itemView.findViewById(R.id.tv_solution_title);
             tvSolutionShortText = itemView.findViewById(R.id.tv_solution_short_text);
         }

@@ -83,7 +83,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     .into(h.industry);
 
             h.cardPost.setOnClickListener(V -> onClickPost.accept(post));
-        } else if (holder instanceof PostPagerAdapter.PostCarroselHolder){
+        } else {
             PostPagerAdapter.PostCarroselHolder h = (PostPagerAdapter.PostCarroselHolder) holder;
             h.title.setText(post.getTitle());
             h.subtitle.setText("R$ " + String.format("%.2f", post.getPrice()) + " | " +
@@ -98,7 +98,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             h.dots.setVisibility(GONE);
 
             ViewGroup.LayoutParams params = h.cardPost.getLayoutParams();
-            params.height = (int) (200 * h.itemView.getContext().getResources().getDisplayMetrics().density);
+            params.height = (int) (300 * h.itemView.getContext().getResources().getDisplayMetrics().density);
             h.cardPost.setLayoutParams(params);
             h.cardPost.setOnClickListener(v -> onClickPost.accept(post));
         }

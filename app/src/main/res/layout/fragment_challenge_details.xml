@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    tools:context=".ui.features.home.fragments.challenges.ChallengeDetailsFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:textSize="26sp"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 tools:text="Transformação de resíduo em lucro e soluções inovadoras" />
 
@@ -43,7 +42,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textSize="16sp"
-                android:textColor="#555555"
                 tools:text="De que forma podemos transformar resíduos em produtos, parcerias ou soluções inovadoras que gerem lucro e fortaleçam nosso compromisso com a sustentabilidade?" />
 
         </LinearLayout>
@@ -53,7 +51,6 @@
             android:layout_height="1dp"
             android:layout_marginTop="24dp"
             android:background="#DDDDDD" />
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -107,7 +104,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Título para sua solução (Obrigatório)"
+                android:hint="Título para sua solução"
                 android:padding="12dp"
                 android:inputType="textCapSentences"/>
 
@@ -127,10 +124,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="ENVIAR SOLUÇÃO"
-                android:backgroundTint="#2E7D32"
-                android:paddingVertical="12dp"
-                style="@style/Widget.AppCompat.Button.Colored" />
+                android:paddingVertical="12dp"/>
 
         </LinearLayout>
+
     </LinearLayout>
 </ScrollView>

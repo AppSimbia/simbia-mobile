@@ -58,6 +58,60 @@ public class PostgresRepository {
         });
     }
 
+    public void findIndustryByIdEmployee(Long id, Consumer<IndustryResponse> onSuccessful) {
+        Log.d(TAG, "findIndustryByIdEmployee called with id: " + id);
+        Call<IndustryResponse> call = apiService.findIndustryByIdEmployee(id);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<IndustryResponse> call, @NonNull Response<IndustryResponse> response) {
+                Log.d(TAG, "findIndustryByIdEmployee response: " + response.code());
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "findIndustryByIdEmployee success: " + response.body());
+                    onSuccessful.accept(response.body());
+                } else {
+                    try {
+                        Log.e(TAG, "findIndustryByIdEmployee failed: " + response.errorBody().string());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    onFailure.accept(MESSAGE_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<IndustryResponse> call, @NonNull Throwable t) {
+                Log.e(TAG, "findIndustryByIdEmployee error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
+
+    public void findIndustryByCnpj(String cnpj, Consumer<IndustryResponse> onSuccessful) {
+        Log.d(TAG, "findIndustryById called with cnpj: " + cnpj);
+        Call<IndustryResponse> call = apiService.findIndustryByCnpj(cnpj);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<IndustryResponse> call, @NonNull Response<IndustryResponse> response) {
+                Log.d(TAG, "findIndustryById response: " + response.code());
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "findIndustryById success: " + response.body());
+                    onSuccessful.accept(response.body());
+                } else {
+                    Log.e(TAG, "findIndustryById failed: " + response.message());
+                    onFailure.accept(MESSAGE_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<IndustryResponse> call, @NonNull Throwable t) {
+                Log.e(TAG, "findIndustryById error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
+
     public void createPost(PostRequest request, Consumer<PostResponse> onSuccessful) {
         Log.d(TAG, "createPost called with request: " + request);
         Call<PostResponse> call = apiService.createPost(request);
@@ -207,6 +261,36 @@ public class PostgresRepository {
             @Override
             public void onFailure(@NonNull Call<List<PostResponse>> call, @NonNull Throwable t) {
                 Log.e(TAG, "listPostsByEmployee error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
+
+    public void updateEmployee(Long id, Map<String, Object> map, Consumer<Void> onSuccessful) {
+        Log.d(TAG, "updateEmployee called with id: " + id + " and map: " + map);
+        Call<Void> call = apiService.updateEmployee(id, map);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                Log.d(TAG, "updateEmployee response code: " + response.code());
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "updateEmployee success");
+                    onSuccessful.accept(null);
+                } else {
+                    try {
+                        String errorBody = response.errorBody() != null ? response.errorBody().string() : response.message();
+                        Log.e(TAG, "updateEmployee failed: " + errorBody);
+                    } catch (IOException e) {
+                        Log.e(TAG, "updateEmployee failed: " + response.message());
+                    }
+                    onFailure.accept(MESSAGE_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Log.e(TAG, "updateEmployee error: ", t);
                 onFailure.accept(MESSAGE_ERROR);
             }
         });

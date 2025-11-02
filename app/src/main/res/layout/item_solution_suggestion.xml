@@ -6,45 +6,24 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="2dp"
-    app:cardBackgroundColor="#F8F8F8"> <androidx.constraintlayout.widget.ConstraintLayout
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
+
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp">
-
-    <ImageView
-        android:id="@+id/iv_author_logo"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src="@drawable/logo_simbia"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_author_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        tools:text="Raízen"
-        android:textSize="18sp"
-        android:fontFamily="@font/k2d_bold"
-        android:layout_marginStart="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/iv_author_logo"
-        app:layout_constraintTop_toTopOf="@id/iv_author_logo"
-        app:layout_constraintBottom_toBottomOf="@id/iv_author_logo" />
 
     <TextView
         android:id="@+id/tv_solution_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        tools:text="Solução Inovadora de Reciclagem de Plástico"
-        android:textSize="18sp"
         android:fontFamily="@font/k2d_bold"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_author_logo" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Solução Inovadora de Reciclagem de Plástico" />
 
     <TextView
         android:id="@+id/tv_solution_short_text"

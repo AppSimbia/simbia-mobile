@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.data.api.cache.PostgresCache;
+import com.germinare.simbia_mobile.data.api.cache.Cache;
 import com.germinare.simbia_mobile.data.api.model.mongo.MatchRequest;
 import com.germinare.simbia_mobile.data.api.repository.MongoRepository;
 import com.germinare.simbia_mobile.databinding.FragmentProductDetailsBinding;
@@ -31,7 +31,7 @@ import java.util.List;
 public class ProductDetailsFragment extends Fragment {
 
     private FragmentProductDetailsBinding binding;
-    private PostgresCache postgresCache;
+    private Cache cache;
     private MongoRepository repository;
     private AlertDialog progressDialog;
     private static final List<String> classficationsLabels = List.of(
@@ -49,7 +49,7 @@ public class ProductDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentProductDetailsBinding.inflate(inflater, container, false);
-        postgresCache = PostgresCache.getInstance();
+        cache = Cache.getInstance();
         repository = new MongoRepository(error -> {
             AlertUtils.showDialogError(requireContext(), error);
             AlertUtils.hideDialog(progressDialog);
@@ -99,8 +99,8 @@ public class ProductDetailsFragment extends Fragment {
             TextInputEditText description = V.findViewById(R.id.ed_solicitation_message);
             MatchRequest request = new MatchRequest(
                     post.getIdPost(),
-                    postgresCache.getEmployee().getUid(),
-                    postgresCache.getIndustry().getCnpj(),
+                    cache.getEmployee().getUid(),
+                    cache.getIndustry().getCnpj(),
                     post.getIndustryCnpj(),
                     description.getText().toString()
             );

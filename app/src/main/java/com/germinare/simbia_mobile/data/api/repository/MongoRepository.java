@@ -4,10 +4,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.germinare.simbia_mobile.data.api.model.mongo.ChalengeResponse;
+import com.germinare.simbia_mobile.data.api.model.mongo.ChallengeRequest;
+import com.germinare.simbia_mobile.data.api.model.mongo.ChallengeResponse;
 import com.germinare.simbia_mobile.data.api.model.mongo.ChatResponse;
-import com.germinare.simbia_mobile.data.api.model.mongo.MatchRequest;
 import com.germinare.simbia_mobile.data.api.model.mongo.MatchResponse;
+import com.germinare.simbia_mobile.data.api.model.mongo.MessageRequest;
 import com.germinare.simbia_mobile.data.api.retrofit.ApiServiceFactory;
 import com.germinare.simbia_mobile.data.api.service.MongoApiService;
 
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,7 +47,11 @@ public class MongoRepository {
                     Log.d(TAG, "createMatch success: " + response.body());
                     onSuccessful.accept(response.body());
                 } else {
-                    Log.e(TAG, "createMatch failed: " + response.message());
+                    try {
+                        Log.e(TAG, "createMatch failed: " + response.errorBody().string());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     onFailure.accept(MESSAGE_ERROR);
                 }
             }
@@ -58,26 +64,127 @@ public class MongoRepository {
         });
     }
 
-    public void changeStatusMatch(String id, String action, Map<String, Object> request, Consumer<String> onSuccessful) {
-        Log.d(TAG, "changeStatusMatch called for id: " + id + ", action: " + action);
-        Call<String> call = apiService.changeStatusMatch(id, action, request);
+    public void addMessage(String id, MessageRequest request, Consumer<ChatResponse.Message> onSuccessful) {
+        Log.d(TAG, "addMessage called with request: " + request);
+        Call<ChatResponse.Message> call = apiService.addMessage(id, request);
 
         call.enqueue(new Callback<>() {
             @Override
-            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-                Log.d(TAG, "changeStatusMatch response code: " + response.code());
+            public void onResponse(@NonNull Call<ChatResponse.Message> call, @NonNull Response<ChatResponse.Message> response) {
+                Log.d(TAG, "addMessage response code: " + response.code());
                 if (response.isSuccessful() && response.body() != null) {
-                    Log.d(TAG, "changeStatusMatch success: " + response.body());
+                    Log.d(TAG, "addMessage success: " + response.body());
                     onSuccessful.accept(response.body());
                 } else {
-                    Log.e(TAG, "changeStatusMatch failed: " + response.message());
+                    try {
+                        Log.e(TAG, "addMessage failed: " + response.errorBody().string());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     onFailure.accept(MESSAGE_ERROR);
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ChatResponse.Message> call, @NonNull Throwable t) {
+                Log.e(TAG, "createMatch error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
+
+    public void readMessage(String id, Long employeeId, String createAt, Consumer<Boolean> onSuccessful) {
+        Log.d(TAG, "readMessage called with id: " + id + " createAt: " + createAt);
+        Call<Boolean> call = apiService.readMessage(id, employeeId, createAt);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<Boolean> call, @NonNull Response<Boolean> response) {
+                Log.d(TAG, "readMessage response code: " + response.code());
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "readMessage success: " + response.body());
+                    onSuccessful.accept(response.body());
+                } else {
+                    Log.e(TAG, "readMessage failed: " + response.message());
+                    onFailure.accept(MESSAGE_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Boolean> call, @NonNull Throwable t) {
+                Log.e(TAG, "readMessage error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
+
+    public void changeStatusMatch(String id, String action, Map<String, Object> request, Consumer<String> onSuccessful) {
+        Log.d(TAG, "changeStatusMatch called for id: " + id + ", action: " + action);
+        Call<ResponseBody> call = apiService.changeStatusMatch(id, action, request);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                Log.d(TAG, "changeStatusMatch response code: " + response.code());
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "changeStatusMatch success: " + response.body());
+                    onSuccessful.accept(response.body().toString());
+                } else {
+                    try {
+                        Log.e(TAG, "changeStatusMatch failed: " + response.errorBody().string());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    onFailure.accept(MESSAGE_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                 Log.e(TAG, "changeStatusMatch error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
+
+    public void cancelMatch(String id) {
+        Log.d(TAG, "cancelMatch called for id: " + id);
+        Call<Void> call = apiService.cancelMatch(id);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                Log.d(TAG, "cancelMatch response code: " + response.code());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Log.e(TAG, "cancelMatch error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
+
+    public void findMatchByChatId(String id, Consumer<MatchResponse> onSuccessful) {
+        Log.d(TAG, "findMatchByChatId called with id: " + id);
+        Call<MatchResponse> call = apiService.findMatchByChatId(id);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<MatchResponse> call, @NonNull Response<MatchResponse> response) {
+                Log.d(TAG, "findMatchByChatId response code: " + response.code());
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "findMatchByChatId success: " + response.body());
+                    onSuccessful.accept(response.body());
+                } else {
+                    Log.e(TAG, "findMatchByChatId failed: " + response.message());
+                    onFailure.accept(MESSAGE_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MatchResponse> call, @NonNull Throwable t) {
+                Log.e(TAG, "findMatchByChatId error: ", t);
                 onFailure.accept(MESSAGE_ERROR);
             }
         });
@@ -108,7 +215,7 @@ public class MongoRepository {
         });
     }
 
-    public void findAllChatByEmployeeId(Long employeeId, Consumer<List<ChatResponse>> onSuccessful) {
+    public void findAllChatByEmployeeId(String employeeId, Consumer<List<ChatResponse>> onSuccessful) {
         Log.d(TAG, "findAllChatByEmployeeId called with id: " + employeeId);
         Call<List<ChatResponse>> call = apiService.findAllChatByEmployeeId(employeeId);
 
@@ -133,21 +240,58 @@ public class MongoRepository {
         });
     }
 
-    public void listChallenges(Consumer<List<ChalengeResponse>> onSuccess) {
-        Call<List<ChalengeResponse>> call = apiService.listChallenges();
+    public void findAllChallenges(Consumer<List<ChallengeResponse>> onSuccessful) {
+        Log.d(TAG, "findAllChallenges called");
+        Call<List<ChallengeResponse>> call = apiService.listChallenges();
+
         call.enqueue(new Callback<>() {
             @Override
-            public void onResponse(@NonNull Call<List<ChalengeResponse>> call, @NonNull Response<List<ChalengeResponse>> response) {
+            public void onResponse(@NonNull Call<List<ChallengeResponse>> call, @NonNull Response<List<ChallengeResponse>> response) {
+                Log.d(TAG, "findAllChallenges response code: " + response.code());
                 if (response.isSuccessful() && response.body() != null) {
-                    onSuccess.accept(response.body());
+                    Log.d(TAG, "findAllChallenges success: " + response.body().size() + " chats received");
+                    onSuccessful.accept(response.body());
                 } else {
-                    onFailure.accept("Falha ao buscar desafios");
+                    Log.e(TAG, "findAllChallenges failed: " + response.message());
+                    onFailure.accept(MESSAGE_ERROR);
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<ChalengeResponse>> call, @NonNull Throwable t) {
-                onFailure.accept("Erro de rede ao buscar desafios");
+            public void onFailure(@NonNull Call<List<ChallengeResponse>> call, @NonNull Throwable t) {
+                Log.e(TAG, "findAllChatByEmployeeId error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
+
+
+    public void createChallenge(ChallengeRequest request, Consumer<ChallengeResponse> onSuccessful) {
+        Log.d(TAG, "createChallenge called with request: " + request);
+        Call<ChallengeResponse> call = apiService.createChallenge(request);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ChallengeResponse> call, @NonNull Response<ChallengeResponse> response) {
+                Log.d(TAG, "createChallenge response code: " + response.code());
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "createChallenge success: " + response.body());
+                    onSuccessful.accept(response.body());
+                } else {
+                    try {
+                        String error = response.errorBody() != null ? response.errorBody().string() : response.message();
+                        Log.e(TAG, "createChallenge failed: " + error);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    onFailure.accept(MESSAGE_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ChallengeResponse> call, @NonNull Throwable t) {
+                Log.e(TAG, "createChallenge error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
             }
         });
     }

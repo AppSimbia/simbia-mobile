@@ -44,15 +44,25 @@ public class IndustryResponse {
         return industryName;
     }
 
-    public void setIndustryName(String industryName) {
-        this.industryName = industryName;
-    }
-
     public String getImage() {
         return image;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    @Override
+    public String toString() {
+        return "IndustryResponse{" +
+                "idIndustry=" + idIndustry +
+                ", industryType=" + industryType +
+                ", plan=" + plan +
+                ", login=" + login +
+                ", cnpj='" + cnpj + '\'' +
+                ", industryName='" + industryName + '\'' +
+                ", description='" + description + '\'' +
+                ", contactMail='" + contactMail + '\'' +
+                ", cep='" + cep + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", image='" + image + '\'' +
+                '}';
     }
 }
