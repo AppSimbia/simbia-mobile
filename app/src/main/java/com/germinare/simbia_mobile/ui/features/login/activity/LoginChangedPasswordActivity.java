@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log; // Adicionado para logs
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.databinding.ActivityLoginChangedPasswordBinding;
 import com.germinare.simbia_mobile.ui.features.home.activity.MainActivity;
+import com.germinare.simbia_mobile.utils.BaseLoginUtils;
 import com.germinare.simbia_mobile.utils.RegexUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,18 +26,14 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidUserException; // Import necessário
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
 public class LoginChangedPasswordActivity extends AppCompatActivity {
 
     private ActivityLoginChangedPasswordBinding binding;
-
-    private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
+    private BaseLoginUtils baseLoginUtils;
 
     private String etEmail;
     private String etPassword;
@@ -49,22 +45,28 @@ public class LoginChangedPasswordActivity extends AppCompatActivity {
         binding = ActivityLoginChangedPasswordBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        setSupportActionBar(binding.toolbarLoginChangedPassword);
         firebaseAuth = FirebaseAuth.getInstance();
-        firebaseFirestore = FirebaseFirestore.getInstance();
+        baseLoginUtils = new BaseLoginUtils(this);
 
+        setupToolbar();
+        setupLoginButton();
+        binding.tvForgotPassword.setOnClickListener(this::showPasswordReset);
+    }
+
+    private void setupToolbar() {
+        setSupportActionBar(binding.toolbarLoginChangedPassword);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.close_toolbar);
         }
-
         binding.toolbarTitleLoginChangedPassword.setText("Login");
+    }
 
+    private void setupLoginButton() {
         TextInputLayout laEmail = binding.inputEmailLogin;
         TextInputLayout laPassword = binding.inputPasswordLogin;
-
         TextInputEditText etEmailField = binding.etEmailLogin;
         TextInputEditText etPasswordField = binding.etPasswordLogin;
 
@@ -73,14 +75,19 @@ public class LoginChangedPasswordActivity extends AppCompatActivity {
             etEmail = etEmailField.getText() != null ? etEmailField.getText().toString().trim() : "";
             etPassword = etPasswordField.getText() != null ? etPasswordField.getText().toString().trim() : "";
 
-
             if (validateInfo(laEmail, laPassword)) {
                 firebaseAuth.signInWithEmailAndPassword(etEmail, etPassword)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    checkFirestoreField(task.getResult().getUser().getUid());
+                                    baseLoginUtils.checkFirstAccess(
+                                            firstAccess -> Toast.makeText(LoginChangedPasswordActivity.this,
+                                                    "Sua conta ainda não realizou o primeiro acesso", Toast.LENGTH_LONG).show(),
+                                            () -> {
+                                                startActivity(new Intent(LoginChangedPasswordActivity.this, MainActivity.class));
+                                                finish();
+                                            });
                                 } else {
                                     Toast.makeText(LoginChangedPasswordActivity.this,
                                             "E-mail ou senha inválidos", Toast.LENGTH_SHORT).show();
@@ -89,13 +96,10 @@ public class LoginChangedPasswordActivity extends AppCompatActivity {
                         });
             }
         });
-
-        binding.tvForgotPassword.setOnClickListener(this::showPasswordReset);
     }
 
     private boolean validateInfo(TextInputLayout laEmail, TextInputLayout laPassword) {
         boolean isValid = true;
-
         laEmail.setError(null);
         laPassword.setError(null);
 
@@ -108,8 +112,15 @@ public class LoginChangedPasswordActivity extends AppCompatActivity {
             laPassword.setError("A senha deve conter 8 caracteres, com pelo menos uma letra minúscula, uma maiúscula, um dígito e um caractere especial ($*&@#).");
             isValid = false;
         }
-
         return isValid;
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Bloqueia login e fecha Activity
+        super.onBackPressed();
+        Toast.makeText(this, "Operação cancelada.", Toast.LENGTH_SHORT).show();
+        finish(); // fecha sem logar
     }
 
     @Override
@@ -122,88 +133,48 @@ public class LoginChangedPasswordActivity extends AppCompatActivity {
         LayoutInflater inflater = LayoutInflater.from(this);
         View customLayout = inflater.inflate(R.layout.dialog_reset_password, null);
 
+        final MaterialButton btnSend = customLayout.findViewById(R.id.btn_send);
+        final MaterialButton btnCancel = customLayout.findViewById(R.id.btn_cancel);
         final TextInputEditText inputEmail = customLayout.findViewById(R.id.input_email);
-        MaterialButton btnSend = customLayout.findViewById(R.id.btn_send);
-        MaterialButton btnCancel = customLayout.findViewById(R.id.btn_cancel);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(customLayout);
-
         final AlertDialog customDialog = builder.create();
-
         if (customDialog.getWindow() != null) {
             customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 
         btnSend.setOnClickListener(v -> {
             String email = inputEmail.getText() != null ? inputEmail.getText().toString().trim() : "";
-
             if (email.isEmpty()) {
                 Toast.makeText(this, "Por favor, insira um email.", Toast.LENGTH_SHORT).show();
+                return;
             }
 
             firebaseAuth.fetchSignInMethodsForEmail(email)
                     .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            List<String> signInMethods = task.getResult().getSignInMethods();
+                        if (task.isSuccessful() && task.getResult() != null
+                                && task.getResult().getSignInMethods() != null
+                                && !task.getResult().getSignInMethods().isEmpty()) {
 
-                            if (signInMethods != null && !signInMethods.isEmpty()) {
-                                firebaseAuth.sendPasswordResetEmail(email)
-                                        .addOnCompleteListener(sendTask -> {
-                                            if(sendTask.isSuccessful()) {
-                                                Toast.makeText(LoginChangedPasswordActivity.this, "Email enviado! Verifique sua caixa de entrada.", Toast.LENGTH_LONG).show();
-                                            } else {
-                                                Toast.makeText(LoginChangedPasswordActivity.this, "Erro ao enviar email de recuperação. Tente novamente.", Toast.LENGTH_LONG).show();
-                                            }
-                                            customDialog.dismiss();
-                                        });
-                            } else {
-                                Toast.makeText(LoginChangedPasswordActivity.this, "Usuário não cadastrado.", Toast.LENGTH_LONG).show();
-                                customDialog.dismiss();
-                            }
+                            firebaseAuth.sendPasswordResetEmail(email)
+                                    .addOnCompleteListener(sendTask -> {
+                                        if (sendTask.isSuccessful()) {
+                                            Toast.makeText(this, "Email enviado! Verifique sua caixa de entrada.", Toast.LENGTH_LONG).show();
+                                        } else {
+                                            Toast.makeText(this, "Erro ao enviar email de recuperação.", Toast.LENGTH_LONG).show();
+                                        }
+                                        customDialog.dismiss();
+                                    });
+
                         } else {
-                            Toast.makeText(LoginChangedPasswordActivity.this, "Erro de conexão. Tente novamente.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Usuário não cadastrado.", Toast.LENGTH_LONG).show();
+                            customDialog.dismiss();
                         }
                     });
         });
 
-        btnCancel.setOnClickListener(v -> {
-            customDialog.dismiss();
-        });
-
+        btnCancel.setOnClickListener(v -> customDialog.dismiss());
         customDialog.show();
-    }
-
-
-    private void checkFirestoreField(String uid) {
-        DocumentReference userDocRef = firebaseFirestore.collection("employee").document(uid);
-
-        userDocRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                if (task.getResult().exists()) {
-                    Boolean isVerified = task.getResult().getBoolean("firstAccess");
-
-                    if (isVerified.booleanValue() && isVerified != null) {
-                        Toast.makeText(LoginChangedPasswordActivity.this,
-                                "Sua conta não realizou o primeiro acesso",
-                                Toast.LENGTH_LONG).show();
-                    } else {
-                        Intent intent = new Intent(LoginChangedPasswordActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                } else {
-                    firebaseAuth.signOut();
-                    Toast.makeText(LoginChangedPasswordActivity.this,
-                            "Dados de perfil não encontrado.",
-                            Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                firebaseAuth.signOut();
-                Toast.makeText(LoginChangedPasswordActivity.this,
-                        "Erro de conexão ao verificar o perfil. Tente novamente",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }
