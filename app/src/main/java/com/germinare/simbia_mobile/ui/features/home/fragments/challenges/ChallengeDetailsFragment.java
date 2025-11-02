@@ -1,5 +1,6 @@
 package com.germinare.simbia_mobile.ui.features.home.fragments.challenges;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,11 +18,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.data.api.model.mongo.ChalengeResponse;
+import com.germinare.simbia_mobile.data.api.model.mongo.ChallengeResponse;
 import com.germinare.simbia_mobile.data.api.model.mongo.SolutionRequest;
+import com.germinare.simbia_mobile.data.api.repository.PostgresRepository;
 import com.germinare.simbia_mobile.data.api.retrofit.ApiServiceFactory;
 import com.germinare.simbia_mobile.data.api.service.MongoApiService;
-import com.germinare.simbia_mobile.ui.features.home.fragments.challenges.SolutionAdapter;
+import com.germinare.simbia_mobile.data.fireauth.UserAuth;
+import com.germinare.simbia_mobile.data.firestore.UserRepository;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.ArrayList;
+import java.util.function.Consumer;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,7 +36,7 @@ import retrofit2.Response;
 
 public class ChallengeDetailsFragment extends Fragment {
 
-    private static final String TAG = "ChallengeDetailsFragment"; // Tag para logs
+    private static final String TAG = "ChallengeDetailsFragment";
 
     private String challengeId;
     private TextView tvCompany;
@@ -43,10 +50,12 @@ public class ChallengeDetailsFragment extends Fragment {
 
     private MongoApiService mongoApiService;
     private SolutionAdapter solutionAdapter;
+    private PostgresRepository repository;
 
-    public ChallengeDetailsFragment() {
-        // Construtor público obrigatório
-    }
+    private UserAuth userAuth;
+    private UserRepository userRepository;
+
+    public ChallengeDetailsFragment() {}
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,15 +63,11 @@ public class ChallengeDetailsFragment extends Fragment {
 
         if (getArguments() != null) {
             challengeId = getArguments().getString("challengeId");
-            // 💡 LOG: Verifica o ID do desafio recebido
             Log.d(TAG, "ID do Desafio recebido: " + challengeId);
-        } else {
-            Log.e(TAG, "Argumentos do fragmento são nulos. Nenhum challengeId encontrado.");
         }
 
         mongoApiService = ApiServiceFactory.getMongoApi();
-
-        solutionAdapter = new SolutionAdapter(null);
+        userAuth = new UserAuth();
     }
 
     @Override
@@ -75,6 +80,10 @@ public class ChallengeDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        userRepository = new UserRepository(requireContext());
+        repository = new PostgresRepository(error -> Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show());
+
+
         tvCompany = view.findViewById(R.id.tv_company_name);
         tvChallengeTitle = view.findViewById(R.id.tv_detail_title);
         tvChallengeDescription = view.findViewById(R.id.tv_detail_description);
@@ -86,40 +95,57 @@ public class ChallengeDetailsFragment extends Fragment {
         btnSendSolution = view.findViewById(R.id.btn_send_solution);
 
         rvSolutions.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvSolutions.setAdapter(solutionAdapter);
+
+        loadAndSetupAdapter();
 
         if (challengeId != null) {
-            // 💡 LOG: Inicia o carregamento dos detalhes
-            Log.d(TAG, "Chamando fetchChallengeDetails para ID: " + challengeId);
-            fetchChallengeDetails(challengeId);
-        } else {
-            Toast.makeText(getContext(), "ID do desafio não encontrado.", Toast.LENGTH_LONG).show();
         }
 
         btnSendSolution.setOnClickListener(v -> submitSolution());
     }
 
-    /**
-     * Implementa a chamada GET /desafios/{id} para carregar detalhes e soluções.
-     */
+    private void loadAndSetupAdapter() {
+        loadLoggedUserCompanyData(requireContext(),
+                companyData -> {
+                    Log.d(TAG, "Dados da empresa carregados: " + companyData.name);
+                    solutionAdapter = new SolutionAdapter(
+                            new ArrayList<>(),
+                            companyData.name,
+                            companyData.logoUrl
+                    );
+                    rvSolutions.setAdapter(solutionAdapter);
+
+                    if (challengeId != null) {
+                        fetchChallengeDetails(challengeId);
+                    }
+                },
+                () -> {
+                    Log.e(TAG, "Falha ao carregar dados da empresa do usuário logado.");
+                    solutionAdapter = new SolutionAdapter(
+                            new ArrayList<>(),
+                            "Empresa Desconhecida",
+                            null
+                    );
+                    rvSolutions.setAdapter(solutionAdapter);
+
+                    if (challengeId != null) {
+                        fetchChallengeDetails(challengeId);
+                    }
+                }
+        );
+    }
+
     private void fetchChallengeDetails(String id) {
-        mongoApiService.getChallengeById(id).enqueue(new Callback<ChalengeResponse>() {
+        mongoApiService.getChallengeById(id).enqueue(new Callback<ChallengeResponse>() {
             @Override
-            public void onResponse(@NonNull Call<ChalengeResponse> call, @NonNull Response<ChalengeResponse> response) {
-                // 💡 LOG: Loga o URL da requisição GET
-                Log.d(TAG, "GET URL: " + call.request().url());
-                Log.d(TAG, "GET Response Code: " + response.code());
-
+            public void onResponse(@NonNull Call<ChallengeResponse> call, @NonNull Response<ChallengeResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    ChalengeResponse details = response.body();
-
-                    // 💡 LOG: Sucesso, loga o título recebido
-                    Log.d(TAG, "Detalhes do Desafio carregados: " + details.getTitle());
+                    ChallengeResponse details = response.body();
 
                     tvChallengeTitle.setText(details.getTitle());
                     tvChallengeDescription.setText(details.getText());
 
-                    if (details.getSolutions() != null) {
+                    if (details.getSolutions() != null && solutionAdapter != null) {
                         int count = details.getSolutions().size();
                         tvSuggestionsTitle.setText("Sugestões Recebidas (" + count + ")");
                         solutionAdapter.updateList(details.getSolutions());
@@ -128,24 +154,19 @@ public class ChallengeDetailsFragment extends Fragment {
                     }
 
                 } else {
-                    // 🚨 LOG: Erro no corpo da resposta
-                    Log.e(TAG, "Erro ao carregar detalhes: " + response.code() + ". Mensagem: " + response.message());
-                    Toast.makeText(getContext(), "Falha ao carregar detalhes do desafio. Código: " + response.code(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Falha ao carregar detalhes do desafio.", Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Erro ao carregar detalhes: " + response.code());
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<ChalengeResponse> call, @NonNull Throwable t) {
-                // 🚨 LOG: Erro de conexão/rede
-                Log.e(TAG, "Erro de API (GET): " + t.getMessage(), t);
+            public void onFailure(@NonNull Call<ChallengeResponse> call, @NonNull Throwable t) {
                 Toast.makeText(getContext(), "Erro de conexão ao carregar desafio.", Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Erro de API (GET): " + t.getMessage(), t);
             }
         });
     }
 
-    /**
-     * Implementa a chamada POST /desafios/create/solucao para enviar a nova solução.
-     */
     private void submitSolution() {
         String title = etSolutionTitle.getText().toString().trim();
         String description = etSolutionDescription.getText().toString().trim();
@@ -155,56 +176,97 @@ public class ChallengeDetailsFragment extends Fragment {
             return;
         }
 
-        long idEmployeeSolution = 1L;
+        FirebaseUser firebaseUser = userAuth.getCurrentUser();
+        if (firebaseUser == null) {
+            Toast.makeText(getContext(), "Usuário não logado.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        SolutionRequest request = new SolutionRequest();
-        request.setIdEmployeeQuestion(idEmployeeSolution);
-        request.setTitle(title);
-        request.setText(description);
+        String uid = firebaseUser.getUid();
 
-        // 💡 LOG: Loga os dados da requisição POST
-        Log.d(TAG, "Enviando Solução. ID do Desafio: " + challengeId +
-                ", Título: " + title +
-                ", Descrição length: " + description.length());
+        userRepository.getUserByUid(uid, document -> {
+            if (document.exists()) {
+                Long employeeId = document.getLong("employeeId");
 
-        mongoApiService.createSolution(challengeId, request).enqueue(new Callback<ChalengeResponse>() {
-
-            @Override
-            public void onResponse(@NonNull Call<ChalengeResponse> call, @NonNull Response<ChalengeResponse> response) {
-                // 💡 LOG: Loga o URL da requisição POST
-                Log.d(TAG, "POST URL: " + call.request().url());
-                Log.d(TAG, "POST Response Code: " + response.code());
-
-                if (response.isSuccessful()) {
-
-                    Toast.makeText(getContext(), "Solução enviada com sucesso!", Toast.LENGTH_SHORT).show();
-
-                    etSolutionTitle.setText("");
-                    etSolutionDescription.setText("");
-
-                    // 💡 LOG: Recarregando dados após sucesso do POST
-                    Log.d(TAG, "Solução enviada com sucesso. Recarregando detalhes.");
-                    fetchChallengeDetails(challengeId);
-
-                } else {
-                    // 🚨 LOG: Erro no corpo da resposta
-                    Log.e(TAG, "Erro ao enviar solução: " + response.code() + " - Mensagem: " + response.message());
-                    // 🚨 LOG: Tenta imprimir o corpo de erro (pode ser nulo/vazio)
-                    try {
-                        Log.e(TAG, "Corpo de Erro: " + response.errorBody().string());
-                    } catch (Exception e) {
-                        Log.e(TAG, "Não foi possível ler corpo de erro.");
-                    }
-                    Toast.makeText(getContext(), "Falha ao enviar solução. Código: " + response.code(), Toast.LENGTH_LONG).show();
+                if (employeeId == null) {
+                    Toast.makeText(getContext(), "ID do funcionário não encontrado.", Toast.LENGTH_SHORT).show();
+                    return;
                 }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<ChalengeResponse> call, @NonNull Throwable t) {
-                // 🚨 LOG: Erro de conexão/rede
-                Log.e(TAG, "Erro de API (POST): " + t.getMessage(), t);
-                Toast.makeText(getContext(), "Erro de conexão. Não foi possível enviar a solução.", Toast.LENGTH_LONG).show();
+                SolutionRequest request = new SolutionRequest();
+                request.setIdEmployeeQuestion(employeeId);
+                request.setTitle(title);
+                request.setText(description);
+
+                mongoApiService.createSolution(challengeId, request).enqueue(new Callback<ChallengeResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ChallengeResponse> call, @NonNull Response<ChallengeResponse> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(getContext(), "Solução enviada com sucesso!", Toast.LENGTH_SHORT).show();
+                            etSolutionTitle.setText("");
+                            etSolutionDescription.setText("");
+                            if (solutionAdapter != null) {
+                                fetchChallengeDetails(challengeId);
+                            }
+                        } else {
+                            Toast.makeText(getContext(), "Falha ao enviar solução.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ChallengeResponse> call, @NonNull Throwable t) {
+                        Toast.makeText(getContext(), "Erro de conexão ao enviar solução.", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            } else {
+                Toast.makeText(getContext(), "Dados do usuário não encontrados.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+
+    private void loadLoggedUserCompanyData(
+            Context context,
+            Consumer<CompanyData> onSuccess,
+            Runnable onFailure
+    ) {
+
+        FirebaseUser user = userAuth.getCurrentUser();
+        if (user == null) {
+            onFailure.run();
+            return;
+        }
+        String uid = user.getUid();
+
+        userRepository.getUserByUid(uid, document -> {
+            Long idIndustry = document.getLong("idIndustry");
+
+            if (idIndustry == null) {
+                onFailure.run();
+                return;
+            }
+
+            repository.findIndustryById(idIndustry, industryResponse -> {
+                String companyName = industryResponse.getIndustryName();
+                String companyLogo = industryResponse.getImage();
+
+                if (companyName != null && companyLogo != null) {
+                    onSuccess.accept(new CompanyData(companyName, companyLogo));
+                } else {
+                    onFailure.run();
+                }
+            });
+        });
+    }
+
+    class CompanyData {
+        String name;
+        String logoUrl;
+
+        CompanyData(String name, String logoUrl) {
+            this.name = name;
+            this.logoUrl = logoUrl;
+        }
     }
 }

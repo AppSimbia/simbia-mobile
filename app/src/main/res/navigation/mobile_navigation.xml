@@ -72,7 +72,11 @@
         android:id="@+id/navigation_challenges"
         android:name="com.germinare.simbia_mobile.ui.features.home.fragments.challenges.ChallengesFragment"
         android:label="fragment_challenges"
-        tools:layout="@layout/fragment_challenges" />
+        tools:layout="@layout/fragment_challenges" >
+        <action
+            android:id="@+id/action_navigation_challenges_to_challengeDetailsFragment"
+            app:destination="@id/challengeDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/challengeDetailsFragment"
         android:name="com.germinare.simbia_mobile.ui.features.home.fragments.challenges.ChallengeDetailsFragment"

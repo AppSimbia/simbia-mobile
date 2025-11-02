@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,183 +9,105 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".ui.features.home.fragments.HomeFragment">
-
-        <TextView
-            android:id="@+id/tv_recomendados"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/k2d_bold"
-            android:text="Recomendados"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.168"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_pergunta_eva" />
-
-        <TextView
-            android:id="@+id/tv_impactos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/k2d_bold"
-            android:text="Seus Impactos"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.166"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
-
-        <EditText
-            android:id="@+id/et_pergunta_eva"
-            android:layout_width="296dp"
-            android:layout_height="45dp"
-
-            android:layout_marginStart="16dp"
-
-            android:layout_marginTop="28dp"
-
-            android:background="@drawable/rounded_edittext_background"
-            android:drawableStart="@drawable/baseline_search_24"
-            android:drawablePadding="8dp"
-            android:drawableTint="?attr/colorOnSurface"
-            android:fontFamily="@font/dm_sans_semibold"
-            android:hint="Pergunte algo a EVA"
-            android:inputType="text"
-            android:maxLines="1"
-            android:paddingStart="16dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="12dp"
-
-            android:textColor="?attr/colorOnSurface"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/iv_legal_guide"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/iv_legal_guide"
-            android:layout_width="48dp"
-            android:layout_height="0dp"
-
-            android:layout_marginStart="9dp"
-
-            android:background="@drawable/rounded_edittext_background"
-
-            android:padding="12dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/icon_guia_legal"
-            app:layout_constraintBottom_toBottomOf="@+id/et_pergunta_eva"
-            app:layout_constraintEnd_toStartOf="@+id/iv_painel_impacto"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/et_pergunta_eva"
-            app:layout_constraintTop_toTopOf="@+id/et_pergunta_eva"
-            app:tint="?attr/colorOnSurface" />
+        tools:context=".ui.features.home.fragments.HomeFragment"
+        android:paddingBottom="16dp"> <EditText
+        android:id="@+id/et_pergunta_eva"
+        android:layout_width="0dp" android:layout_height="48dp" android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp" android:background="@drawable/rounded_edittext_background"
+        android:drawableStart="@drawable/baseline_search_24"
+        android:drawablePadding="8dp"
+        android:drawableTint="?attr/colorOnSurface"
+        android:fontFamily="@font/dm_sans_semibold"
+        android:hint="Pergunte algo a EVA"
+        android:inputType="text"
+        android:maxLines="1"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp"
+        android:textColor="?attr/colorOnSurface"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/iv_painel_impacto"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        />
 
         <ImageView
             android:id="@+id/iv_painel_impacto"
             android:layout_width="48dp"
-            android:layout_height="45dp"
-
-
-            android:layout_marginStart="9dp"
-
+            android:layout_height="0dp" android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/rounded_edittext_background"
             android:padding="12dp"
             android:scaleType="fitCenter"
             android:src="@drawable/icon_painel_impacto"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/iv_legal_guide"
+            app:layout_constraintStart_toEndOf="@+id/et_pergunta_eva"
             app:layout_constraintTop_toTopOf="@+id/et_pergunta_eva"
-            app:tint="?attr/colorOnSurface" />
+            app:layout_constraintBottom_toBottomOf="@+id/et_pergunta_eva"
+            app:layout_constraintEnd_toStartOf="@+id/iv_legal_guide"
+            app:tint="?attr/colorOnSurface"
+            tools:layout_editor_absoluteY="28dp" /> <ImageView
+            android:id="@+id/iv_legal_guide"
+            android:layout_width="48dp"
+            android:layout_height="0dp" android:layout_marginEnd="16dp"
+            android:background="@drawable/rounded_edittext_background"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_guia_legal"
+            app:layout_constraintTop_toTopOf="@+id/et_pergunta_eva"
+            app:layout_constraintBottom_toBottomOf="@+id/et_pergunta_eva"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_painel_impacto"
+            app:tint="?attr/colorOnSurface"
+            tools:layout_editor_absoluteX="307dp" /> <TextView
+            android:id="@+id/tv_recomendados"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/k2d_bold"
+            android:text="Recomendados"
+            android:textSize="24sp"
+            android:layout_marginTop="32dp"
+            app:layout_constraintStart_toStartOf="@+id/et_pergunta_eva" app:layout_constraintTop_toBottomOf="@+id/et_pergunta_eva"
+            />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout3"
-            android:layout_width="328dp"
-            android:layout_height="160dp"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vp_carrosel_posts_home"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
             android:layout_marginTop="12dp"
-            android:background="@drawable/carousel_fav_mock"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            app:layout_constraintDimensionRatio="16:9" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.506"
+            app:layout_constraintTop_toBottomOf="@+id/tv_recomendados"
+            android:layout_marginHorizontal="16dp" tools:itemCount="3"
+            tools:listitem="@layout/post_carrosel_layout" />
+
+        <TextView
+            android:id="@+id/tv_desafios"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/k2d_bold"
+            android:text="Desafios"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="@+id/tv_recomendados" app:layout_constraintTop_toBottomOf="@+id/vp_carrosel_posts_home" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vp_challenges_home"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginTop="16dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:layout_marginHorizontal="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_desafios"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_recomendados">
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout4"
-            android:layout_width="328dp"
-            android:layout_height="140dp"
-            android:layout_marginTop="64dp"
-            android:background="@drawable/button_chat"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.807"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_impactos">
-
-            <ImageView
-                android:id="@+id/icon_pergunta_recente"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:src="@drawable/icon_pergunta"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tv_perguntas_recentes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:fontFamily="@font/k2d_bold"
-                android:text="Perguntas Recentes"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="@+id/icon_pergunta_recente"
-                app:layout_constraintStart_toEndOf="@+id/icon_pergunta_recente"
-                app:layout_constraintTop_toTopOf="@+id/icon_pergunta_recente" />
-
-            <ImageView
-                android:id="@+id/icon_nestle"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/logo_simbia"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/icon_pergunta_recente" />
-
-            <TextView
-                android:id="@+id/tv_question_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="16dp"
-                android:fontFamily="@font/k2d"
-                android:text="Como podemos transformar resíduos em oportunidades lucrativas e sustentáveis?"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/icon_nestle"
-                app:layout_constraintTop_toTopOf="@+id/icon_nestle" />
-
-            <TextView
-                android:id="@+id/tv_suggest_solution"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                android:fontFamily="@font/k2d"
-                android:text="Sugerir Solução >"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            tools:itemCount="3"
+            tools:listitem="@layout/item_challenge"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

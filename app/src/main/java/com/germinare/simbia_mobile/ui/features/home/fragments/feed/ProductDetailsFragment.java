@@ -23,6 +23,7 @@ import com.germinare.simbia_mobile.ui.features.home.fragments.feed.activity.Soli
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.FiltersAdapter;
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.Post;
 import com.germinare.simbia_mobile.utils.AlertUtils;
+import com.germinare.simbia_mobile.utils.NotificationHelper;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
@@ -106,6 +107,13 @@ public class ProductDetailsFragment extends Fragment {
 
             progressDialog = AlertUtils.showLoadingDialog(requireContext(), "Criando Solicitação...");
             repository.createMatch(MatchRequest.createRequest(request), response -> {
+
+                NotificationHelper.showNotification(
+                        requireContext(),
+                        "Solicitação de Match Enviada",
+                        "Sua solicitação foi enviada com sucesso!🌱"
+                );
+
                 Intent intent = new Intent(requireActivity(), SolicitationSent.class);
                 intent.putExtra("industryName", post.getIndustryName());
                 AlertUtils.hideDialog(progressDialog);

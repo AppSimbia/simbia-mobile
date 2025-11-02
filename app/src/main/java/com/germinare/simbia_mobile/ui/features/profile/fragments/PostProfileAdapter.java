@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.Post;
-import com.google.android.material.imageview.ShapeableImageView; // Adicionado para ShapeableImageView
+import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.List;
 
@@ -24,12 +24,11 @@ public class PostProfileAdapter extends RecyclerView.Adapter<PostProfileAdapter.
         this.posts = posts;
     }
 
-    @NonNull
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // 🎯 CORREÇÃO 1: O layout deve ser 'item_profile_post' (ou o nome que você deu ao XML do item).
-        // Assumindo que você usa 'R.layout.item_profile_post' para o XML que você enviou:
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_layout, parent, false);
+        // Usar o novo layout com image_industry_post
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.card_post, parent, false);
         return new PostViewHolder(view);
     }
 
@@ -37,27 +36,42 @@ public class PostProfileAdapter extends RecyclerView.Adapter<PostProfileAdapter.
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         Post post = posts.get(position);
 
-        // 🎯 CORREÇÃO 2: Usa 'holder.imagePost' (variável mapeada corretamente no ViewHolder).
-        // Carrega a imagem principal do post
-        if (post.getUrlImage() != null && !post.getUrlImage().isEmpty()) {
-            Glide.with(holder.imagePost.getContext())
-                    .load(post.getUrlImage())
-                    .placeholder(R.drawable.photo_default)
-                    .into(holder.imagePost);
-        } else {
-            holder.imagePost.setImageResource(R.drawable.photo_default);
-        }
+        // Imagem principal do post
+        Glide.with(holder.imagePost.getContext())
+                .load(post.getUrlImage())
+                .placeholder(R.drawable.photo_default)
+                .into(holder.imagePost);
 
-        // Preenche os outros campos conforme seus IDs no XML
         holder.txTitlePost.setText(post.getTitle());
 
-        // Se você precisar carregar a imagem da indústria (image_industry_post):
-        /* if (post.getUrlIndustryImage() != null && holder.imageIndustryPost != null) {
-            Glide.with(holder.imageIndustryPost.getContext())
-                .load(post.getUrlIndustryImage())
-                .into(holder.imageIndustryPost);
+        if (post.getPrice() != null) {
+            holder.txPrecoPost.setText("R$ " + String.format("%.2f", post.getPrice()));
+        } else {
+            holder.txPrecoPost.setText("R$ 0,00");
         }
-        */
+
+        if (post.getQuantity() != null && post.getMeasureUnit() != null) {
+            String[] units = {"Kg", "Litro", "Metro", "Unidade"};
+            int unitIndex = post.getMeasureUnit() - 1;
+            if (unitIndex >= 0 && unitIndex < units.length) {
+                holder.txQntdPost.setText(post.getQuantity() + " " + units[unitIndex]);
+            } else {
+                holder.txQntdPost.setText(post.getQuantity().toString());
+            }
+        } else {
+            holder.txQntdPost.setText("-");
+        }
+
+        if (holder.imageIndustryPost != null) {
+            if (post.getUrlIndustry() != null && !post.getUrlIndustry().isEmpty()) {
+                Glide.with(holder.imageIndustryPost.getContext())
+                        .load(post.getUrlIndustry())
+                        .placeholder(R.drawable.photo_default)
+                        .into(holder.imageIndustryPost);
+            } else {
+                holder.imageIndustryPost.setImageResource(R.drawable.photo_default);
+            }
+        }
     }
 
     @Override
@@ -72,26 +86,16 @@ public class PostProfileAdapter extends RecyclerView.Adapter<PostProfileAdapter.
     }
 
     public static class PostViewHolder extends RecyclerView.ViewHolder {
-
-        // ❌ Removida: ivPostImage. Você tinha duas variáveis para o mesmo propósito.
-
-        // ✅ Corrigidas (conforme seu XML):
-        ImageView imagePost; // Corresponde a R.id.image_post
-        TextView txTitlePost; // Corresponde a R.id.tx_title_post
-        TextView txPrecoPost; // Corresponde a R.id.tx_preco_post
-        TextView txQntdPost; // Corresponde a R.id.tx_qntd_post
-        ShapeableImageView imageIndustryPost; // Corresponde a R.id.image_industry_post
+        ImageView imagePost;
+        TextView txTitlePost, txPrecoPost, txQntdPost;
+        ShapeableImageView imageIndustryPost;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            // Mapeamento corrigido dos IDs do XML
             imagePost = itemView.findViewById(R.id.image_post);
             txTitlePost = itemView.findViewById(R.id.tx_title_post);
             txPrecoPost = itemView.findViewById(R.id.tx_preco_post);
             txQntdPost = itemView.findViewById(R.id.tx_qntd_post);
-
-            // Adicionado o mapeamento da ShapeableImageView
             imageIndustryPost = itemView.findViewById(R.id.image_industry_post);
         }
     }

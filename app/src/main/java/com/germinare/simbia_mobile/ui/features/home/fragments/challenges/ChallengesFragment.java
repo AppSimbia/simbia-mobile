@@ -1,53 +1,52 @@
 package com.germinare.simbia_mobile.ui.features.home.fragments.challenges;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.navigation.Navigation;
 
-import com.germinare.simbia_mobile.R; // Import do arquivo R
-import com.germinare.simbia_mobile.data.api.model.mongo.ChalengeResponse;
-import com.germinare.simbia_mobile.data.api.retrofit.ApiServiceFactory;
-import com.germinare.simbia_mobile.data.api.service.MongoApiService;
+import com.germinare.simbia_mobile.R;
+
+import com.germinare.simbia_mobile.data.api.model.firestore.EmployeeFirestore;
+import com.germinare.simbia_mobile.data.api.model.mongo.ChallengeRequest;
+import com.germinare.simbia_mobile.data.api.model.mongo.ChallengeResponse;
+import com.germinare.simbia_mobile.data.api.repository.MongoRepository;
+import com.germinare.simbia_mobile.data.api.repository.PostgresRepository;
+import com.germinare.simbia_mobile.data.fireauth.UserAuth;
+import com.germinare.simbia_mobile.data.firestore.UserRepository;
+import com.germinare.simbia_mobile.utils.NotificationHelper;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+public class ChallengesFragment extends Fragment {
 
-// Implementando a interface de clique para receber o evento do Adapter
-public class ChallengesFragment extends Fragment implements ChallengeAdapter.OnChallengeClickListener {
+    private UserAuth userAuth;
+    private UserRepository userRepository;
 
     private RecyclerView rvChallenges;
-    private ChallengeAdapter adapter;
-    private List<ChalengeResponse> challengeList = new ArrayList<>();
-    private MongoApiService mongoApiService;
+    private ChallengePagerAdapter challengeAdapter;
+    private final List<Challenge> challengeList = new ArrayList<>();
 
-    // Constante para o ID do contêiner principal da sua Activity
-    // AJUSTE ESTE ID para o ID real do seu FragmentContainerView/FrameLayout na Activity principal!
-    private static final int FRAGMENT_CONTAINER_ID = R.id.container_card;
-
-
-    public ChallengesFragment() {
-        // Construtor público obrigatório
-    }
+    private MongoRepository mongoRepository;
+    private PostgresRepository postgresRepository;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Assumindo que o nome do XML é fragment_challenges (ou challenge_fragment)
         return inflater.inflate(R.layout.fragment_challenges, container, false);
     }
 
@@ -55,64 +54,109 @@ public class ChallengesFragment extends Fragment implements ChallengeAdapter.OnC
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mongoApiService = ApiServiceFactory.getMongoApi();
+        mongoRepository = new MongoRepository(error -> Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show());
+        postgresRepository = new PostgresRepository(error -> Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show());
+
+        if (getContext() != null) {
+            userAuth = new UserAuth();
+            userRepository = new UserRepository(getContext());
+        }
 
         rvChallenges = view.findViewById(R.id.rv_challenges);
         rvChallenges.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Inicializa o adapter com a lista vazia e a interface de clique (this)
-        adapter = new ChallengeAdapter(challengeList, this);
-        rvChallenges.setAdapter(adapter);
+        challengeAdapter = new ChallengePagerAdapter(challengeList, challenge -> {
+            Log.d("ChallengesFragment", "Desafio clicado: " + challenge.getId());
+            Bundle bundle = new Bundle();
+            bundle.putString("challengeId", challenge.getId());
+            Navigation.findNavController(requireView())
+                    .navigate(R.id.challengeDetailsFragment, bundle);
+        });
+
+        rvChallenges.setAdapter(challengeAdapter);
+
+        Button proposeChallengeButton = view.findViewById(R.id.button);
+        proposeChallengeButton.setOnClickListener(v -> attemptCreateChallenge());
 
         fetchChallenges();
     }
 
-    private void fetchChallenges() {
-        mongoApiService.listChallenges().enqueue(new Callback<List<ChalengeResponse>>() {
-            // ... (Implementação do onResponse e onFailure para carregar a lista) ...
-            @Override
-            public void onResponse(@NonNull Call<List<ChalengeResponse>> call, @NonNull Response<List<ChalengeResponse>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    challengeList.clear();
-                    challengeList.addAll(response.body());
-                    adapter.notifyDataSetChanged();
-                } else {
-                    Log.e("ChallengesFragment", "Erro ao carregar desafios: " + response.code());
-                    Toast.makeText(getContext(), "Não foi possível carregar os desafios.", Toast.LENGTH_SHORT).show();
-                }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<List<ChalengeResponse>> call, @NonNull Throwable t) {
-                Log.e("ChallengesFragment", "Falha na requisição da API: " + t.getMessage());
-                Toast.makeText(getContext(), "Erro de conexão.", Toast.LENGTH_SHORT).show();
-            }
+    private void attemptCreateChallenge() {
+        FirebaseUser currentUser = userAuth.getCurrentUser();
+
+        if (currentUser == null || getContext() == null) {
+            Toast.makeText(getContext(), "Usuário não autenticado.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        userRepository.getUserByUid(currentUser.getUid(), document -> {
+            EmployeeFirestore employeeData = new EmployeeFirestore(document);
+
+            showCreateChallengeDialog(employeeData.getEmployeeId());
         });
     }
 
-    /**
-     * Lógica de navegação para a tela de criação de solução.
-     * Implementa o método da interface ChallengeAdapter.OnChallengeClickListener.
-     */
-    @Override
-    public void onSuggestSolutionClick(ChalengeResponse challenge) {
-        String challengeId = challenge.getId();
 
-        try {
-            NavController navController = NavHostFragment.findNavController(this);
+    private void fetchChallenges() {
+        mongoRepository.findAllChallenges(response -> {
+            challengeList.clear();
 
-            Bundle args = new Bundle();
-            // A chave "challengeId" deve ser a mesma do nav_graph.xml
-            args.putString("challengeId", challengeId);
+            for (ChallengeResponse cr : response) {
+                challengeList.add(new Challenge(cr));
+            }
 
-            // Use o ID do novo Fragmento de Detalhes
-            // Substitua R.id.challengeDetailsFragment pelo ID REAL no seu nav_graph.xml
-            navController.navigate(R.id.challengeDetailsFragment, args);
+            for (Challenge challenge : challengeList) {
+                postgresRepository.findIndustryByIdEmployee(challenge.getIdEmployeeQuestion(), industry -> {
+                    challenge.setIndustryImage(industry.getImage());
+                    challenge.setIndustryName(industry.getIndustryName());
+                    challengeAdapter.notifyDataSetChanged();
+                });
+            }
 
-        } catch (Exception e) {
-            Log.e("ChallengesFragment", "Erro ao navegar: " + e.getMessage());
-            Toast.makeText(getContext(), "Erro de navegação. Verifique o Nav Graph.", Toast.LENGTH_LONG).show();
-        }
+            challengeAdapter.notifyDataSetChanged();
+        });
     }
 
+    private void showCreateChallengeDialog(Long employeeId) {
+        if (getContext() == null) return;
+
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_create_challenge, null);
+        final EditText etTitle = dialogView.findViewById(R.id.et_challenge_title);
+        final EditText etDescription = dialogView.findViewById(R.id.et_challenge_description);
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Propor Novo Desafio")
+                .setView(dialogView)
+                .setPositiveButton("Criar Desafio", (dialog, which) -> {
+                    String title = etTitle.getText().toString().trim();
+                    String description = etDescription.getText().toString().trim();
+
+                    if (title.isEmpty() || description.isEmpty()) {
+                        Toast.makeText(getContext(), "Preencha o Título e a Descrição.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    ChallengeRequest request = new ChallengeRequest(
+                            employeeId,
+                            title,
+                            description
+                    );
+
+                    mongoRepository.createChallenge(request, challengeResponse -> {
+                        if (getContext() != null) {
+
+                            NotificationHelper.showNotification(
+                                    requireContext(),
+                                    "Desafio enviado!",
+                                    "Seu desafio foi enviado com sucesso!"
+                            );
+                        }
+
+                        fetchChallenges();
+                    });
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
 }

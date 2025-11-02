@@ -72,4 +72,5 @@ dependencies {
     implementation("io.reactivex.rxjava2:rxjava:2.2.21")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
     implementation("org.java-websocket:Java-WebSocket:1.3.6")
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
 }

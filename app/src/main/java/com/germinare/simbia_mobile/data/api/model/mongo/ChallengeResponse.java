@@ -2,13 +2,20 @@ package com.germinare.simbia_mobile.data.api.model.mongo;
 
 import java.util.List;
 
-public class ChalengeResponse {
+public class ChallengeResponse {
 
     private String id;
     private Long idEmployeeQuestion;
     private String title;
     private String text;
     private List<SolutionResponse> solutions;
+    private String industryImage;
+    private String industryName;
+
+    public String getIndustryImage() { return industryImage; }
+    public String getIndustryName() { return industryName; }
+    public void setIndustryImage(String industryImage) { this.industryImage = industryImage; }
+    public void setIndustryName(String industryName) { this.industryName = industryName; }
 
     public String getId() {
         return id;

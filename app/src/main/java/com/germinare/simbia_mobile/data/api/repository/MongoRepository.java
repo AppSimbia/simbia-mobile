@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.germinare.simbia_mobile.data.api.model.mongo.ChallengeRequest;
+import com.germinare.simbia_mobile.data.api.model.mongo.ChallengeResponse;
 import com.germinare.simbia_mobile.data.api.model.mongo.ChatResponse;
 import com.germinare.simbia_mobile.data.api.model.mongo.MatchResponse;
 import com.germinare.simbia_mobile.data.api.model.mongo.MessageRequest;
@@ -237,4 +239,61 @@ public class MongoRepository {
             }
         });
     }
+
+    public void findAllChallenges(Consumer<List<ChallengeResponse>> onSuccessful) {
+        Log.d(TAG, "findAllChallenges called");
+        Call<List<ChallengeResponse>> call = apiService.listChallenges();
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<List<ChallengeResponse>> call, @NonNull Response<List<ChallengeResponse>> response) {
+                Log.d(TAG, "findAllChallenges response code: " + response.code());
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "findAllChallenges success: " + response.body().size() + " chats received");
+                    onSuccessful.accept(response.body());
+                } else {
+                    Log.e(TAG, "findAllChallenges failed: " + response.message());
+                    onFailure.accept(MESSAGE_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<ChallengeResponse>> call, @NonNull Throwable t) {
+                Log.e(TAG, "findAllChatByEmployeeId error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
+
+
+    public void createChallenge(ChallengeRequest request, Consumer<ChallengeResponse> onSuccessful) {
+        Log.d(TAG, "createChallenge called with request: " + request);
+        Call<ChallengeResponse> call = apiService.createChallenge(request);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ChallengeResponse> call, @NonNull Response<ChallengeResponse> response) {
+                Log.d(TAG, "createChallenge response code: " + response.code());
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "createChallenge success: " + response.body());
+                    onSuccessful.accept(response.body());
+                } else {
+                    try {
+                        String error = response.errorBody() != null ? response.errorBody().string() : response.message();
+                        Log.e(TAG, "createChallenge failed: " + error);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    onFailure.accept(MESSAGE_ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ChallengeResponse> call, @NonNull Throwable t) {
+                Log.e(TAG, "createChallenge error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
+
 }

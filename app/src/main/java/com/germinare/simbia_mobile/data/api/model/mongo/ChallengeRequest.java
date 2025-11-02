@@ -1,11 +1,17 @@
 package com.germinare.simbia_mobile.data.api.model.mongo;
 
-public class ChalengeRequest {
+public class ChallengeRequest {
 
     private Long idEmployeeQuestion;
 
     private String title;
     private String text;
+
+    public ChallengeRequest(Long idEmployeeQuestion, String title, String text) {
+        this.idEmployeeQuestion = idEmployeeQuestion;
+        this.title = title;
+        this.text = text;
+    }
 
     public Long getIdEmployeeQuestion() {
         return idEmployeeQuestion;

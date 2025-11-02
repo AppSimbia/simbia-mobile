@@ -4,6 +4,10 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -19,6 +23,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class CameraGalleryUtils {
 
@@ -110,7 +115,6 @@ public class CameraGalleryUtils {
             dispatchPickImageIntent();
         } else requestStoragePermissionLauncher.launch(permission);
     }
-
     private void dispatchPickImageIntent() {
         Intent pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         pickImageLauncher.launch(pickIntent);
@@ -158,14 +162,83 @@ public class CameraGalleryUtils {
         return photoUri;
     }
 
-    public File getPhotoFile() {
-        return photoFile;
-    }
-
     public Uri getUriForUpload() {
         if (photoFile != null && photoFile.exists()) {
             return Uri.fromFile(photoFile);
         }
         return photoUri;
+    }
+
+    public static Bitmap handleImageRotation(Context context, Uri imageUri) {
+        try {
+            InputStream input = context.getContentResolver().openInputStream(imageUri);
+            Bitmap bitmap = BitmapFactory.decodeStream(input);
+            if (input != null) input.close();
+
+            InputStream exifInput = context.getContentResolver().openInputStream(imageUri);
+            ExifInterface exif = new ExifInterface(exifInput);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            if (exifInput != null) exifInput.close();
+
+            Matrix matrix = new Matrix();
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    matrix.postRotate(90);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    matrix.postRotate(180);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    matrix.postRotate(270);
+                    break;
+                default:
+                    return bitmap;
+            }
+
+            Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            bitmap.recycle();
+            return rotatedBitmap;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    public static Bitmap rotateImageIfRequired(Context context, Uri imageUri) {
+        try {
+            InputStream input = context.getContentResolver().openInputStream(imageUri);
+            Bitmap bitmap = BitmapFactory.decodeStream(input);
+            input.close();
+
+            InputStream exifInput = context.getContentResolver().openInputStream(imageUri);
+            ExifInterface exif = new ExifInterface(exifInput);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            exifInput.close();
+
+            Matrix matrix = new Matrix();
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    matrix.postRotate(90);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    matrix.postRotate(180);
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    matrix.postRotate(270);
+                    break;
+                default:
+                    return bitmap; // já está correto
+            }
+
+            Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            bitmap.recycle();
+            return rotatedBitmap;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
