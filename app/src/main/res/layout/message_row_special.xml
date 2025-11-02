@@ -3,24 +3,25 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="end"
+    android:gravity="start"
     >
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:layout_marginStart="100dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="50dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/background_message_sent"
-        >
-        
+        android:background="@drawable/background_message_special"
+        android:gravity="center_horizontal"
+        android:padding="12dp">
+
         <TextView
-            android:id="@+id/txMessageSent"
+            android:id="@+id/txMessageSpecial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
 

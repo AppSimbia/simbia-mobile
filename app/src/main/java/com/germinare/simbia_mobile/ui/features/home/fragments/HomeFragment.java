@@ -19,7 +19,9 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.germinare.simbia_mobile.R;
-import com.germinare.simbia_mobile.data.api.cache.PostgresCache;
+import com.germinare.simbia_mobile.data.api.cache.Cache;
+import com.germinare.simbia_mobile.data.api.model.firestore.EmployeeFirestore;
+import com.germinare.simbia_mobile.data.api.repository.MongoRepository;
 import com.germinare.simbia_mobile.data.api.repository.PostgresRepository;
 import com.germinare.simbia_mobile.data.fireauth.UserAuth;
 import com.germinare.simbia_mobile.data.firestore.UserRepository;
@@ -33,8 +35,9 @@ public class HomeFragment extends Fragment {
 
     private UserAuth userAuth;
     private PostgresRepository repository;
+    private MongoRepository mongoRepository;
     private UserRepository userRepository;
-    private PostgresCache postgresCache;
+    private Cache cache;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private FragmentHomeBinding binding;
     private Runnable navigationRunnable;
@@ -48,10 +51,11 @@ public class HomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
 
-        postgresCache = PostgresCache.getInstance();
+        cache = Cache.getInstance();
         userAuth = new UserAuth();
         userRepository = new UserRepository(requireContext());
         repository = new PostgresRepository(error -> AlertUtils.showDialogError(requireContext(), error));
+        mongoRepository = new MongoRepository(error -> AlertUtils.showDialogError(requireContext(), error));
 
         binding.ivLegalGuide.setOnClickListener(v -> Navigation.findNavController(requireView()).navigate(R.id.action_homeFragment_to_legalGuideFragment));
         binding.ivPainelImpacto.setOnClickListener(v -> Navigation.findNavController(requireView()).navigate(R.id.action_navigation_home_to_navigation_impacts));
@@ -94,15 +98,17 @@ public class HomeFragment extends Fragment {
         }
 
         userRepository.getUserByUid(user.getUid(), document -> {
-            postgresCache.setEmployee(document);
+            EmployeeFirestore employee = new EmployeeFirestore(document);
+            cache.setEmployee(employee);
+            mongoRepository.findAllChatByEmployeeId(employee.getUid(), cache::setChats);
             repository.findIndustryById(document.getLong("industryId"), industry -> {
-                postgresCache.setIndustry(industry);
+                cache.setIndustry(industry);
                 repository.listPostsByCnpj(industry.getCnpj(), list -> {
-                    postgresCache.setPosts(list);
-                    postgresCache.setPostsFiltered(list);
+                    cache.setPosts(list);
+                    cache.setPostsFiltered(list);
                 });
             });
-            repository.listProductCategories(postgresCache::setProductCategory);
+            repository.listProductCategories(cache::setProductCategory);
         });
     }
 

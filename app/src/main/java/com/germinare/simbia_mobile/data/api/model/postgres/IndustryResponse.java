@@ -39,4 +39,30 @@ public class IndustryResponse {
     public String getCnpj() {
         return cnpj;
     }
+
+    public String getIndustryName() {
+        return industryName;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    @Override
+    public String toString() {
+        return "IndustryResponse{" +
+                "idIndustry=" + idIndustry +
+                ", industryType=" + industryType +
+                ", plan=" + plan +
+                ", login=" + login +
+                ", cnpj='" + cnpj + '\'' +
+                ", industryName='" + industryName + '\'' +
+                ", description='" + description + '\'' +
+                ", contactMail='" + contactMail + '\'' +
+                ", cep='" + cep + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", image='" + image + '\'' +
+                '}';
+    }
 }

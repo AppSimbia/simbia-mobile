@@ -1,18 +1,18 @@
 package com.germinare.simbia_mobile.data.api.model.mongo;
 
-import java.time.Instant;
 import java.util.List;
 
 public class ChatResponse {
     private String id;
-    private List<Long> participants;
+    private List<String> participants;
     private List<Message> messages;
 
     public class Message{
         private Long idEmployee;
         private String message;
-        private Instant createdAt;
+        private String createdAt;
         private boolean read;
+        private boolean specialMessage;
 
         public Long getIdEmployee() {
             return idEmployee;
@@ -22,12 +22,16 @@ public class ChatResponse {
             return message;
         }
 
-        public Instant getCreatedAt() {
+        public String getCreatedAt() {
             return createdAt;
         }
 
         public boolean isRead() {
             return read;
+        }
+
+        public boolean isSpecialMessage() {
+            return specialMessage;
         }
     }
 
@@ -35,7 +39,7 @@ public class ChatResponse {
         return id;
     }
 
-    public List<Long> getParticipants() {
+    public List<String> getParticipants() {
         return participants;
     }
 

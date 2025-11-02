@@ -1,22 +1,23 @@
 package com.germinare.simbia_mobile.data.api.cache;
 
 import com.germinare.simbia_mobile.data.api.model.firestore.EmployeeFirestore;
+import com.germinare.simbia_mobile.data.api.model.mongo.ChatResponse;
 import com.germinare.simbia_mobile.data.api.model.postgres.IndustryResponse;
 import com.germinare.simbia_mobile.data.api.model.postgres.PostResponse;
 import com.germinare.simbia_mobile.data.api.model.postgres.ProductCategoryResponse;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostgresCache {
+public class Cache {
 
-    private static PostgresCache instance;
+    private static Cache instance;
     private EmployeeFirestore employee;
     private IndustryResponse industry;
     private List<ProductCategoryResponse> productCategory;
     private List<PostResponse> posts;
     private List<PostResponse> postsFiltered;
+    private List<ChatResponse> chats;
 
     private final List<OnCacheListener> listeners = new ArrayList<>();
 
@@ -24,11 +25,15 @@ public class PostgresCache {
         void onCacheUpdated();
     }
 
-    public static PostgresCache getInstance() {
+    public static Cache getInstance() {
         if (instance == null){
-            instance = new PostgresCache();
+            instance = new Cache();
         }
         return instance;
+    }
+
+    public void clearCache(){
+        instance = null;
     }
 
     public void addListener(OnCacheListener listener){
@@ -49,8 +54,8 @@ public class PostgresCache {
         return employee;
     }
 
-    public void setEmployee(DocumentSnapshot documentSnapshot) {
-        this.employee = new EmployeeFirestore(documentSnapshot);
+    public void setEmployee(EmployeeFirestore employee) {
+        this.employee = employee;
         notifyListeners();
     }
 
@@ -87,6 +92,15 @@ public class PostgresCache {
 
     public void setPostsFiltered(List<PostResponse> postsFiltered) {
         this.postsFiltered = postsFiltered;
+        notifyListeners();
+    }
+
+    public List<ChatResponse> getChats() {
+        return chats;
+    }
+
+    public void setChats(List<ChatResponse> chats) {
+        this.chats = chats;
         notifyListeners();
     }
 }
