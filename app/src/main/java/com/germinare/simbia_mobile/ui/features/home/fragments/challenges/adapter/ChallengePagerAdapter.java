@@ -1,4 +1,4 @@
-package com.germinare.simbia_mobile.ui.features.home.fragments.challenges;
+package com.germinare.simbia_mobile.ui.features.home.fragments.challenges.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,17 +19,25 @@ public class ChallengePagerAdapter extends RecyclerView.Adapter<ChallengePagerAd
 
     private final List<Challenge> challengeList;
     private final Consumer<Challenge> onClick;
+    private final boolean isPager;
 
-    public ChallengePagerAdapter(List<Challenge> challengeList, Consumer<Challenge> onClick) {
+    public ChallengePagerAdapter(List<Challenge> challengeList, boolean isPager, Consumer<Challenge> onClick) {
         this.challengeList = challengeList;
         this.onClick = onClick;
+        this.isPager = isPager;
     }
 
     @NonNull
     @Override
     public ChallengeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_challenge, parent, false);
+        View view;
+        if (isPager) {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_challenge_pager, parent, false);
+        }else {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_challenge, parent, false);
+        }
         return new ChallengeViewHolder(view);
     }
 

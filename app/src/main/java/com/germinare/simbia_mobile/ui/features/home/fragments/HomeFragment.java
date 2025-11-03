@@ -26,8 +26,8 @@ import com.germinare.simbia_mobile.data.api.repository.PostgresRepository;
 import com.germinare.simbia_mobile.data.fireauth.UserAuth;
 import com.germinare.simbia_mobile.data.firestore.UserRepository;
 import com.germinare.simbia_mobile.databinding.FragmentHomeBinding;
-import com.germinare.simbia_mobile.ui.features.home.fragments.challenges.Challenge;
-import com.germinare.simbia_mobile.ui.features.home.fragments.challenges.ChallengePagerAdapter;
+import com.germinare.simbia_mobile.ui.features.home.fragments.challenges.adapter.Challenge;
+import com.germinare.simbia_mobile.ui.features.home.fragments.challenges.adapter.ChallengePagerAdapter;
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.Post;
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.PostPagerAdapter;
 import com.germinare.simbia_mobile.ui.features.splashScreen.SplashScreen;
@@ -79,7 +79,7 @@ public class HomeFragment extends Fragment {
         mongoRepository = new MongoRepository(error -> AlertUtils.showDialogError(requireContext(), error));
 
         postPagerAdapter = new PostPagerAdapter(topThreePosts, this::onClickPost);
-        challengePagerAdapter = new ChallengePagerAdapter(latestTwoChallenges, response -> {
+        challengePagerAdapter = new ChallengePagerAdapter(latestTwoChallenges, true, response -> {
             Log.d(TAG, "Desafio clicado: " + response.getId());
             Bundle bundle = new Bundle();
             bundle.putString("challengeId", response.getId());

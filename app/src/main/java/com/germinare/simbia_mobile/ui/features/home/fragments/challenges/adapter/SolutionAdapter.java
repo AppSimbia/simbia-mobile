@@ -1,4 +1,4 @@
-package com.germinare.simbia_mobile.ui.features.home.fragments.challenges;
+package com.germinare.simbia_mobile.ui.features.home.fragments.challenges.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;

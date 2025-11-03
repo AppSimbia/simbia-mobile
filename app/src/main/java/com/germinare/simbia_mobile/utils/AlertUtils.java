@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup; // ⬅️ NOVO IMPORT NECESSÁRIO
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -85,18 +86,25 @@ public class AlertUtils {
     public static Dialog showDialogCustom(Context ctx, int layoutResId, DialogAlertBuilder builder){
         Dialog alert = new Dialog(ctx);
         alert.setContentView(layoutResId);
-        Objects.requireNonNull(alert.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
+
+        if (alert.getWindow() != null) {
+            alert.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            alert.getWindow().setLayout(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+        }
 
         if (builder.onCustomViewCreated != null) {
             builder.onCustomViewCreated.onViewCreated(alert.findViewById(android.R.id.content), alert);
         }
 
-        TextView tittle = alert.findViewById(R.id.tx_tittle);
+        TextView tittle = alert.findViewById(R.id.alert_title);
         if (tittle != null) {
             tittle.setText(builder.title);
         }
 
-        TextView description = alert.findViewById(R.id.tx_description);
+        TextView description = alert.findViewById(R.id.alert_subtitle);
         if (description != null) {
             description.setText(builder.description);
         }

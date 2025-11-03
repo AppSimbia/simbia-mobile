@@ -47,6 +47,8 @@ public class FeedFragment extends Fragment {
     private IntegrationRepository integrationRepository;
     private PostgresRepository postgresRepository;
     private AlertDialog progressDialog;
+    private Dialog formsSuggestDialog;
+    private Dialog suggestPostDialog;
     private PostPagerAdapter postPagerAdapter;
     private FiltersAdapter filtersAdapter;
     private PostAdapter postAdapter1;
@@ -86,7 +88,10 @@ public class FeedFragment extends Fragment {
         filtersAdapter = new FiltersAdapter(requireContext(), filters);
         postAdapter1 = new PostAdapter(posts, this::onClickPost);
         postAdapter2 = new PostAdapter(posts, this::onClickPost);
-        postAdapterSuggest = new PostAdapter(postsSuggest, this::onClickPost, false);
+        postAdapterSuggest = new PostAdapter(postsSuggest, post -> {
+            AlertUtils.hideDialog(suggestPostDialog);
+            onClickPost(post);
+        }, false);
 
         progressDialog = AlertUtils.showLoadingDialog(requireContext(), "");
         cache.addListener(this::updateUIFromCache);
@@ -116,7 +121,11 @@ public class FeedFragment extends Fragment {
         binding.rvPost2.setAdapter(postAdapter2);
 
         binding.btnSugerirMatch.setOnClickListener(V -> {
+            AlertUtils.hideDialog(formsSuggestDialog);
+
             AlertUtils.DialogAlertBuilder builder = new AlertUtils.DialogAlertBuilder()
+                    .setTitle("Sugerir Match")
+                    .setDescription("Preencha os campos abaixo para sugerir um match.")
                     .onCustomViewCreated((v, dialog) -> {
                         ArrayAdapter<String> categoriaAdapter = new ArrayAdapter<>(
                                 requireContext(),
@@ -134,7 +143,7 @@ public class FeedFragment extends Fragment {
                     })
                     .onAccept(this::suggestPost);
 
-            AlertUtils.showDialogCustom(
+            formsSuggestDialog = AlertUtils.showDialogCustom(
                     requireContext(),
                     R.layout.alert_sugerir_match,
                     builder
@@ -207,7 +216,7 @@ public class FeedFragment extends Fragment {
                         ((RecyclerView) dialogPosts.findViewById(R.id.rv_posts_suggests)).setAdapter(postAdapterSuggest);
                     });
 
-            AlertUtils.showDialogCustom(
+            suggestPostDialog = AlertUtils.showDialogCustom(
                     requireContext(),
                     R.layout.card_posts_suggests,
                     builder

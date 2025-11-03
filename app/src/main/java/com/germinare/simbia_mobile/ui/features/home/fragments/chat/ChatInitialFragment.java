@@ -1,6 +1,7 @@
 package com.germinare.simbia_mobile.ui.features.home.fragments.chat;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +73,11 @@ public class ChatInitialFragment extends Fragment {
             List<Chat> tempChats = new ArrayList<>();
             int totalChats = cache.getChats().size();
             int[] processedCount = {0};
+
+            if (cache.getChats().isEmpty()){
+                AlertUtils.hideDialog(progressDialog);
+                return;
+            }
 
             for (ChatResponse chatResponse : cache.getChats()) {
                 userRepository.getUserByUid(

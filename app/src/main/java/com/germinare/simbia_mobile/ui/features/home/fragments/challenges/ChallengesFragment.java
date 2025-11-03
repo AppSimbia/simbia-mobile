@@ -26,6 +26,8 @@ import com.germinare.simbia_mobile.data.api.repository.MongoRepository;
 import com.germinare.simbia_mobile.data.api.repository.PostgresRepository;
 import com.germinare.simbia_mobile.data.fireauth.UserAuth;
 import com.germinare.simbia_mobile.data.firestore.UserRepository;
+import com.germinare.simbia_mobile.ui.features.home.fragments.challenges.adapter.Challenge;
+import com.germinare.simbia_mobile.ui.features.home.fragments.challenges.adapter.ChallengePagerAdapter;
 import com.germinare.simbia_mobile.utils.NotificationHelper;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -65,7 +67,7 @@ public class ChallengesFragment extends Fragment {
         rvChallenges = view.findViewById(R.id.rv_challenges);
         rvChallenges.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        challengeAdapter = new ChallengePagerAdapter(challengeList, challenge -> {
+        challengeAdapter = new ChallengePagerAdapter(challengeList, false, challenge -> {
             Log.d("ChallengesFragment", "Desafio clicado: " + challenge.getId());
             Bundle bundle = new Bundle();
             bundle.putString("challengeId", challenge.getId());

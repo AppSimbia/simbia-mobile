@@ -25,6 +25,7 @@ import com.germinare.simbia_mobile.data.api.retrofit.ApiServiceFactory;
 import com.germinare.simbia_mobile.data.api.service.MongoApiService;
 import com.germinare.simbia_mobile.data.fireauth.UserAuth;
 import com.germinare.simbia_mobile.data.firestore.UserRepository;
+import com.germinare.simbia_mobile.ui.features.home.fragments.challenges.adapter.SolutionAdapter;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
