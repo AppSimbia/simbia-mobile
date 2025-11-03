@@ -44,7 +44,7 @@ public class EvaMessagesFragment extends Fragment {
 
     private static final String USER_ID = "1";
     private static final String AI_ID = "2";
-    private static final String GIF_URL = "https://sonobel.com.br/assets/img/loading-peq.gif";
+    private static final String GIF_URL = "https://media.tenor.com/Pq1cZiuhlEEAAAAi/rajinikanth.gif";
 
     public EvaMessagesFragment() {}
 

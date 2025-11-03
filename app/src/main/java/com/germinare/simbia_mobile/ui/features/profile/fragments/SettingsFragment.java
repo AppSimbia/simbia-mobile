@@ -1,6 +1,7 @@
 package com.germinare.simbia_mobile.ui.features.profile.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -45,34 +46,31 @@ import java.util.Map;
 
 public class SettingsFragment extends Fragment implements CameraGalleryUtils.ImageResultListener {
 
-    private ImageView btnLogout;
-    private ImageView ivEditName;
+    private ImageView btnLogout, ivEditName, ivProfileIcon;
     private RecyclerView rvPosts;
+    private TextView tvUserName, tvEmail, tvRankingPosition, tvMatchesCount;
     private PostProfileAdapter postAdapter;
+
     private FetchUserPostsUseCase fetchUserPostsUseCase;
-
-    private CameraGalleryUtils cameraGalleryUtils;
-    private ImageView ivProfileIcon;
-    private TextView tvUserName, tvEmail;
-    private TextView tvRankingPosition, tvMatchesCount;
-
     private FirebaseAuth mAuth;
     private UserRepository userRepository;
     private StorageUtils storageUtils;
     private PostgresRepository postgresRepository;
+    private CameraGalleryUtils cameraGalleryUtils;
 
     private Switch switchDarkMode;
-    private android.content.SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences;
 
     public SettingsFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cameraGalleryUtils = new CameraGalleryUtils(this, this);
+
         mAuth = FirebaseAuth.getInstance();
         userRepository = new UserRepository(requireContext());
         storageUtils = new StorageUtils();
+        cameraGalleryUtils = new CameraGalleryUtils(this, this);
 
         postgresRepository = new PostgresRepository(
                 error -> AlertUtils.showDialogError(requireContext(), error)
@@ -81,8 +79,7 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         ivProfileIcon = view.findViewById(R.id.iv_profile_icon);
@@ -91,50 +88,43 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
         tvRankingPosition = view.findViewById(R.id.tv_ranking_position);
         tvMatchesCount = view.findViewById(R.id.tv_matches_count);
         ivEditName = view.findViewById(R.id.iv_edit_name);
-
+        btnLogout = view.findViewById(R.id.iv_logout);
         rvPosts = view.findViewById(R.id.rv_post2);
+        switchDarkMode = view.findViewById(R.id.switch_dark_mode);
+
         postAdapter = new PostProfileAdapter(new ArrayList<>());
-
-        int spanCount = 2;
-        float screenWidthDp = getResources().getConfiguration().screenWidthDp;
-        if (screenWidthDp >= 600) spanCount = 3;
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(requireContext(), spanCount);
-        rvPosts.setLayoutManager(gridLayoutManager);
-        rvPosts.setNestedScrollingEnabled(false);
+        int spanCount = getResources().getConfiguration().screenWidthDp >= 600 ? 3 : 2;
+        rvPosts.setLayoutManager(new GridLayoutManager(requireContext(), spanCount));
         rvPosts.setAdapter(postAdapter);
+        rvPosts.setNestedScrollingEnabled(false);
+
+        sharedPreferences = requireContext().getSharedPreferences("MY_CACHE", requireContext().MODE_PRIVATE);
+        boolean isDarkMode = sharedPreferences.getBoolean("dark_mode", false);
+        switchDarkMode.setChecked(isDarkMode);
+        applyTheme(isDarkMode);
+
+        switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            sharedPreferences.edit().putBoolean("dark_mode", isChecked).apply();
+            applyTheme(isChecked);
+        });
 
         ivProfileIcon.setOnClickListener(v -> showImageSourceDialog());
-
-        btnLogout = view.findViewById(R.id.iv_logout);
+        ivEditName.setOnClickListener(v -> showEditNameDialog());
         btnLogout.setOnClickListener(v -> showCustomLogoutDialog());
 
         loadUserInfo();
         loadUserPosts();
-        setupListeners();
-
-        switchDarkMode = view.findViewById(R.id.switch_dark_mode);
-        sharedPreferences = requireContext().getSharedPreferences("MY_CACHE", getContext().MODE_PRIVATE);
-
-        boolean isDarkMode = sharedPreferences.getBoolean("dark_mode", false);
-        switchDarkMode.setChecked(isDarkMode);
-        AppCompatDelegate.setDefaultNightMode(
-                isDarkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
-        );
-
-        switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sharedPreferences.edit().putBoolean("dark_mode", isChecked).apply();
-            AppCompatDelegate.setDefaultNightMode(
-                    isChecked ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
-            );
-        });
 
         return view;
     }
 
-    private void setupListeners() {
-        ivEditName.setOnClickListener(v -> showEditNameDialog());
-    }
+    private void applyTheme(boolean darkMode) {
+        AppCompatDelegate.setDefaultNightMode(
+                darkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
+        );
+        if (getActivity() instanceof AppCompatActivity) {
+            ((AppCompatActivity) getActivity()).getDelegate().applyDayNight();
+        }    }
 
     private void showEditNameDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
@@ -147,13 +137,12 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
 
         builder.setPositiveButton("Salvar", (dialog, which) -> {
             String newName = etNewName.getText().toString().trim();
-            if (!newName.isEmpty() && !newName.equals(tvUserName.getText().toString())) {
-                updateUserName(newName);
-            } else if (newName.isEmpty()) {
+            if (newName.isEmpty()) {
                 Toast.makeText(requireContext(), "O nome não pode ser vazio.", Toast.LENGTH_SHORT).show();
+            } else {
+                updateUserName(newName);
             }
         });
-
         builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
         builder.show();
     }
@@ -166,46 +155,27 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
         }
 
         String uid = currentUser.getUid();
-        Map<String, Object> firestoreMap = Map.of("name", newName);
-
-        userRepository.updateFieldByUid(uid, firestoreMap, aVoid -> {
-            Log.d("SettingsFragment", "Nome atualizado no Firestore com sucesso.");
+        userRepository.updateFieldByUid(uid, Map.of("name", newName), aVoid -> {
             tvUserName.setText(newName);
-
             userRepository.getUserByUid(uid, document -> {
                 Long employeeId = document.getLong("employeeId");
-                if (employeeId != null) {
-                    Map<String, Object> postgresMap = Map.of("employeeName", newName);
-
-                    if (postgresRepository != null) {
-                        postgresRepository.updateEmployee(employeeId, postgresMap, result -> {
-                            Toast.makeText(requireContext(), "Nome atualizado com sucesso!", Toast.LENGTH_SHORT).show();
-                            Log.d("SettingsFragment", "Nome atualizado no Postgres com sucesso.");
-                        });
-                    } else {
-                        Log.e("SettingsFragment", "PostgresRepository não inicializado.");
-                        Toast.makeText(requireContext(), "Erro interno. Repositório não encontrado.", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "Atenção: Nome atualizado no app, mas ID de funcionário não encontrado para o servidor.", Toast.LENGTH_LONG).show();
-                    Log.e("SettingsFragment", "employeeId is null for Postgres update. Update on Firestore succeeded.");
+                if (employeeId != null && postgresRepository != null) {
+                    postgresRepository.updateEmployee(employeeId, Map.of("employeeName", newName),
+                            result -> Toast.makeText(requireContext(), "Nome atualizado!", Toast.LENGTH_SHORT).show());
                 }
             });
         });
     }
 
     private void loadUserPosts() {
-        if (fetchUserPostsUseCase == null) return;
-
         fetchUserPostsUseCase.execute(
                 postResponses -> {
                     List<Post> posts = new ArrayList<>();
-                    for (PostResponse response : postResponses) {
+                    for (PostResponse response : postResponses)
                         posts.add(new Post(response));
-                    }
                     postAdapter.updatePosts(posts);
                 },
-                errorMessage -> Log.e("SettingsFragment", "Erro ao carregar posts: " + errorMessage)
+                error -> Log.e("SettingsFragment", "Erro ao carregar posts: " + error)
         );
     }
 
@@ -230,10 +200,7 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
 
     private void showCustomLogoutDialog() {
         View dialogView = getLayoutInflater().inflate(R.layout.alert_default, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setView(dialogView);
-
-        AlertDialog dialog = builder.create();
+        AlertDialog dialog = new AlertDialog.Builder(requireContext()).setView(dialogView).create();
         if (dialog.getWindow() != null)
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
@@ -251,23 +218,17 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
             dialog.dismiss();
             performLogout();
         });
-
         btnCancel.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
     }
 
     private void performLogout() {
         mAuth.signOut();
-        requireContext().getSharedPreferences("MY_CACHE", getContext().MODE_PRIVATE)
-                .edit()
-                .clear()
-                .apply();
-
+        requireContext().getSharedPreferences("MY_CACHE", requireContext().MODE_PRIVATE)
+                .edit().clear().apply();
         clearAppCache();
-
         Glide.get(requireContext()).clearMemory();
         new Thread(() -> Glide.get(requireContext()).clearDiskCache()).start();
-
         requireActivity().finish();
         requireActivity().startActivity(new Intent(requireContext(), SplashScreen.class));
     }
@@ -286,8 +247,7 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
             String[] children = dir.list();
             if (children != null) {
                 for (String child : children) {
-                    boolean success = deleteDir(new File(dir, child));
-                    if (!success) return false;
+                    if (!deleteDir(new File(dir, child))) return false;
                 }
             }
         }
@@ -295,11 +255,8 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
     }
 
     private void showImageSourceDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View view = getLayoutInflater().inflate(R.layout.dialog_image, null);
-        builder.setView(view);
-
-        AlertDialog dialog = builder.create();
+        AlertDialog dialog = new AlertDialog.Builder(requireContext()).setView(view).create();
         if (dialog.getWindow() != null)
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
@@ -307,32 +264,25 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
             dialog.dismiss();
             cameraGalleryUtils.selectImageFromGallery();
         });
-
         view.findViewById(R.id.btn_take_photo).setOnClickListener(v -> {
             dialog.dismiss();
             cameraGalleryUtils.takePhoto();
         });
-
         view.findViewById(R.id.tv_view_image).setOnClickListener(v -> {
             dialog.dismiss();
             showProfileImageDialog();
         });
-
         dialog.show();
     }
 
     private void showProfileImageDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View view = getLayoutInflater().inflate(R.layout.dialog_view_image, null);
-        builder.setView(view);
-
-        AlertDialog dialog = builder.create();
+        AlertDialog dialog = new AlertDialog.Builder(requireContext()).setView(view).create();
         if (dialog.getWindow() != null)
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         ImageView ivFullImage = view.findViewById(R.id.iv_full_image);
         Button btnClose = view.findViewById(R.id.btn_close);
-
         ivFullImage.setImageDrawable(ivProfileIcon.getDrawable());
         btnClose.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
@@ -343,11 +293,9 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
         Bitmap rotatedBitmap = CameraGalleryUtils.rotateImageIfRequired(requireContext(), imageUri);
         if (rotatedBitmap != null) {
             ivProfileIcon.setImageBitmap(rotatedBitmap);
-            storageUtils.uploadImage(
-                    requireContext(),
+            storageUtils.uploadImage(requireContext(),
                     new StorageUtils.StorageDataLoad("profile_images", mAuth.getCurrentUser().getUid(), rotatedBitmap),
-                    this::updateUserPhoto
-            );
+                    this::updateUserPhoto);
         } else {
             Toast.makeText(requireContext(), "Erro ao processar imagem.", Toast.LENGTH_SHORT).show();
         }
@@ -357,17 +305,12 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) return;
 
-        userRepository.updateFieldByUid(
-                user.getUid(),
+        userRepository.updateFieldByUid(user.getUid(),
                 Map.of("imageUri", downloadUrl),
-                Void -> {
-                    Glide.with(requireContext())
-                            .load(downloadUrl)
-                            .placeholder(R.drawable.photo_default)
-                            .into(ivProfileIcon);
-                    Toast.makeText(requireContext(), "Imagem atualizada com sucesso!", Toast.LENGTH_SHORT).show();
-                }
-        );
+                Void -> Glide.with(requireContext())
+                        .load(downloadUrl)
+                        .placeholder(R.drawable.photo_default)
+                        .into(ivProfileIcon));
     }
 
     @Override
