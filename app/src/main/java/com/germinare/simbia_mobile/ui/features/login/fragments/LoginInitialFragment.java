@@ -68,17 +68,18 @@ public class LoginInitialFragment extends Fragment implements CameraGalleryUtils
                     FirebaseUser user = authResult.getUser();
                     if (user == null) return;
 
-                    // Bloqueia login automático se já fez o 1º acesso
                     baseLoginUtils.checkFirstAccess(
                             firstAccess -> {
-                                // PRIMEIRO ACESSO: precisa foto e ir para trocar senha
                                 if (selectedImageUri != null) {
                                     uploadProfileImage(user.getUid(), selectedImageUri);
                                 } else {
                                     Toast.makeText(getContext(), "Selecione uma foto de perfil.", Toast.LENGTH_SHORT).show();
                                 }
                             },
-                            () -> Toast.makeText(getContext(), "O usuário já fez o primeiro acesso.", Toast.LENGTH_SHORT).show()
+                            () -> {
+                                Toast.makeText(getContext(), "O usuário já fez o primeiro acesso.", Toast.LENGTH_SHORT).show();
+                                mAuth.signOut();
+                            }
                     );
                 })
                 .addOnFailureListener(e ->
@@ -174,12 +175,11 @@ public class LoginInitialFragment extends Fragment implements CameraGalleryUtils
     @Override
     public void onResume() {
         super.onResume();
-        // Bloqueia o login automático se apertar back
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             baseLoginUtils.checkFirstAccess(
-                    firstAccess -> {}, // nada se ainda não fez o primeiro acesso
-                    () -> mAuth.signOut() // se já fez 1º acesso, desloga
+                    firstAccess -> {},
+                    () -> mAuth.signOut()
             );
         }
     }

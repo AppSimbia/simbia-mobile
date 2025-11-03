@@ -88,12 +88,10 @@ public class LoginVerificationFragment extends Fragment {
 
         Log.d(TAG, "Usuário autenticado: UID=" + currentUser.getUid());
 
-        // Atualiza a senha no FirebaseAuth
         currentUser.updatePassword(newPassword)
                 .addOnSuccessListener(aVoid -> {
                     Log.d(TAG, "Senha atualizada no FirebaseAuth com sucesso");
 
-                    // Atualiza o campo firstAccess = false no Firestore usando UserRepository
                     userRepository.updateFieldByUid(
                             currentUser.getUid(),
                             Map.of("firstAccess", false),
@@ -101,7 +99,6 @@ public class LoginVerificationFragment extends Fragment {
                                 Log.d(TAG, "Campo firstAccess atualizado com sucesso no Firestore");
                                 Toast.makeText(getContext(), "Senha alterada com sucesso!", Toast.LENGTH_SHORT).show();
 
-                                // Redireciona para MainActivity
                                 Intent intent = new Intent(getActivity(), MainActivity.class);
                                 startActivity(intent);
                                 requireActivity().finish();
