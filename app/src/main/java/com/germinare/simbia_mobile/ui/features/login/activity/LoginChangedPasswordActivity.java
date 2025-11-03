@@ -27,14 +27,11 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.List;
-
 public class LoginChangedPasswordActivity extends AppCompatActivity {
 
     private ActivityLoginChangedPasswordBinding binding;
     private FirebaseAuth firebaseAuth;
     private BaseLoginUtils baseLoginUtils;
-
     private String etEmail;
     private String etPassword;
 
@@ -82,15 +79,16 @@ public class LoginChangedPasswordActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     baseLoginUtils.checkFirstAccess(
-                                            firstAccess -> Toast.makeText(LoginChangedPasswordActivity.this,
-                                                    "Sua conta ainda não realizou o primeiro acesso", Toast.LENGTH_LONG).show(),
+                                            firstAccess -> {
+                                                Toast.makeText(LoginChangedPasswordActivity.this, "Sua conta ainda não realizou o primeiro acesso", Toast.LENGTH_LONG).show();
+                                                firebaseAuth.signOut();
+                                            },
                                             () -> {
                                                 startActivity(new Intent(LoginChangedPasswordActivity.this, MainActivity.class));
                                                 finish();
                                             });
                                 } else {
-                                    Toast.makeText(LoginChangedPasswordActivity.this,
-                                            "E-mail ou senha inválidos", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(LoginChangedPasswordActivity.this, "E-mail ou senha inválidos", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -117,10 +115,9 @@ public class LoginChangedPasswordActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // Bloqueia login e fecha Activity
         super.onBackPressed();
         Toast.makeText(this, "Operação cancelada.", Toast.LENGTH_SHORT).show();
-        finish(); // fecha sem logar
+        finish();
     }
 
     @Override
