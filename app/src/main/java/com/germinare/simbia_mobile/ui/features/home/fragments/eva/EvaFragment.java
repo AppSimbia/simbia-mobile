@@ -20,7 +20,6 @@ public class EvaFragment extends Fragment {
     private EvaViewModel evaViewModel;
 
     public EvaFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -34,13 +33,10 @@ public class EvaFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 🔹 Obtém o mesmo ViewModel compartilhado com EvaMessagesFragment
         evaViewModel = new ViewModelProvider(requireActivity()).get(EvaViewModel.class);
 
-        // 🔹 Limpa o histórico de mensagens quando o usuário volta para a tela inicial da Eva
         evaViewModel.clearMessages();
 
-        // --- ENVIO MANUAL PELO INPUT ---
         binding.imageView6.setOnClickListener(v -> {
             final String messageContent = binding.etChatMessage.getText().toString().trim();
 
@@ -48,7 +44,6 @@ public class EvaFragment extends Fragment {
                 Bundle envelope = new Bundle();
                 envelope.putString("message", messageContent);
 
-                // limpa o campo de input
                 binding.etChatMessage.setText("");
 
                 Navigation.findNavController(view)
@@ -56,23 +51,19 @@ public class EvaFragment extends Fragment {
             }
         });
 
-        // --- BOTÕES DE ATALHO ---
 
-        // 1. Guia Legal
         binding.btnGuia.setOnClickListener(v -> {
             Bundle envelope = new Bundle();
             envelope.putString("message", "O que é o Guia Legal?");
             Navigation.findNavController(view).navigate(R.id.navigation_eva_messages, envelope);
         });
 
-        // 2. Recomendar Melhorias
         binding.btnPergunta.setOnClickListener(v -> {
             Bundle envelope = new Bundle();
             envelope.putString("message", "Mande melhorias para minha indústria.");
             Navigation.findNavController(view).navigate(R.id.navigation_eva_messages, envelope);
         });
 
-        // 3. Painel de Impacto
         binding.btnPainel.setOnClickListener(v -> {
             Bundle envelope = new Bundle();
             envelope.putString("message", "O que é o Painel de Impacto do Simbia?");
