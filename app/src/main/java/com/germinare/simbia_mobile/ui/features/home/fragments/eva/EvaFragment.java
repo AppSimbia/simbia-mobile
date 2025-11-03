@@ -32,6 +32,13 @@ public class EvaFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Bundle args = getArguments();
+
+        if (args != null) {
+            Bundle envelope = new Bundle();
+            envelope.putString("message", args.getString("message"));
+            Navigation.findNavController(view).navigate(R.id.navigation_eva_messages, envelope);
+        }
 
         evaViewModel = new ViewModelProvider(requireActivity()).get(EvaViewModel.class);
 
