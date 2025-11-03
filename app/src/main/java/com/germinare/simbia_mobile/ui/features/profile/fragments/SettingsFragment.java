@@ -174,7 +174,7 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
         fetchUserPostsUseCase.execute(
                 postResponses -> {
                     List<Post> posts = new ArrayList<>();
-                    for (PostResponse response : postResponses)
+                    for (PostResponse response : postResponses){
                         posts.add(new Post(response));
                         tvRankingPosition.setText(String.valueOf(Integer.parseInt(tvRankingPosition.getText().toString())+1));
                     }
