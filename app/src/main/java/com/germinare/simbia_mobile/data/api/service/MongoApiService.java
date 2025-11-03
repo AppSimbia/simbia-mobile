@@ -37,6 +37,9 @@ public interface MongoApiService {
     @GET("/match/chat/{id}")
     Call<MatchResponse> findMatchByChatId(@Path("id") String id);
 
+    @GET("/match/completed/{id}")
+    Call<List<MatchResponse>> findMatchByEmployeeId(@Path("id") String id);
+
     @POST("/match/status/{id}")
     Call<ResponseBody> changeStatusMatch(@Path("id") String id, @Query("action") String action, @Body Map<String, Object> request);
 

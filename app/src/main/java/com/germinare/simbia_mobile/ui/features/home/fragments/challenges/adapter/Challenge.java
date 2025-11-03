@@ -1,4 +1,4 @@
-package com.germinare.simbia_mobile.ui.features.home.fragments.challenges;
+package com.germinare.simbia_mobile.ui.features.home.fragments.challenges.adapter;
 
 import com.germinare.simbia_mobile.data.api.model.mongo.ChallengeResponse;
 import com.germinare.simbia_mobile.data.api.model.mongo.SolutionResponse;

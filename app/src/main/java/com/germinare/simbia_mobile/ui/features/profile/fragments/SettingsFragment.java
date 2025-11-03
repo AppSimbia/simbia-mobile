@@ -28,6 +28,7 @@ import com.bumptech.glide.Glide;
 import com.germinare.simbia_mobile.R;
 import com.germinare.simbia_mobile.data.api.model.postgres.FetchUserPostsUseCase;
 import com.germinare.simbia_mobile.data.api.model.postgres.PostResponse;
+import com.germinare.simbia_mobile.data.api.repository.MongoRepository;
 import com.germinare.simbia_mobile.data.api.repository.PostgresRepository;
 import com.germinare.simbia_mobile.data.firestore.UserRepository;
 import com.germinare.simbia_mobile.ui.features.home.fragments.feed.adapter.Post;
@@ -54,6 +55,7 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
     private FetchUserPostsUseCase fetchUserPostsUseCase;
     private FirebaseAuth mAuth;
     private UserRepository userRepository;
+    private MongoRepository mongoRepository;
     private StorageUtils storageUtils;
     private PostgresRepository postgresRepository;
     private CameraGalleryUtils cameraGalleryUtils;
@@ -75,6 +77,7 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
         postgresRepository = new PostgresRepository(
                 error -> AlertUtils.showDialogError(requireContext(), error)
         );
+        mongoRepository = new MongoRepository(error -> AlertUtils.showDialogError(requireContext(), error));
         fetchUserPostsUseCase = new FetchUserPostsUseCase(requireContext(), postgresRepository);
     }
 
@@ -171,8 +174,10 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
         fetchUserPostsUseCase.execute(
                 postResponses -> {
                     List<Post> posts = new ArrayList<>();
-                    for (PostResponse response : postResponses)
+                    for (PostResponse response : postResponses){
                         posts.add(new Post(response));
+                        tvRankingPosition.setText(String.valueOf(Integer.parseInt(tvRankingPosition.getText().toString())+1));
+                    }
                     postAdapter.updatePosts(posts);
                 },
                 error -> Log.e("SettingsFragment", "Erro ao carregar posts: " + error)
@@ -185,6 +190,11 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
 
         tvEmail.setText(user.getEmail());
         userRepository.getUserByUid(user.getUid(), this::loadFields);
+        mongoRepository.findAllMatchByEmployeeId(user.getUid(), list -> {
+            list.forEach(match -> {
+                tvMatchesCount.setText(String.valueOf(Integer.parseInt(tvMatchesCount.getText().toString())+1));
+            });
+        });
     }
 
     private void loadFields(DocumentSnapshot document) {
@@ -199,27 +209,18 @@ public class SettingsFragment extends Fragment implements CameraGalleryUtils.Ima
     }
 
     private void showCustomLogoutDialog() {
-        View dialogView = getLayoutInflater().inflate(R.layout.alert_default, null);
-        AlertDialog dialog = new AlertDialog.Builder(requireContext()).setView(dialogView).create();
-        if (dialog.getWindow() != null)
-            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
-        TextView txTitle = dialogView.findViewById(R.id.tx_tittle);
-        TextView txDescription = dialogView.findViewById(R.id.tx_description);
-        Button btnAccept = dialogView.findViewById(R.id.btn_accept);
-        Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
-
-        txTitle.setText("Sair do app");
-        txDescription.setText("Tem certeza que deseja sair?");
-        btnAccept.setText("Sim");
-        btnCancel.setText("Cancelar");
-
-        btnAccept.setOnClickListener(v -> {
-            dialog.dismiss();
-            performLogout();
-        });
-        btnCancel.setOnClickListener(v -> dialog.dismiss());
-        dialog.show();
+        AlertUtils.showDialogDefault(requireContext(),
+                new AlertUtils.DialogAlertBuilder()
+                        .setTitle("Sair do app")
+                        .setDescription("Tem certeza que deseja sair?")
+                        .setTextAccept("Sim")
+                        .setTextCancel("Cancelar")
+                        .onAccept(dialog -> {
+                            AlertUtils.hideDialog(dialog);
+                            performLogout();
+                        })
+                        .onCancel(AlertUtils::hideDialog)
+        );
     }
 
     private void performLogout() {

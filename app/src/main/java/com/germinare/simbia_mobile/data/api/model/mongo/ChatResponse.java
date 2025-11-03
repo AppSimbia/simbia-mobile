@@ -46,4 +46,13 @@ public class ChatResponse {
     public List<Message> getMessages() {
         return messages;
     }
+
+    @Override
+    public String toString() {
+        return "ChatResponse{" +
+                "id='" + id + '\'' +
+                ", participants=" + participants +
+                ", messages=" + messages +
+                '}';
+    }
 }

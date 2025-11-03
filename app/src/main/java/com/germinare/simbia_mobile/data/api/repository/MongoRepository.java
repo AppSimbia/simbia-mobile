@@ -52,7 +52,11 @@ public class MongoRepository {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    onFailure.accept(MESSAGE_ERROR);
+                    if (response.code() != 400) {
+                        onFailure.accept(MESSAGE_ERROR);
+                    } else {
+                        onFailure.accept("Já existe um match com esse post.\nTente novamente com outra postagem.");
+                    }
                 }
             }
 
@@ -190,31 +194,6 @@ public class MongoRepository {
         });
     }
 
-    public void findChatById(String id, Consumer<ChatResponse> onSuccessful) {
-        Log.d(TAG, "findChatById called with id: " + id);
-        Call<ChatResponse> call = apiService.findChatById(id);
-
-        call.enqueue(new Callback<>() {
-            @Override
-            public void onResponse(@NonNull Call<ChatResponse> call, @NonNull Response<ChatResponse> response) {
-                Log.d(TAG, "findChatById response code: " + response.code());
-                if (response.isSuccessful() && response.body() != null) {
-                    Log.d(TAG, "findChatById success: " + response.body());
-                    onSuccessful.accept(response.body());
-                } else {
-                    Log.e(TAG, "findChatById failed: " + response.message());
-                    onFailure.accept(MESSAGE_ERROR);
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ChatResponse> call, @NonNull Throwable t) {
-                Log.e(TAG, "findChatById error: ", t);
-                onFailure.accept(MESSAGE_ERROR);
-            }
-        });
-    }
-
     public void findAllChatByEmployeeId(String employeeId, Consumer<List<ChatResponse>> onSuccessful) {
         Log.d(TAG, "findAllChatByEmployeeId called with id: " + employeeId);
         Call<List<ChatResponse>> call = apiService.findAllChatByEmployeeId(employeeId);
@@ -235,6 +214,33 @@ public class MongoRepository {
             @Override
             public void onFailure(@NonNull Call<List<ChatResponse>> call, @NonNull Throwable t) {
                 Log.e(TAG, "findAllChatByEmployeeId error: ", t);
+                onFailure.accept(MESSAGE_ERROR);
+            }
+        });
+    }
+
+    public void findAllMatchByEmployeeId(String employeeId, Consumer<List<MatchResponse>> onSuccessful) {
+        Log.d(TAG, "findAllMatchByEmployeeId called with id: " + employeeId);
+        Call<List<MatchResponse>> call = apiService.findMatchByEmployeeId(employeeId);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<List<MatchResponse>> call, @NonNull Response<List<MatchResponse>> response) {
+                Log.d(TAG, "findAllMatchByEmployeeId response code: " + response.code());
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "findAllMatchByEmployeeId success: " + response.body().size() + " chats received");
+                    onSuccessful.accept(response.body());
+                } else {
+                    Log.e(TAG, "findAllMatchByEmployeeId failed: " + response.message());
+                    if (response.code() != 404) {
+                        onFailure.accept(MESSAGE_ERROR);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<MatchResponse>> call, @NonNull Throwable t) {
+                Log.e(TAG, "findAllMatchByEmployeeId error: ", t);
                 onFailure.accept(MESSAGE_ERROR);
             }
         });

@@ -1,6 +1,7 @@
 package com.germinare.simbia_mobile.data.firestore;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.germinare.simbia_mobile.data.api.model.firestore.EmployeeFirestore;
@@ -27,7 +28,7 @@ public class UserRepository {
         db.collection(COLLECTION_NAME).document(uid).get()
                 .addOnSuccessListener(document -> {
                     if (document.exists()) onSucessFunction.accept(document);
-                    else Toast.makeText(ctx, "Dados do usuário não encontrados.", Toast.LENGTH_SHORT).show();
+                    else Log.d("teste", "Não achei nada");
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(ctx, "Erro ao carregar dados: " + e.getMessage(), Toast.LENGTH_SHORT).show());
